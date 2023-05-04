@@ -64,7 +64,7 @@ const SidebarContainer = styled.div`
 const UserContainer = styled.div`
   display: flex;
   justify-content: flex-start;
-  margin: 33px 0;
+  margin-bottom: 33px;
   padding: 40px 20px;
   border: 1px solid ${theme.colors.primaryColor};
   border-radius: 15px;
