@@ -37,9 +37,14 @@ Object.keys(sizes).reduce((acc: Media, label: string) => {
 const colors = {
   white: '#ffffff',
   black: '#000000',
+  primaryColor: '#50bbdf',
+  primaryColorVarient: '#0080B8',
 }
 
-const secondaryColors = {}
+const secondaryColors = {
+  secondary: '#DF7450',
+}
+
 const fontSizes: string[] = []
 
 const theme = {
