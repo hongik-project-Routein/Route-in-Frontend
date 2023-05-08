@@ -6,6 +6,7 @@ import theme from '../../styles/Theme'
 import PostSmall from '../../components/postSmall'
 import PageMoveBtn from '../../components/pageMoveBtn'
 import HeaderAndSidebar from '../../components/headerAndSidebar'
+import Tab from '../../components/tab'
 
 export default function Search(): JSX.Element {
   return <HeaderAndSidebar article={<SearchArticle />} />
@@ -20,7 +21,7 @@ function SearchArticle(): JSX.Element {
           <FontAwesomeIcon icon={faMagnifyingGlass} />
         </SearchButton>
       </SearchWindow>
-      <Tab>탭</Tab>
+      <Tab />
       <SearchResultTitle>
         <SearchResultKeyword>해시태그</SearchResultKeyword>
         {` 로 검색 관련된 게시글을 추천합니다.`}
@@ -56,12 +57,6 @@ const SearchButton = styled.button`
   height: 60px;
   border: 1px solid ${theme.colors.primaryColor};
   border-left: none;
-`
-
-const Tab = styled.div`
-  width: 70%;
-  height: 50px;
-  margin-bottom: 30px;
 `
 
 const SearchResultTitle = styled.h2`

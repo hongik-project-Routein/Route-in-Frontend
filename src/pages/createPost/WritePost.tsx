@@ -1,8 +1,27 @@
 import React from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
+import Carousel from '../../components/carousel'
 
 export default function WritePost(): JSX.Element {
+  const images: JSX.Element[] = [
+    <Image
+      key={0}
+      src="https://avatars.githubusercontent.com/u/81083461?v=4"
+    />,
+    <Image
+      key={1}
+      src="https://visitowa.com/wp-content/uploads/2021/02/DSC07749-1.jpg"
+    />,
+    <Image
+      key={2}
+      src="https://images.pexels.com/photos/2193600/pexels-photo-2193600.jpeg?cs=srgb&dl=pexels-lisa-fotios-2193600.jpg&fm=jpg"
+    />,
+    <Image
+      key={3}
+      src="https://cdn.jdpower.com/Average%20Weight%20Of%20A%20Car.jpg"
+    />,
+  ]
   // props: Dispatch<SetStateAction<Location[]>>
   return (
     <>
@@ -10,7 +29,7 @@ export default function WritePost(): JSX.Element {
       <Paragraph>{`장소에 대한 해시태그가 자동으로 완성됩니다.`}</Paragraph>
       <GroupContainer>
         <PictureGroup>
-          <Carousel></Carousel>
+          <Carousel items={images}></Carousel>
         </PictureGroup>
         <LocationGroup>
           <WriteSpace />
@@ -38,13 +57,6 @@ const Paragraph = styled.p`
   white-space: pre-line;
   text-align: center;
 `
-const Carousel = styled.div`
-  width: 350px;
-  height: 350px;
-  margin-bottom: 30px;
-  background-color: #d9d9d9;
-  border-radius: 10px;
-`
 
 // PictureGroup, LocationGroup을 묶어주는 컨테이너
 const GroupContainer = styled.div`
@@ -68,6 +80,13 @@ const WriteSpace = styled.textarea`
   width: 300px;
   height: 300px;
   resize: none;
+`
+
+const Image = styled.img`
+  width: 350px;
+  height: 350px;
+  object-fit: cover;
+  border-radius: 10px;
 `
 
 const ButtonContainer = styled.div`
