@@ -4,11 +4,14 @@ import theme from './../styles/Theme'
 import logo from '../img/logo.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBell } from '@fortawesome/free-regular-svg-icons'
+import { Link } from 'react-router-dom'
 
 export default function Header(): JSX.Element {
   return (
     <HeaderContainer>
-      <Logo src={logo} />
+      <LogoLink to="/">
+        <Logo src={logo} />
+      </LogoLink>
       <IconContainer>
         <Bell>
           <FontAwesomeIcon icon={faBell} />
@@ -27,6 +30,8 @@ const HeaderContainer = styled.div`
   background-color: ${theme.colors.white};
   border-bottom: 1px solid #d9d9d9;
 `
+
+const LogoLink = styled(Link)``
 
 const Logo = styled.img`
   object-fit: cover;
