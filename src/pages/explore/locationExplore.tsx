@@ -1,27 +1,13 @@
 import React from 'react'
-import Header from '../../components/header'
-import Sidebar from '../../components/sidebar'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons'
 import PostSmall from '../../components/postSmall'
 import PageMoveBtn from '../../components/pageMoveBtn'
+import HeaderAndSidebar from '../../components/headerAndSidebar'
 
 export default function LocationExplore(): JSX.Element {
-  return (
-    <Grid>
-      <HeaderGrid>
-        <Header />
-      </HeaderGrid>
-      <SidebarGrid>
-        <Sidebar />
-      </SidebarGrid>
-      {/* 변경되는 내용 */}
-      <ExploreGrid>
-        <ExploreArticle />
-      </ExploreGrid>
-    </Grid>
-  )
+  return <HeaderAndSidebar article={<ExploreArticle />} />
 }
 
 function ExploreArticle(): JSX.Element {
@@ -50,25 +36,6 @@ function ExploreArticle(): JSX.Element {
   )
 }
 
-const Grid = styled.div`
-  display: grid;
-  grid-template-columns: 3fr 5fr 4fr;
-  grid-column-gap: 24px;
-  grid-row-gap: 33px;
-  grid-template-areas:
-    'header header header'
-    'sidebar createPost createPost ';
-`
-
-const HeaderGrid = styled.div`
-  grid-area: header;
-`
-const SidebarGrid = styled.div`
-  grid-area: sidebar;
-`
-const ExploreGrid = styled.div`
-  grid-area: createPost;
-`
 const ExploreHeader = styled.header`
   font-size: 20px;
   margin-bottom: 30px;

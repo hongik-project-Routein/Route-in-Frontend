@@ -1,24 +1,10 @@
 import React from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
-import Header from '../../components/header'
-import Sidebar from '../../components/sidebar'
+import HeaderAndSidebar from '../../components/headerAndSidebar'
 
 export default function CreateStory(): JSX.Element {
-  return (
-    <Grid>
-      <HeaderGrid>
-        <Header />
-      </HeaderGrid>
-      <SidebarGrid>
-        <Sidebar />
-      </SidebarGrid>
-      {/* 변경되는 내용 */}
-      <CreateStoryGrid>
-        <CreateStoryArticle />
-      </CreateStoryGrid>
-    </Grid>
-  )
+  return <HeaderAndSidebar article={<CreateStoryArticle />} />
 }
 
 function CreateStoryArticle(): JSX.Element {
@@ -37,26 +23,6 @@ function CreateStoryArticle(): JSX.Element {
     </>
   )
 }
-
-const Grid = styled.div`
-  display: grid;
-  grid-template-columns: 3fr 5fr 4fr;
-  grid-column-gap: 24px;
-  grid-row-gap: 33px;
-  grid-template-areas:
-    'header header header'
-    'sidebar createPost createPost ';
-`
-
-const HeaderGrid = styled.div`
-  grid-area: header;
-`
-const SidebarGrid = styled.div`
-  grid-area: sidebar;
-`
-const CreateStoryGrid = styled.div`
-  grid-area: createPost;
-`
 
 const Title = styled.h1`
   color: ${theme.colors.primaryColor};
