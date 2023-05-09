@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import { useSelector, useDispatch } from 'react-redux/es/exports'
+import { type RootState } from '../modules'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faHouse,
@@ -14,6 +16,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 
 import theme from '../styles/Theme'
+import { changeNavbarIndex } from '../modules/navbar'
 
 interface TapContent {
   icon: IconDefinition
@@ -23,28 +26,52 @@ interface TapContent {
 
 const TapContents: TapContent[] = [
   { icon: faHouse, name: '홈', link: '/' },
-  { icon: faImage, name: '스토리', link: '/' },
-  { icon: faMagnifyingGlass, name: '검색', link: '/' },
-  { icon: faLocationDot, name: '탐색', link: '/' },
-  { icon: faComment, name: '메시지', link: '/' },
-  { icon: faSquarePlus, name: '만들기', link: '/' },
-  { icon: faGear, name: '설정', link: '/' },
+  { icon: faImage, name: '스토리', link: '/story/create' },
+  { icon: faMagnifyingGlass, name: '검색', link: '/search' },
+  { icon: faLocationDot, name: '탐색', link: '/explore' },
+  { icon: faComment, name: '메시지', link: '/directmessage' },
+  { icon: faSquarePlus, name: '만들기', link: '/post/create' },
+  { icon: faGear, name: '설정', link: '/setting' },
 ]
 
 export default function Sidebar(): JSX.Element {
+  const dispatch = useDispatch()
+  const [selectedTabIndex, setselectedTabIndex] = useState<number>(0)
+  const curIndex = useSelector(
+    (state: RootState) => state.changeNavbarReducer.index
+  )
+  const handleTabClick = (index: number): void => {
+    setselectedTabIndex(index)
+    dispatch(changeNavbarIndex(index))
+  }
+  useEffect(() => {
+    setselectedTabIndex(curIndex)
+  }, [selectedTabIndex])
   return (
     <SidebarContainer>
-      <UserContainer>
+      <UserContainer
+        to="/profile"
+        active={selectedTabIndex === -1}
+        onClick={() => {
+          handleTabClick(-1)
+        }}
+      >
         <Profile src="https://avatars.githubusercontent.com/u/81083461?v=4" />
         <NicknameContainer>
-          <Nickname to="/">Jinhokim98</Nickname>
+          <Nickname>Jinhokim98</Nickname>
           <Introduce>김진호</Introduce>
         </NicknameContainer>
       </UserContainer>
       <Tab>
         {TapContents.map((item, idx) => (
-          <TabContentContainer key={idx} to={item.link}>
-            <Indicator />
+          <TabContentContainer
+            key={idx}
+            to={item.link}
+            onClick={() => {
+              handleTabClick(idx)
+            }}
+          >
+            <Indicator active={selectedTabIndex === idx} />
             <TabIcon>
               <FontAwesomeIcon icon={item.icon} />
             </TabIcon>
@@ -61,12 +88,13 @@ const SidebarContainer = styled.div`
   flex-direction: column;
   width: 260px;
 `
-const UserContainer = styled.div`
+const UserContainer = styled(Link)<{ active: boolean }>`
   display: flex;
   justify-content: flex-start;
   margin-bottom: 33px;
   padding: 40px 20px;
-  border: 1px solid ${theme.colors.primaryColor};
+  border: ${(props) => (props.active ? '2px' : '1px')} solid
+    ${theme.colors.primaryColor};
   border-radius: 15px;
 `
 
@@ -86,7 +114,7 @@ const NicknameContainer = styled.div`
   flex-direction: column;
 `
 
-const Nickname = styled(Link)`
+const Nickname = styled.div`
   color: ${theme.colors.primaryColor};
   font-size: 24px;
 `
@@ -111,10 +139,11 @@ const TabContentContainer = styled(Link)`
   border-bottom: 1px solid #d9d9d9;
 `
 
-const Indicator = styled.div`
+const Indicator = styled.div<{ active: boolean }>`
   width: 5px;
   height: 42px;
-  background-color: ${theme.colors.primaryColor};
+  background-color: ${(props) =>
+    props.active ? theme.colors.primaryColor : theme.colors.white};
 `
 
 const TabIcon = styled.div`

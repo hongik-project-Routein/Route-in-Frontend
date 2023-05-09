@@ -27,11 +27,13 @@ export default function Post(): JSX.Element {
           <DistanceFromMe>나와의 거리: 100km</DistanceFromMe>
         </UserContent>
         <RestContent>
-          <NumOfHeart>좋아요: 100</NumOfHeart>
           <Icons>
-            <Heart>
-              <FontAwesomeIcon icon={faHeart} />
-            </Heart>
+            <HeartAndNumber>
+              <Heart>
+                <FontAwesomeIcon icon={faHeart} />
+              </Heart>
+              <NumOfHeart>100</NumOfHeart>
+            </HeartAndNumber>
             <DirectMessage>
               <FontAwesomeIcon icon={faComment} />
             </DirectMessage>
@@ -64,8 +66,8 @@ const UserContent = styled.div`
 `
 
 const Profile = styled.img`
-  width: 56px;
-  height: 56px;
+  width: 50px;
+  height: 50px;
   margin-right: 20px;
   border-radius: 50%;
   object-fit: cover;
@@ -76,7 +78,7 @@ const Profile = styled.img`
 
 const Nickname = styled.span`
   margin-right: 20px;
-  font-size: 16px;
+  font-size: 20px;
 `
 
 const RestContent = styled.div`
@@ -89,25 +91,34 @@ const DistanceFromMe = styled.span`
   font-size: 16px;
 `
 
-const NumOfHeart = styled.span`
-  font-size: 16px;
-  margin-right: 20px;
-`
-
 const Icons = styled.div`
   display: flex;
   justify-content: flex-start;
 `
 
-const Heart = styled.div`
+const HeartAndNumber = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
   margin-right: 10px;
 `
 
+const Heart = styled.div``
+
+const NumOfHeart = styled.div`
+  font-size: 16px;
+  margin-top: 5px;
+`
+
 const DirectMessage = styled.div`
+  width: 20px;
   margin-right: 10px;
 `
 
 const Bookmark = styled.div`
+  width: 20px;
   margin-right: 10px;
 `
 const PostImageContainer = styled.div`

@@ -30,6 +30,7 @@ export default function WritePost(): JSX.Element {
       <GroupContainer>
         <PictureGroup>
           <Carousel items={images}></Carousel>
+          <EditButton>사진 편집</EditButton>
         </PictureGroup>
         <LocationGroup>
           <WriteSpace />
@@ -61,7 +62,7 @@ const Paragraph = styled.p`
 // PictureGroup, LocationGroup을 묶어주는 컨테이너
 const GroupContainer = styled.div`
   display: flex;
-  justify-content: space-around;
+  justify-content: space-evenly;
   margin-top: 30px;
 `
 
@@ -77,9 +78,12 @@ const LocationGroup = styled.div`
   align-items: center;
 `
 const WriteSpace = styled.textarea`
-  width: 300px;
-  height: 300px;
+  width: 350px;
+  height: 350px;
   resize: none;
+  outline: none;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
 `
 
 const Image = styled.img`
@@ -92,6 +96,15 @@ const Image = styled.img`
 const ButtonContainer = styled.div`
   display: flex;
   margin: 30px 0;
+`
+
+const EditButton = styled.button`
+  width: 100px;
+  height: 35px;
+  background-color: #eaaa96;
+  color: ${theme.colors.white};
+  border-radius: 8px;
+  font-size: 16px;
 `
 
 const Blank = styled.div``

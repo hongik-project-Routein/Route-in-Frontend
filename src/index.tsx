@@ -4,13 +4,20 @@ import Router from './Routes'
 import { ThemeProvider } from './styles/theme-components'
 import theme from './styles/Theme'
 import GlobalStyle from './styles/GlobalStyle'
+import { legacy_createStore as createStore } from 'redux'
+import rootReducer from './modules'
+import { Provider } from 'react-redux'
+
+const store = createStore(rootReducer)
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
   <>
     <GlobalStyle />
     <ThemeProvider theme={theme}>
-      <Router />
+      <Provider store={store}>
+        <Router />
+      </Provider>
     </ThemeProvider>
   </>
 )

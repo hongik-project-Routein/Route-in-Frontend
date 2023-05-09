@@ -1,21 +1,44 @@
-import React from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import theme from './../styles/Theme'
 import logo from '../img/logo.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBell } from '@fortawesome/free-regular-svg-icons'
-import { Link } from 'react-router-dom'
+import NoticeModal from './noticeModal'
 
 export default function Header(): JSX.Element {
+  const [noticeModalVisibliity, setnoticeModalVisibliity] = useState(false)
+  const noticeRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent): void => {
+      if (
+        noticeRef.current == null ||
+        !noticeRef.current.contains(event.target as HTMLElement)
+      ) {
+        setnoticeModalVisibliity(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [noticeRef])
   return (
     <HeaderContainer>
-      <LogoLink to="/">
-        <Logo src={logo} />
-      </LogoLink>
+      <Logo src={logo} />
       <IconContainer>
-        <Bell>
-          <FontAwesomeIcon icon={faBell} />
-        </Bell>
+        <Notice ref={noticeRef}>
+          <Bell
+            modalVisible={noticeModalVisibliity}
+            type="button"
+            onClick={() => {
+              setnoticeModalVisibliity(!noticeModalVisibliity)
+            }}
+          >
+            <FontAwesomeIcon icon={faBell} />
+          </Bell>
+          {noticeModalVisibliity ? <NoticeModal /> : null}
+        </Notice>
       </IconContainer>
     </HeaderContainer>
   )
@@ -31,15 +54,10 @@ const HeaderContainer = styled.div`
   border-bottom: 1px solid #d9d9d9;
 `
 
-const LogoLink = styled(Link)``
-
 const Logo = styled.img`
   object-fit: cover;
   width: 170px;
   margin-top: 15px;
-  &:hover {
-    cursor: pointer;
-  }
 `
 
 const IconContainer = styled.div`
@@ -49,10 +67,10 @@ const IconContainer = styled.div`
   width: 20%;
 `
 
-const Bell = styled.div`
-  color: #d9d9d9;
+const Notice = styled.div``
+
+const Bell = styled.button<{ modalVisible: boolean }>`
+  color: ${(props) =>
+    props.modalVisible ? theme.colors.primaryColor : '#d9d9d9'};
   font-size: 24px;
-  &:hover {
-    cursor: pointer;
-  }
 `

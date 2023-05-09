@@ -1,77 +1,67 @@
-import React from 'react'
-import styled from 'styled-components'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
-import theme from '../../styles/Theme'
-import PostSmall from '../../components/postSmall'
-import PageMoveBtn from '../../components/pageMoveBtn'
+import React, { useState, useEffect } from 'react'
 import HeaderAndSidebar from '../../components/headerAndSidebar'
-import Tab from '../../components/tab'
+import { useSelector, useDispatch } from 'react-redux/es/exports'
+import { type RootState } from '../../modules'
+import { changeTabIndex } from '../../modules/tab'
+import SearchPostArticle from './SearchPost'
+import SearchPinArticle from './SearchPin'
+import SearchMapArticle from './SearchMap'
+import SearchUserArticle from './SearchUser'
 
 export default function Search(): JSX.Element {
-  return <HeaderAndSidebar article={<SearchArticle />} />
-}
-
-function SearchArticle(): JSX.Element {
+  const dispatch = useDispatch()
+  const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0)
+  const curIndex = useSelector(
+    (state: RootState) => state.changeTabReducer.index
+  )
+  const handleTabClick = (index: number): void => {
+    setSelectedTabIndex(index)
+    dispatch(changeTabIndex(index))
+  }
+  useEffect(() => {
+    setSelectedTabIndex(curIndex)
+  }, [selectedTabIndex])
   return (
     <>
-      <SearchWindow>
-        <InputKeyword placeholder="해시태그로 검색" />
-        <SearchButton>
-          <FontAwesomeIcon icon={faMagnifyingGlass} />
-        </SearchButton>
-      </SearchWindow>
-      <Tab />
-      <SearchResultTitle>
-        <SearchResultKeyword>해시태그</SearchResultKeyword>
-        {` 로 검색 관련된 게시글을 추천합니다.`}
-      </SearchResultTitle>
-      <SearchResultGrid>
-        <PostSmall />
-        <PostSmall />
-        <PostSmall />
-        <PostSmall />
-        <PostSmall />
-        <PostSmall />
-      </SearchResultGrid>
-      <PageMoveBtn />
+      {selectedTabIndex === 0 ? (
+        <HeaderAndSidebar
+          article={
+            <SearchPostArticle
+              handleTabfunc={handleTabClick}
+              tabIndex={selectedTabIndex}
+            />
+          }
+        />
+      ) : selectedTabIndex === 1 ? (
+        <HeaderAndSidebar
+          article={
+            <SearchPinArticle
+              handleTabfunc={handleTabClick}
+              tabIndex={selectedTabIndex}
+            />
+          }
+        />
+      ) : selectedTabIndex === 2 ? (
+        <HeaderAndSidebar
+          article={
+            <SearchMapArticle
+              handleTabfunc={handleTabClick}
+              tabIndex={selectedTabIndex}
+            />
+          }
+        />
+      ) : selectedTabIndex === 3 ? (
+        <HeaderAndSidebar
+          article={
+            <SearchUserArticle
+              handleTabfunc={handleTabClick}
+              tabIndex={selectedTabIndex}
+            />
+          }
+        />
+      ) : (
+        <div>잘못된 접근</div>
+      )}
     </>
   )
 }
-
-const SearchWindow = styled.div`
-  display: flex;
-  width: 520px;
-  height: 60px;
-  margin-bottom: 30px;
-`
-
-const InputKeyword = styled.input`
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid ${theme.colors.primaryColor};
-  font-size: 16px;
-`
-const SearchButton = styled.button`
-  width: 40px;
-  height: 60px;
-  border: 1px solid ${theme.colors.primaryColor};
-  border-left: none;
-`
-
-const SearchResultTitle = styled.h2`
-  margin-bottom: 30px;
-  font-size: 25px;
-`
-
-const SearchResultKeyword = styled.span`
-  color: ${theme.colors.primaryColor};
-`
-
-const SearchResultGrid = styled.div`
-  display: grid;
-  grid-template-rows: repeat(2, 1fr);
-  grid-template-columns: repeat(3, 1fr);
-  grid-gap: 46px;
-  width: 900px;
-`

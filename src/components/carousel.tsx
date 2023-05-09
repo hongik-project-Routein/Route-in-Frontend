@@ -49,7 +49,7 @@ const LeftButton = styled.button`
   left: 3%;
   width: 30px;
   height: 30px;
-  background-color: ${theme.colors.black};
+  background-color: rgba(0, 0, 0, 0.6);
   border-radius: 50%;
   color: ${theme.colors.white};
 `
@@ -59,7 +59,7 @@ const RightButton = styled.button`
   right: 3%;
   width: 30px;
   height: 30px;
-  background-color: ${theme.colors.black};
+  background-color: rgba(0, 0, 0, 0.6);
   border-radius: 50%;
   color: ${theme.colors.white};
 `
