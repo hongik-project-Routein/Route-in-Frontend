@@ -4,10 +4,10 @@ import Main from './pages/Main'
 import CreatePost from './pages/createPost/CreatePost'
 import Search from './pages/search/Search'
 import CreateStory from './pages/story/CreateStory'
-import LocationExplore from './pages/explore/locationExplore'
-import MyProfile from './pages/profile/MyProfile'
 import Setting from './pages/setting/Setting'
 import DiretMessage from './pages/directMessage/directMessage'
+import Explore from './pages/explore/explore'
+import MyProfile from './pages/profile/profile'
 
 function Router(): JSX.Element {
   return (
@@ -19,8 +19,10 @@ function Router(): JSX.Element {
           {/* 와일드카드 문제 해결하지 않음 */}
           <Route path="/search/*" element={<Search />} />
           <Route path="/story/create" element={<CreateStory />} />
-          <Route path="/explore" element={<LocationExplore />} />
-          <Route path="/profile" element={<MyProfile />} />
+          {/* 와일드카드 문제 해결하지 않음 */}
+          <Route path="/explore/*" element={<Explore />} />
+          {/* 와일드카드 문제 해결하지 않음 */}
+          <Route path="/profile/:username/*" element={<MyProfile />} />
           <Route path="/setting" element={<Setting />} />
           <Route path="/directmessage" element={<DiretMessage />} />
         </Routes>

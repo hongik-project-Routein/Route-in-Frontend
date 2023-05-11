@@ -34,6 +34,8 @@ const Grid = styled.div`
 
 const HeaderGrid = styled.div`
   grid-area: header;
+  position: sticky;
+  top: 0;
 `
 const SidebarGrid = styled.div`
   grid-area: sidebar;

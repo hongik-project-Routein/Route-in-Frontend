@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
-import PostSmall from '../../components/postSmall'
 import PageMoveBtn from '../../components/pageMoveBtn'
 import Tab from '../../components/tab'
 import SearchWindow from '../../components/searchWindow'
@@ -37,14 +36,7 @@ export default function SearchMapArticle(
         <SearchResultKeyword>해시태그</SearchResultKeyword>
         {` 와 관련된 경로을 추천합니다.`}
       </SearchResultTitle>
-      <SearchResultGrid>
-        <PostSmall />
-        <PostSmall />
-        <PostSmall />
-        <PostSmall />
-        <PostSmall />
-        <PostSmall />
-      </SearchResultGrid>
+      <SearchResultGrid></SearchResultGrid>
       <PageMoveBtn />
     </>
   )

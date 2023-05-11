@@ -16,7 +16,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 
 import theme from '../styles/Theme'
-import { changeNavbarIndex } from '../modules/navbar'
+import { changeNavbarIndex } from '../modules/tap/navbar'
 
 interface TapContent {
   icon: IconDefinition
@@ -50,7 +50,7 @@ export default function Sidebar(): JSX.Element {
   return (
     <SidebarContainer>
       <UserContainer
-        to="/profile"
+        to="/profile/jinokim98"
         active={selectedTabIndex === -1}
         onClick={() => {
           handleTabClick(-1)

@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from 'react'
 import HeaderAndSidebar from '../../components/headerAndSidebar'
-import { useSelector, useDispatch } from 'react-redux/es/exports'
+import { useSelector, useDispatch } from 'react-redux'
 import { type RootState } from '../../modules'
-import { changeSearchTabIndex } from '../../modules/tap/tab'
-import SearchPostArticle from './SearchPost'
-import SearchPinArticle from './SearchPin'
-import SearchMapArticle from './SearchMap'
-import SearchUserArticle from './SearchUser'
+import { changeProfileTabIndex } from '../../modules/tap/profiletab'
+import ProfileMapArticle from './profileMap'
+import ProfilePostArticle from './profilePost'
+import ProfileStoryArticle from './profileStory'
+import ProfileBookmarkArticle from './profileBookmark'
 
-export default function Search(): JSX.Element {
+export default function MyProfile(): JSX.Element {
   const dispatch = useDispatch()
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0)
   const curIndex = useSelector(
-    (state: RootState) => state.changeTabReducer.index
+    (state: RootState) => state.changeProfileTabReducer.index
   )
   const handleTabClick = (index: number): void => {
     setSelectedTabIndex(index)
-    dispatch(changeSearchTabIndex(index))
+    dispatch(changeProfileTabIndex(index))
   }
   useEffect(() => {
     setSelectedTabIndex(curIndex)
@@ -26,7 +26,7 @@ export default function Search(): JSX.Element {
       {selectedTabIndex === 0 ? (
         <HeaderAndSidebar
           article={
-            <SearchPostArticle
+            <ProfileMapArticle
               handleTabfunc={handleTabClick}
               tabIndex={selectedTabIndex}
             />
@@ -35,7 +35,7 @@ export default function Search(): JSX.Element {
       ) : selectedTabIndex === 1 ? (
         <HeaderAndSidebar
           article={
-            <SearchPinArticle
+            <ProfilePostArticle
               handleTabfunc={handleTabClick}
               tabIndex={selectedTabIndex}
             />
@@ -44,7 +44,7 @@ export default function Search(): JSX.Element {
       ) : selectedTabIndex === 2 ? (
         <HeaderAndSidebar
           article={
-            <SearchMapArticle
+            <ProfileStoryArticle
               handleTabfunc={handleTabClick}
               tabIndex={selectedTabIndex}
             />
@@ -53,7 +53,7 @@ export default function Search(): JSX.Element {
       ) : selectedTabIndex === 3 ? (
         <HeaderAndSidebar
           article={
-            <SearchUserArticle
+            <ProfileBookmarkArticle
               handleTabfunc={handleTabClick}
               tabIndex={selectedTabIndex}
             />

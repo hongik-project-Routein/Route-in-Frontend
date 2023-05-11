@@ -8,7 +8,7 @@ interface FollowList {
   username: string
 }
 
-export default function FollowModal(): JSX.Element {
+export default function FollowingModal(): JSX.Element {
   const FollowLists: FollowList[] = [
     {
       image: 'https://avatars.githubusercontent.com/u/81083461?v=4',
@@ -43,7 +43,7 @@ export default function FollowModal(): JSX.Element {
   ]
   return (
     <ModalContainer>
-      <ModalTitle>팔로워</ModalTitle>
+      <ModalTitle>팔로잉</ModalTitle>
       <ModalInner>
         {FollowLists.map((item, idx) => (
           <Row key={idx}>
@@ -52,7 +52,7 @@ export default function FollowModal(): JSX.Element {
               <Nickname>{item.nickname}</Nickname>
               <Name>{item.username}</Name>
             </NicknameAndName>
-            <FollowButton>삭제</FollowButton>
+            <FollowButton>팔로잉</FollowButton>
           </Row>
         ))}
       </ModalInner>

@@ -1,13 +1,13 @@
-const TABINDEX = 'tab/TABINDEX' as const
+const SEARCHTABINDEX = 'searchTab/TABINDEX' as const
 
-export const changeTabIndex = (
+export const changeSearchTabIndex = (
   diff: number
-): { type: typeof TABINDEX; payload: number } => ({
-  type: TABINDEX,
+): { type: typeof SEARCHTABINDEX; payload: number } => ({
+  type: SEARCHTABINDEX,
   payload: diff,
 })
 
-type TabAction = ReturnType<typeof changeTabIndex>
+type TabAction = ReturnType<typeof changeSearchTabIndex>
 
 interface TabState {
   index: number
@@ -22,7 +22,7 @@ function changeTabReducer(
   action: TabAction
 ): TabState {
   switch (action.type) {
-    case TABINDEX:
+    case SEARCHTABINDEX:
       return { index: action.payload }
     default:
       return state

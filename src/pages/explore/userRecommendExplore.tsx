@@ -11,13 +11,13 @@ interface TabContent {
   link: string
 }
 
-interface LocationExploreArticleProps {
+interface UserRecommendExploreArticleProps {
   handleTabfunc: (index: number) => void
   tabIndex: number
 }
 
-export default function LocationExploreArticle(
-  props: LocationExploreArticleProps
+export default function UserRecommendExploreArticle(
+  props: UserRecommendExploreArticleProps
 ): JSX.Element {
   const tabContents: TabContent[] = [
     { tabName: '현재 위치', link: '/explore/location' },

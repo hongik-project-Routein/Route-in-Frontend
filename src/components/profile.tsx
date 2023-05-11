@@ -1,10 +1,49 @@
-import React from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
 import theme from '../styles/Theme'
+import FollowModal from './followModal'
+import FollowingModal from './followingModal'
+import { useSelector, useDispatch } from 'react-redux'
+import { type RootState } from '../modules'
+import { changeIntroduction } from '../modules/profile'
 
 export default function Profile(): JSX.Element {
-  const introductionText: string = `김진호
-홍익대학교 경영학과`
+  const dispatch = useDispatch()
+  const [introductionText, setIntroductionText] = useState<string>('')
+  const [activeIntroductionModify, setActiveIntroductionModify] =
+    useState(false)
+  const [followModalVisibliity, setFollowModalVisibliity] = useState(false)
+  const [followingModalVisibliity, setFollowingModalVisibliity] =
+    useState(false)
+  const followRef = useRef<HTMLDivElement>(null)
+  const followingRef = useRef<HTMLDivElement>(null)
+  const curIntroductionText = useSelector(
+    (state: RootState) => state.changeIntroductionReducer.data
+  )
+  useEffect(() => {
+    setIntroductionText(curIntroductionText)
+    setActiveIntroductionModify(true)
+  }, [])
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent): void => {
+      if (
+        followRef.current == null ||
+        !followRef.current.contains(event.target as HTMLElement)
+      ) {
+        setFollowModalVisibliity(false)
+      }
+      if (
+        followingRef.current == null ||
+        !followingRef.current.contains(event.target as HTMLElement)
+      ) {
+        setFollowingModalVisibliity(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [followRef, followingRef])
   return (
     <>
       <ProfileHeader>
@@ -12,16 +51,47 @@ export default function Profile(): JSX.Element {
         <ProfileDesc>
           <NameAndEditBtn>
             <Nickname>jinokim98</Nickname>
-            <EditButton>프로필 편집</EditButton>
+            <EditButton
+              onClick={() => {
+                if (!activeIntroductionModify) {
+                  dispatch(changeIntroduction(introductionText))
+                }
+                setActiveIntroductionModify(!activeIntroductionModify)
+              }}
+            >
+              {activeIntroductionModify ? '프로필 편집' : '저장'}
+            </EditButton>
           </NameAndEditBtn>
           <Statistics>
             <NumOfPosts>게시글 {25}</NumOfPosts>
-            <Follower>팔로워 {220}</Follower>
-            <Follow>팔로우 {225}</Follow>
+            <FollowerContainer ref={followRef}>
+              <Follower
+                onClick={() => {
+                  setFollowModalVisibliity(!followModalVisibliity)
+                }}
+              >
+                팔로워 {220}
+              </Follower>
+              {followModalVisibliity ? <FollowModal /> : null}
+            </FollowerContainer>
+            <FollowContainer ref={followingRef}>
+              <Follow
+                onClick={() => {
+                  setFollowingModalVisibliity(!followingModalVisibliity)
+                }}
+              >
+                팔로우 {225}
+              </Follow>
+              {followingModalVisibliity ? <FollowingModal /> : null}
+            </FollowContainer>
           </Statistics>
           <Introduction
             value={introductionText}
             spellCheck="false"
+            readOnly={activeIntroductionModify}
+            onChange={(event) => {
+              setIntroductionText(event.target.value)
+            }}
           ></Introduction>
         </ProfileDesc>
       </ProfileHeader>
@@ -76,8 +146,23 @@ const Statistics = styled.div`
   }
 `
 const NumOfPosts = styled.div``
-const Follower = styled.div``
-const Follow = styled.div``
+const FollowerContainer = styled.div`
+  position: relative;
+`
+const Follower = styled.div`
+  &:hover {
+    cursor: pointer;
+  }
+`
+
+const FollowContainer = styled.div`
+  position: relative;
+`
+const Follow = styled.div`
+  &:hover {
+    cursor: pointer;
+  }
+`
 
 const Introduction = styled.textarea`
   width: 420px;
