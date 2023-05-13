@@ -8,20 +8,34 @@ import Setting from './pages/setting/Setting'
 import DiretMessage from './pages/directMessage/directMessage'
 import Explore from './pages/explore/explore'
 import MyProfile from './pages/profile/profile'
+import PostDetail from './pages/post/postDetail'
+import WritePost from './pages/createPost/WritePost'
+import SelectRepresentativePicture from './pages/createPost/SelectRepresentativePicture'
+import HeaderAndSidebar from './components/headerAndSidebar'
 
 function Router(): JSX.Element {
   return (
     <>
+      {/* 전체적으로 와일드카드 문제 해결하지 않음 */}
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Main />} />
-          <Route path="/post/create" element={<CreatePost />} />
-          {/* 와일드카드 문제 해결하지 않음 */}
+          <Route path="/post/:postid" element={<PostDetail />} />
+          {/* post/create 나중에 수정하기 */}
+          <Route path="/post/create/" element={<CreatePost />} />
+          <Route
+            path="/post/create/text"
+            element={<HeaderAndSidebar article={<WritePost />} />}
+          />
+          <Route
+            path="/post/create/setimage"
+            element={
+              <HeaderAndSidebar article={<SelectRepresentativePicture />} />
+            }
+          />
           <Route path="/search/*" element={<Search />} />
           <Route path="/story/create" element={<CreateStory />} />
-          {/* 와일드카드 문제 해결하지 않음 */}
           <Route path="/explore/*" element={<Explore />} />
-          {/* 와일드카드 문제 해결하지 않음 */}
           <Route path="/profile/:username/*" element={<MyProfile />} />
           <Route path="/setting" element={<Setting />} />
           <Route path="/directmessage" element={<DiretMessage />} />

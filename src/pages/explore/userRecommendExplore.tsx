@@ -1,10 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faLocationDot } from '@fortawesome/free-solid-svg-icons'
 import PostSmall from '../../components/postSmall'
 import PageMoveBtn from '../../components/pageMoveBtn'
 import Tab from '../../components/tab'
+import theme from '../../styles/Theme'
 
 interface TabContent {
   tabName: string
@@ -26,12 +25,13 @@ export default function UserRecommendExploreArticle(
   return (
     <>
       <ExploreHeader>
-        <CurrentLocation>
-          <FontAwesomeIcon icon={faLocationDot} />
-          <Address>홍익대학교 서울캠퍼스</Address>
-        </CurrentLocation>
+        <Hashtags>
+          <Hashtag>#야구장</Hashtag>
+          <Hashtag>#치킨</Hashtag>
+          <Hashtag>#콘서트</Hashtag>
+        </Hashtags>
         <RecommandationMent>
-          {`현재 위치에 관련된 게시물을 추천합니다.`}
+          {`jinokim98님의 성향에 맞는 게시물을 추천합니다.`}
         </RecommandationMent>
       </ExploreHeader>
       <Tab
@@ -54,21 +54,27 @@ export default function UserRecommendExploreArticle(
 
 const ExploreHeader = styled.header`
   font-size: 20px;
+  margin-top: 78px;
   margin-bottom: 30px;
 `
-const CurrentLocation = styled.div`
+const Hashtags = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
   margin-bottom: 30px;
 `
 
-const Address = styled.div`
+const Hashtag = styled.div`
   margin-left: 20px;
+  &:first-child {
+    margin-left: 0;
+  }
+  font-size: 14px;
+  color: ${theme.colors.primaryColor};
 `
 
 const RecommandationMent = styled.div`
-  margin-bottom: 30px;
+  margin-bottom: 50px;
 `
 
 const RecommandationResultGrid = styled.div`

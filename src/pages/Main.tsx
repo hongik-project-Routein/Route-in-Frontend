@@ -4,6 +4,7 @@ import Sidebar from '../components/sidebar'
 import Post from '../components/post'
 import styled from 'styled-components'
 import UserRecommend from '../components/userRecommend'
+import theme from '../styles/Theme'
 
 function Main(): JSX.Element {
   return (
@@ -43,6 +44,10 @@ const Grid = styled.div`
 
 const HeaderGrid = styled.div`
   grid-area: header;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: ${theme.colors.white};
 `
 const SidebarGrid = styled.div`
   grid-area: sidebar;

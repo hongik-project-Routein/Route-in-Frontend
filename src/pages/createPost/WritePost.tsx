@@ -1,7 +1,11 @@
-import React from 'react'
+import React, { useState, useEffect, type ChangeEvent } from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
 import Carousel from '../../components/carousel'
+import { Link } from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux'
+import { type RootState } from '../../modules'
+import { changeHashtag } from '../../modules/hashtag'
 
 export default function WritePost(): JSX.Element {
   const images: JSX.Element[] = [
@@ -22,6 +26,35 @@ export default function WritePost(): JSX.Element {
       src="https://cdn.jdpower.com/Average%20Weight%20Of%20A%20Car.jpg"
     />,
   ]
+  const [hashtag, setHashtag] = useState<string[] | []>([])
+  const [text, setText] = useState<string>('')
+  const dispatch = useDispatch()
+  const hashtags = useSelector(
+    (state: RootState) => state.changeHashtagReducer.data
+  )
+  useEffect(() => {
+    setText(hashtags.join().replace(/,/g, '\n\n'))
+    setHashtag(hashtags)
+  }, [])
+  useEffect(() => {
+    console.log(hashtag)
+  }, [hashtag])
+  const handleOnChange = (event: ChangeEvent<HTMLTextAreaElement>): void => {
+    setText(event.target.value)
+  }
+  const pushHashtag = (): void => {
+    const newHashtags: string[] = []
+    text.split('\n').forEach((line) => {
+      line.split(' ').forEach((word) => {
+        if (word.startsWith('#')) {
+          newHashtags.push(word)
+          console.log(word)
+        }
+      })
+    })
+    setHashtag(newHashtags)
+    dispatch(changeHashtag(newHashtags))
+  }
   // props: Dispatch<SetStateAction<Location[]>>
   return (
     <>
@@ -30,15 +63,21 @@ export default function WritePost(): JSX.Element {
       <GroupContainer>
         <PictureGroup>
           <Carousel items={images}></Carousel>
-          <EditButton>사진 편집</EditButton>
         </PictureGroup>
         <LocationGroup>
-          <WriteSpace />
+          <WriteSpace value={text} onChange={handleOnChange} />
         </LocationGroup>
       </GroupContainer>
       <ButtonContainer>
         <Blank />
-        <NextButton>다음으로</NextButton>
+        <NextButtonLink
+          to="/post/create/setimage"
+          onClick={() => {
+            pushHashtag()
+          }}
+        >
+          <NextButton>{`다음으로`}</NextButton>
+        </NextButtonLink>
         <Blank />
       </ButtonContainer>
     </>
@@ -97,18 +136,11 @@ const ButtonContainer = styled.div`
   display: flex;
   margin: 30px 0;
 `
-
-const EditButton = styled.button`
-  width: 100px;
-  height: 35px;
-  background-color: #eaaa96;
-  color: ${theme.colors.white};
-  border-radius: 8px;
-  font-size: 16px;
-`
-
 const Blank = styled.div``
 
+const NextButtonLink = styled(Link)`
+  margin: auto;
+`
 const NextButton = styled.button`
   width: 100px;
   height: 35px;

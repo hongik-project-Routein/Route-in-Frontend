@@ -54,6 +54,7 @@ export default function LocationExploreArticle(
 
 const ExploreHeader = styled.header`
   font-size: 20px;
+  margin-top: 78px;
   margin-bottom: 30px;
 `
 const CurrentLocation = styled.div`
@@ -68,7 +69,7 @@ const Address = styled.div`
 `
 
 const RecommandationMent = styled.div`
-  margin-bottom: 30px;
+  margin-bottom: 44px;
 `
 
 const RecommandationResultGrid = styled.div`

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -23,7 +23,9 @@ export default function Carousel(props: CarouselProps): JSX.Element {
   const handleNextClick = (): void => {
     setCurrentIndex((currentIndex + 1) % props.items.length)
   }
-
+  useEffect(() => {
+    console.log(props.items)
+  }, [])
   return (
     <CarouselContainer>
       <LeftButton onClick={handlePrevClick}>
