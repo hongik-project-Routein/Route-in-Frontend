@@ -12,6 +12,8 @@ import PostDetail from './pages/post/postDetail'
 import WritePost from './pages/createPost/WritePost'
 import SelectRepresentativePicture from './pages/createPost/SelectRepresentativePicture'
 import HeaderAndSidebar from './components/headerAndSidebar'
+import Login from './pages/login'
+import SignUp from './pages/signUp'
 
 function Router(): JSX.Element {
   return (
@@ -20,6 +22,8 @@ function Router(): JSX.Element {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Main />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
           <Route path="/post/:postid" element={<PostDetail />} />
           {/* post/create 나중에 수정하기 */}
           <Route path="/post/create/" element={<CreatePost />} />

@@ -41,7 +41,6 @@ const PersonalInfoContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 300px;
   height: 60px;
 `
 
@@ -95,7 +94,6 @@ const Bookmark = styled.div`
   margin-right: 10px;
 `
 const PostImageContainer = styled.div`
-  width: 300px;
   height: 300px;
   margin-top: 20px;
 `

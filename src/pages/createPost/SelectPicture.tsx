@@ -12,10 +12,10 @@ import { faImage } from '@fortawesome/free-solid-svg-icons'
 // }
 
 export default function SelectPicture(): JSX.Element {
-  const [selectedFile, setSelectedFile] = useState<File[] | undefined>(
+  const [selectedFiles, setSelectedFiles] = useState<File[] | undefined>(
     undefined
   )
-  const [previewUrl, setPreviewUrl] = useState<string[] | undefined>(undefined)
+  const [imageUrls, setImageUrls] = useState<string[] | undefined>(undefined)
   const [imgTagList, setImgTagList] = useState<JSX.Element[]>()
 
   const fileSelectedHandler = async (
@@ -32,8 +32,8 @@ export default function SelectPicture(): JSX.Element {
         newFiles.push(file)
         newUrls.push(newUrl)
       }
-      setSelectedFile(newFiles)
-      setPreviewUrl(newUrls)
+      setSelectedFiles(newFiles)
+      setImageUrls(newUrls)
     }
   }
   const readUrl = async (file: File): Promise<string> => {
@@ -49,20 +49,20 @@ export default function SelectPicture(): JSX.Element {
 
   useEffect(() => {
     const newImgTagList: JSX.Element[] = []
-    const fileLength = selectedFile?.length
-    const urlLength = previewUrl?.length
+    const fileLength = selectedFiles?.length
+    const urlLength = imageUrls?.length
     console.log(urlLength)
 
-    if (fileLength !== undefined && previewUrl !== undefined) {
+    if (fileLength !== undefined && imageUrls !== undefined) {
       for (let i = 0; i < fileLength; i++) {
         const imgTag = (
-          <CarouselImageProps key={i} src={previewUrl[i]} alt="img" />
+          <CarouselImageProps key={i} src={imageUrls[i]} alt="img" />
         )
         newImgTagList.push(imgTag)
       }
       setImgTagList(newImgTagList)
     }
-  }, [selectedFile, previewUrl])
+  }, [selectedFiles, imageUrls])
   return (
     <>
       <Title>사진 선택</Title>
@@ -235,10 +235,10 @@ const NextButton = styled.button`
 `
 /*
 export default function SelectPicture(): JSX.Element {
-  const [selectedFile, setSelectedFile] = useState<File[] | undefined>(
+  const [selectedFiles, setSelectedFiles] = useState<File[] | undefined>(
     undefined
   )
-  const [previewUrl, setPreviewUrl] = useState<string[] | undefined>(undefined)
+  const [imageUrls, setImageUrls] = useState<string[] | undefined>(undefined)
   const [imgTagList, setImgTagList] = useState<JSX.Element[]>()
 
   const fileSelectedHandler = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -263,7 +263,7 @@ export default function SelectPicture(): JSX.Element {
         fileReader.readAsDataURL(files[i])
       }
       setSelectedFile(newFiles)
-      setPreviewUrl(newUrls)
+      setImageUrls(newUrls)
     }
   }
 */

@@ -50,6 +50,7 @@ const TabArticle = styled.div`
   display: grid;
   grid-template-rows: repeat(2, 1fr);
   grid-template-columns: repeat(3, 1fr);
-  grid-gap: 46px;
-  width: 900px;
+  grid-gap: 20px;
+  width: 9fr;
+  margin-right: 20px;
 `
