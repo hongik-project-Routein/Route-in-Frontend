@@ -4,14 +4,17 @@ import changeTabReducer from './tap/tab'
 import changeExploreTabReducer from './tap/Exploretab'
 import changeProfileTabReducer from './tap/profiletab'
 import changeIntroductionReducer from './profile'
-import changeHashtagReducer from './hashtag'
+import changePostReducer from './post'
+import commentReducer from './comment'
+
 const rootReducer = combineReducers({
   changeNavbarReducer,
   changeTabReducer,
   changeExploreTabReducer,
   changeProfileTabReducer,
   changeIntroductionReducer,
-  changeHashtagReducer,
+  changePostReducer,
+  commentReducer,
 })
 
 export default rootReducer

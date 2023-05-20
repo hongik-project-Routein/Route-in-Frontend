@@ -5,43 +5,56 @@ import Carousel from '../../components/carousel'
 import { Link } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { type RootState } from '../../modules'
-import { changeHashtag } from '../../modules/hashtag'
+import { ChangeHashtagAndText } from '../../modules/post'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faMinus } from '@fortawesome/free-solid-svg-icons'
+import { type Post } from '../../types/postTypes'
+
+// 자동 생성된 해시태그의 이름과 값
+interface HashtagAutoAndText {
+  hashtagAuto: string
+  text: string
+}
+
+// 추가로 작성한 해시태그 리스트와 전체 텍스트
+interface HashtagAndText {
+  hashtag: string[]
+  text: string
+}
 
 export default function WritePost(): JSX.Element {
-  const images: JSX.Element[] = [
-    <Image
-      key={0}
-      src="https://avatars.githubusercontent.com/u/81083461?v=4"
-    />,
-    <Image
-      key={1}
-      src="https://visitowa.com/wp-content/uploads/2021/02/DSC07749-1.jpg"
-    />,
-    <Image
-      key={2}
-      src="https://images.pexels.com/photos/2193600/pexels-photo-2193600.jpeg?cs=srgb&dl=pexels-lisa-fotios-2193600.jpg&fm=jpg"
-    />,
-    <Image
-      key={3}
-      src="https://cdn.jdpower.com/Average%20Weight%20Of%20A%20Car.jpg"
-    />,
-  ]
-  const [hashtag, setHashtag] = useState<string[] | []>([])
+  const [hashtagAutoTextList, setHashtagAutoTextList] = useState<
+    HashtagAutoAndText[] | []
+  >([])
   const [text, setText] = useState<string>('')
+
+  const posts = useSelector((state: RootState) => state.changePostReducer.post)
+
   const dispatch = useDispatch()
-  const hashtags = useSelector(
-    (state: RootState) => state.changeHashtagReducer.data
-  )
+
+  // 초기 해시태그 자동 값 가져오기
   useEffect(() => {
-    setText(hashtags.join().replace(/,/g, '\n\n'))
-    setHashtag(hashtags)
+    const loadHashtagAuto: HashtagAutoAndText[] = posts.map((item) => {
+      return {
+        hashtagAuto: item.hashtagAuto.hashtagAuto,
+        text: '',
+      }
+    })
+    setHashtagAutoTextList(loadHashtagAuto)
   }, [])
-  useEffect(() => {
-    console.log(hashtag)
-  }, [hashtag])
+
   const handleOnChange = (event: ChangeEvent<HTMLTextAreaElement>): void => {
     setText(event.target.value)
   }
+
+  const deleteHashtagAutoInput = (idx: number): void => {
+    const updateList = [...hashtagAutoTextList]
+    updateList.splice(idx, 1)
+
+    setHashtagAutoTextList(updateList)
+  }
+
+  // 새로 만든 해시태그를 감지해서 푸시하는 함수
   const pushHashtag = (): void => {
     const newHashtags: string[] = []
     text.split('\n').forEach((line) => {
@@ -52,19 +65,55 @@ export default function WritePost(): JSX.Element {
         }
       })
     })
-    setHashtag(newHashtags)
-    dispatch(changeHashtag(newHashtags))
+    const newPosts: Post[] = posts.map((post, idx) => {
+      return {
+        ...post,
+        hashtagAuto: hashtagAutoTextList[idx],
+      }
+    })
+
+    const payload: HashtagAndText = {
+      hashtag: newHashtags,
+      text: `${text}`,
+    }
+
+    dispatch(ChangeHashtagAndText(newPosts, payload))
   }
-  // props: Dispatch<SetStateAction<Location[]>>
   return (
     <>
       <Title>새 게시물 만들기</Title>
       <Paragraph>{`장소에 대한 해시태그가 자동으로 완성됩니다.`}</Paragraph>
       <GroupContainer>
         <PictureGroup>
-          <Carousel items={images}></Carousel>
+          <Carousel items={posts.map((item) => item.tag)}></Carousel>
         </PictureGroup>
         <LocationGroup>
+          {hashtagAutoTextList.map((hashtag, idx) => (
+            <HashtagAutoTextContainer key={idx}>
+              <HashtagAuto>{hashtag.hashtagAuto}</HashtagAuto>
+              <DeleteBtn
+                onClick={() => {
+                  deleteHashtagAutoInput(idx)
+                }}
+              >
+                <FontAwesomeIcon icon={faMinus} />
+              </DeleteBtn>
+              <HashtagAutoTextInput
+                value={hashtag.text}
+                onChange={(event) => {
+                  setHashtagAutoTextList((prev) => {
+                    const updateList = [...prev]
+                    updateList[idx] = {
+                      ...updateList[idx],
+                      text: event.target.value,
+                    }
+                    return updateList
+                  })
+                }}
+                type="text"
+              />
+            </HashtagAutoTextContainer>
+          ))}
           <WriteSpace value={text} onChange={handleOnChange} />
         </LocationGroup>
       </GroupContainer>
@@ -115,21 +164,56 @@ const LocationGroup = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-`
-const WriteSpace = styled.textarea`
   width: 350px;
   height: 350px;
-  resize: none;
-  outline: none;
   border: 1px solid #d9d9d9;
   border-radius: 8px;
 `
 
-const Image = styled.img`
+const HashtagAutoTextContainer = styled.div`
+  position: relative;
+  width: 350px;
+  height: 50px;
+  margin-bottom: 5px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+`
+
+const HashtagAuto = styled.div`
+  width: 90%;
+  height: 15px;
+  margin: 5px 0;
+  padding: 1px 2px;
+  color: ${theme.colors.primaryColor};
+  overflow-x: hidden;
+  overflow-y: hidden;
+`
+
+const DeleteBtn = styled.button`
+  position: absolute;
+  right: 10px;
+  top: 5px;
+  width: 10px;
+  height: 10px;
+`
+
+const HashtagAutoTextInput = styled.input`
+  width: 100%;
+  height: 25px;
+  padding: 0 5px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  font-size: 15px;
+`
+
+const WriteSpace = styled.textarea`
   width: 350px;
   height: 350px;
-  object-fit: cover;
-  border-radius: 10px;
+  padding: 8px;
+  resize: none;
+  outline: none;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
 `
 
 const ButtonContainer = styled.div`

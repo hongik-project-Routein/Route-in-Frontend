@@ -1,9 +1,24 @@
 import React from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
+import { useSelector } from 'react-redux'
+import { type RootState } from '../../modules'
+import Carousel from '../../components/carousel'
 
 export default function SelectRepresentativePicture(): JSX.Element {
-  // props: Dispatch<SetStateAction<Location[]>>
+  const posts = useSelector((state: RootState) => state.changePostReducer.post)
+  const rest = useSelector(
+    (state: RootState) => state.changePostReducer.hashtagAndText
+  )
+  const loadText = (): string => {
+    const hashtagAutoText: string[] = posts.map((hashtag) => {
+      return `${hashtag.hashtagAuto.hashtagAuto}\n${hashtag.hashtagAuto.text}\n\n`
+    })
+
+    const returnText = hashtagAutoText.join(' ') + rest.text
+    console.log(returnText)
+    return returnText
+  }
   return (
     <>
       <Title>대표 이미지 설정</Title>
@@ -13,11 +28,11 @@ export default function SelectRepresentativePicture(): JSX.Element {
       </Paragraph>
       <GroupContainer>
         <PictureGroup>
-          <Carousel></Carousel>
+          <Carousel items={posts.map((item) => item.tag)}></Carousel>
           <ReturnDefaultImage>기본이미지로</ReturnDefaultImage>
         </PictureGroup>
         <LocationGroup>
-          <WriteSpace />
+          <WriteSpace>{loadText()}</WriteSpace>
         </LocationGroup>
       </GroupContainer>
       <ButtonContainer>
@@ -41,13 +56,6 @@ const Paragraph = styled.p`
   line-height: 24px;
   white-space: pre-line;
   text-align: center;
-`
-const Carousel = styled.div`
-  width: 350px;
-  height: 350px;
-  margin-bottom: 30px;
-  background-color: #d9d9d9;
-  border-radius: 10px;
 `
 const ReturnDefaultImage = styled.button`
   width: 100px;
@@ -76,10 +84,12 @@ const LocationGroup = styled.div`
   flex-direction: column;
   align-items: center;
 `
-const WriteSpace = styled.textarea`
-  width: 300px;
-  height: 300px;
-  resize: none;
+const WriteSpace = styled.div`
+  width: 350px;
+  height: 350px;
+  padding: 8px 12px;
+  border: 1px solid #d9d9d9;
+  white-space: pre-line;
 `
 
 const ButtonContainer = styled.div`

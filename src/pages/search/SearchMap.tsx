@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
 import PageMoveBtn from '../../components/pageMoveBtn'
@@ -24,17 +24,20 @@ export default function SearchMapArticle(
     { tabName: '지도', link: '/search/map' },
     { tabName: '유저', link: '/search/user' },
   ]
+  const [keyword, setKeyword] = useState<string>('')
   return (
     <>
-      <SearchWindow />
+      <SearchWindow setKeyword={setKeyword} />
       <Tab
         tabContent={tabContents}
         tabIndex={props.tabIndex}
         handleTabfunc={props.handleTabfunc}
       />
       <SearchResultTitle>
-        <SearchResultKeyword>해시태그</SearchResultKeyword>
-        {` 와 관련된 경로을 추천합니다.`}
+        <SearchResultKeyword>{keyword}</SearchResultKeyword>
+        {keyword === ''
+          ? `검색어를 입력하세요`
+          : `와 관련된 경로를 추천합니다.`}
       </SearchResultTitle>
       <SearchResultGrid></SearchResultGrid>
       <PageMoveBtn />

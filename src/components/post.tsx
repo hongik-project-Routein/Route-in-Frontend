@@ -11,11 +11,11 @@ import Hashtag from './hashtag'
 import theme from '../styles/Theme'
 
 const postText: string = `#김포공항
-\n김포공항은 좋았다.
+\n김포공항은 좋았다. 시설도 좋고 깔끔했으며 여행가기 전 설레는 마음이 가득한 공간이었다.
 \n#제주레포츠랜드
-\n레포츠랜드는 재밌었다.
+\n레포츠랜드에서 우리는 카트를 타고 씽씽 달리는 스릴 넘치는 시간이었다.
 \n#스누피가든제주
-\n스누피가 너무 귀여웠다.
+\n스누피가 너무 귀여웠고 너무 잘 꾸며저있어서 행복했던 곳이다.
 \n#제주여행 #제주익사이팅
 \n이번 제주도 여행은~~~~
 `
@@ -65,8 +65,75 @@ export default function Post(): JSX.Element {
           <PostImage src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8YWlycGxhbmV8ZW58MHx8MHx8&w=1000&q=80" />
         </PostDetailLink>
       </PostImageContainer>
-      <PostText>{<Hashtag postText={postText} />}</PostText>
+      <PostText />
+      <PostComment>
+        <Link to="/post/1">{`댓글 ${20}개 모두 보기`}</Link>
+      </PostComment>
     </>
+  )
+}
+
+function PostText(): JSX.Element {
+  const [limit, setLimit] = useState<number>(50)
+  const toggleEllipsis = (
+    str: JSX.Element,
+    limit: number
+  ): { string: JSX.Element; isShowMore: boolean } => {
+    const postText = str.props.postText
+    const splitText = postText.split('\n')
+    const limitedText = []
+    let lengthCount = 0
+    let isShowMore = false
+
+    for (let i = 0; i < splitText.length; i++) {
+      const line = splitText[i]
+      const words = line.split(' ')
+
+      limitedText.push(
+        <p key={`p-${i}`}>
+          {words.map((word: string) => {
+            if (word.startsWith('#')) {
+              if (lengthCount + word.length + 3 > limit) {
+                isShowMore = true
+                return null
+              }
+              lengthCount += word.length + 3
+              return (
+                <a
+                  href={`/search?q=${word.substring(1)}`}
+                  key={word}
+                  style={{ color: `${theme.colors.primaryColor}` }}
+                >
+                  {word}{' '}
+                </a>
+              )
+            } else {
+              lengthCount += word.length + 1
+              return <span key={word}>{word} </span>
+            }
+          })}
+        </p>
+      )
+
+      if (isShowMore) {
+        break
+      }
+    }
+    return {
+      string: <>{limitedText}</>,
+      isShowMore,
+    }
+  }
+  const onClickMore = (str: string) => (): void => {
+    setLimit(str.length)
+  }
+  return (
+    <PostTextContainer>
+      {toggleEllipsis(<Hashtag postText={postText} />, limit).string}
+      {toggleEllipsis(<Hashtag postText={postText} />, limit).isShowMore && (
+        <MoreButton onClick={onClickMore(postText)}>...더보기</MoreButton>
+      )}
+    </PostTextContainer>
   )
 }
 
@@ -162,8 +229,20 @@ const PostImage = styled.img`
 `
 const PostDetailLink = styled(Link)``
 
-const PostText = styled.p`
+const PostTextContainer = styled.p`
   margin-top: 20px;
+  padding: 8px 12px;
+  border: 1px solid #98a2b3;
+  border-radius: 8px;
+  font-size: 16px;
+  line-height: 30px;
+  white-space: pre-line;
+`
+
+const MoreButton = styled.button``
+
+const PostComment = styled.p`
+  margin: 20px 0;
   padding: 8px 12px;
   border: 1px solid #98a2b3;
   border-radius: 8px;

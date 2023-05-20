@@ -14,6 +14,7 @@ import SelectRepresentativePicture from './pages/createPost/SelectRepresentative
 import HeaderAndSidebar from './components/headerAndSidebar'
 import Login from './pages/login'
 import SignUp from './pages/signUp'
+import Story from './pages/story/Story'
 
 function Router(): JSX.Element {
   return (
@@ -38,6 +39,7 @@ function Router(): JSX.Element {
             }
           />
           <Route path="/search/*" element={<Search />} />
+          <Route path="/story" element={<Story />} />
           <Route path="/story/create" element={<CreateStory />} />
           <Route path="/explore/*" element={<Explore />} />
           <Route path="/profile/:username/*" element={<MyProfile />} />

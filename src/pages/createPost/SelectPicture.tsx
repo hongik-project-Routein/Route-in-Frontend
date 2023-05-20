@@ -2,21 +2,38 @@ import React, { useState, useEffect, type ChangeEvent } from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
 import { Link } from 'react-router-dom'
-import Carousel from '../../components/carousel'
+import CarouselSelectPicture from './../../components/carouselSelectPicture'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faImage } from '@fortawesome/free-solid-svg-icons'
+import { useDispatch } from 'react-redux'
+import { EnrollImages } from '../../modules/post'
+import { gps } from 'exifr'
+import Geocode from 'react-geocode'
+import { GoogleMap, MarkerF } from '@react-google-maps/api'
+import { type Post } from '../../types/postTypes'
 
-// interface Location {
-//   picture: string
-//   hashtag: string
-// }
+interface GPSInfo {
+  latitude: number
+  longitude: number
+}
 
-export default function SelectPicture(): JSX.Element {
+interface SelectPictureProps {
+  mapApi: boolean
+  mapApiKey: string
+}
+
+export default function SelectPicture(props: SelectPictureProps): JSX.Element {
   const [selectedFiles, setSelectedFiles] = useState<File[] | undefined>(
     undefined
   )
+  // 최적화 필요
+  const [imageList, setImageList] = useState<Post[]>([])
   const [imageUrls, setImageUrls] = useState<string[] | undefined>(undefined)
   const [imgTagList, setImgTagList] = useState<JSX.Element[]>()
+  const [imgGPSInfoList, setImgGPSInfoList] = useState<GPSInfo[] | []>([])
+  const [addresses, setAddresses] = useState<string[] | []>([])
+  const [carouselIndex, setCarouselIndex] = useState<number>(0)
+  const dispatch = useDispatch()
 
   const fileSelectedHandler = async (
     event: ChangeEvent<HTMLInputElement>
@@ -25,15 +42,26 @@ export default function SelectPicture(): JSX.Element {
     if (files != null) {
       const newUrls: string[] = []
       const newFiles: File[] = []
+      const newGPSInfo: GPSInfo[] = []
 
       for (let i = 0; i < files.length; i++) {
         const file = files[i]
         const newUrl = await readUrl(file)
+        const exifTags = await readExifTags(file)
         newFiles.push(file)
         newUrls.push(newUrl)
+
+        // 위치정보가 없으면 위도 경도를 -1로 넣는다.
+        exifTags !== undefined
+          ? newGPSInfo.push(exifTags)
+          : newGPSInfo.push({
+              latitude: NaN,
+              longitude: NaN,
+            })
       }
       setSelectedFiles(newFiles)
       setImageUrls(newUrls)
+      setImgGPSInfoList(newGPSInfo)
     }
   }
   const readUrl = async (file: File): Promise<string> => {
@@ -47,22 +75,96 @@ export default function SelectPicture(): JSX.Element {
     })
   }
 
+  const readExifTags = async (file: File): Promise<GPSInfo | undefined> => {
+    try {
+      const exifData = await gps(file)
+      if (exifData.latitude !== null && exifData.longitude !== null) {
+        return { latitude: exifData.latitude, longitude: exifData.longitude }
+      }
+    } catch (error) {
+      console.error('Error extracting location from image:', error)
+    }
+    return undefined
+  }
+
+  // url이 변경됐을 때만 실행 => 사진을 넣을 때만 실행되길 원함
   useEffect(() => {
     const newImgTagList: JSX.Element[] = []
+    const newPosts: Post[] = []
+    const newAddressList: string[] = []
     const fileLength = selectedFiles?.length
-    const urlLength = imageUrls?.length
-    console.log(urlLength)
 
-    if (fileLength !== undefined && imageUrls !== undefined) {
-      for (let i = 0; i < fileLength; i++) {
-        const imgTag = (
-          <CarouselImageProps key={i} src={imageUrls[i]} alt="img" />
-        )
-        newImgTagList.push(imgTag)
+    const processImages = async (): Promise<void> => {
+      if (
+        selectedFiles !== undefined &&
+        fileLength !== undefined &&
+        imageUrls !== undefined
+      ) {
+        for (let i = 0; i < fileLength; i++) {
+          const imgTag = (
+            <CarouselImageProps key={i} src={imageUrls[i]} alt="img" />
+          )
+          const address = await getPlacesName(
+            imgGPSInfoList[i],
+            props.mapApi,
+            props.mapApiKey
+          )
+          console.log(address)
+
+          newPosts.push({
+            picture: selectedFiles[i],
+            hashtagAuto: { hashtagAuto: `#${address}`, text: '' },
+            tag: imgTag,
+          })
+          newImgTagList.push(imgTag)
+          newAddressList.push(address)
+        }
+        setImgTagList(newImgTagList)
+        setImageList(newPosts)
+        setAddresses(newAddressList)
+        dispatch(EnrollImages(newPosts))
       }
-      setImgTagList(newImgTagList)
     }
-  }, [selectedFiles, imageUrls])
+
+    processImages().catch((error) => {
+      console.log(error)
+    })
+  }, [imageUrls])
+
+  const getPlacesName = async (
+    place: GPSInfo,
+    googleAPI: boolean,
+    googleAPIKey: string
+  ): Promise<string> => {
+    if (googleAPI) {
+      Geocode.setApiKey(googleAPIKey)
+      Geocode.setLanguage('ko')
+      Geocode.setRegion('kr')
+      Geocode.enableDebug()
+
+      try {
+        const response = await Geocode.fromLatLng(
+          place.latitude.toString(),
+          place.longitude.toString()
+        )
+        console.log(response)
+
+        const address = response.results[0].formatted_address
+        console.log(address)
+        return address
+      } catch (error) {
+        console.log(error)
+        return ''
+      }
+    }
+    // 구글 키가 없을 때 빈 문자열 리턴
+    return ''
+  }
+
+  // test용 Effect
+  useEffect(() => {
+    console.log(imageList)
+  }, [imageList])
   return (
     <>
       <Title>사진 선택</Title>
@@ -74,7 +176,10 @@ export default function SelectPicture(): JSX.Element {
         <PictureGroup>
           <InputImageContainer>
             {imgTagList != null ? (
-              <Carousel items={imgTagList} />
+              <CarouselSelectPicture
+                items={imgTagList}
+                setCarouselIndex={setCarouselIndex}
+              />
             ) : (
               <>
                 <InputLabel htmlFor="file">
@@ -102,9 +207,34 @@ export default function SelectPicture(): JSX.Element {
           </EditPictureButton>
         </PictureGroup>
         <LocationGroup>
-          <CarouselContainer></CarouselContainer>
+          <CarouselContainer>
+            {imgGPSInfoList.length > 0 ? (
+              <GoogleMap
+                zoom={15}
+                center={{
+                  lat: imgGPSInfoList[carouselIndex].latitude,
+                  lng: imgGPSInfoList[carouselIndex].longitude,
+                }}
+                mapContainerStyle={{
+                  width: '100%',
+                  height: '100%',
+                }}
+              >
+                <MarkerF
+                  position={{
+                    lat: imgGPSInfoList[carouselIndex].latitude,
+                    lng: imgGPSInfoList[carouselIndex].longitude,
+                  }}
+                />
+              </GoogleMap>
+            ) : null}
+          </CarouselContainer>
           <LocationName># 김포공항</LocationName>
-          <LocationAddress>서울특별시 강서구 하늘길 76</LocationAddress>
+          <LocationAddress>
+            {addresses.length > 0
+              ? addresses[carouselIndex]
+              : '사진을 입력하세요'}
+          </LocationAddress>
         </LocationGroup>
       </GroupContainer>
       <ButtonContainer>
@@ -233,37 +363,3 @@ const NextButton = styled.button`
   border-radius: 8px;
   font-size: 16px;
 `
-/*
-export default function SelectPicture(): JSX.Element {
-  const [selectedFiles, setSelectedFiles] = useState<File[] | undefined>(
-    undefined
-  )
-  const [imageUrls, setImageUrls] = useState<string[] | undefined>(undefined)
-  const [imgTagList, setImgTagList] = useState<JSX.Element[]>()
-
-  const fileSelectedHandler = (event: ChangeEvent<HTMLInputElement>): void => {
-    const files = event.target.files
-    if (files != null) {
-      const fileReaders: FileReader[] = []
-      const newUrls: string[] = []
-      const newFiles: File[] = []
-
-      for (let i = 0; i < files.length; i++) {
-        const fileReader = new FileReader()
-        fileReader.onload = () => {
-          const url = fileReader.result?.toString()
-          newUrls.push(url as string)
-          Exif.getData(fileReader.result as string, () => {
-            const tags = Exif.getAllTags(files[i])
-            console.log(tags)
-          })
-        }
-        fileReaders.push(fileReader)
-        newFiles.push(files[i])
-        fileReader.readAsDataURL(files[i])
-      }
-      setSelectedFile(newFiles)
-      setImageUrls(newUrls)
-    }
-  }
-*/

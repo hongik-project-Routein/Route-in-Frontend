@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import Profile from '../../components/profile'
 import Tab from '../../components/tab'
+import { GoogleMap, useJsApiLoader, MarkerF } from '@react-google-maps/api'
 
 interface TabContent {
   tabName: string
@@ -23,6 +24,11 @@ export default function ProfileMapArticle(
     { tabName: '스토리', link: `/profile/${username}/story` },
     { tabName: '북마크', link: `/profile/${username}/bookmark` },
   ]
+
+  const { isLoaded } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY ?? '',
+  })
   return (
     <>
       <Profile />
@@ -31,12 +37,29 @@ export default function ProfileMapArticle(
         tabIndex={props.tabIndex}
         handleTabfunc={props.handleTabfunc}
       />
-      <TabArticle></TabArticle>
+      {!isLoaded ? <div>load</div> : <Map />}
     </>
   )
 }
 
-const TabArticle = styled.div`
-  width: 900px;
+function Map(): JSX.Element {
+  return (
+    <MapContainer>
+      <GoogleMap
+        zoom={10}
+        center={{ lat: 44, lng: -80 }}
+        mapContainerStyle={{
+          width: '100%',
+          height: '100%',
+        }}
+      />
+      <MarkerF position={{ lat: 44, lng: -80 }} />
+    </MapContainer>
+  )
+}
+
+const MapContainer = styled.div`
+  width: 8fr;
   height: 450px;
+  margin-right: 50px;
 `

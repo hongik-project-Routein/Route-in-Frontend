@@ -1,21 +1,41 @@
-import React from 'react'
+import React, { type FormEvent, useState } from 'react'
 import styled from 'styled-components'
 import theme from '../styles/Theme'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 
-export default function SearchWindow(): JSX.Element {
+interface SearchWindowProps {
+  setKeyword: React.Dispatch<React.SetStateAction<string>>
+}
+
+export default function SearchWindow(props: SearchWindowProps): JSX.Element {
+  const [keyword, setKeyword] = useState<string>('')
+  const onSubmit = (event: FormEvent<HTMLFormElement>): void => {
+    event.preventDefault()
+    if (keyword === '') return
+    props.setKeyword(keyword)
+  }
+  const onChange = (event: FormEvent<HTMLInputElement>): void => {
+    const {
+      currentTarget: { value },
+    } = event
+    setKeyword(value)
+  }
   return (
-    <SearchWindowContainer>
-      <InputKeyword placeholder="해시태그로 검색" />
-      <SearchButton>
+    <SearchWindowContainer onSubmit={onSubmit}>
+      <InputKeyword
+        value={keyword}
+        onChange={onChange}
+        placeholder="해시태그로 검색"
+      />
+      <SearchButton type="submit">
         <FontAwesomeIcon icon={faMagnifyingGlass} />
       </SearchButton>
     </SearchWindowContainer>
   )
 }
 
-const SearchWindowContainer = styled.div`
+const SearchWindowContainer = styled.form`
   display: flex;
   width: 520px;
   height: 60px;

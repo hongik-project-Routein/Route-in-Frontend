@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -9,9 +9,12 @@ import theme from '../styles/Theme'
 
 interface CarouselProps {
   items: JSX.Element[]
+  setCarouselIndex: React.Dispatch<React.SetStateAction<number>>
 }
 
-export default function Carousel(props: CarouselProps): JSX.Element {
+export default function CarouselSelectPicture(
+  props: CarouselProps
+): JSX.Element {
   const [currentIndex, setCurrentIndex] = useState(0)
 
   const handlePrevClick = (): void => {
@@ -23,6 +26,10 @@ export default function Carousel(props: CarouselProps): JSX.Element {
   const handleNextClick = (): void => {
     setCurrentIndex((currentIndex + 1) % props.items.length)
   }
+  // 상위 컴포넌트에 인덱스 값이 바뀜을 알려줌
+  useEffect(() => {
+    props.setCarouselIndex(currentIndex)
+  }, [currentIndex])
   return (
     <CarouselContainer>
       <LeftButton onClick={handlePrevClick}>
