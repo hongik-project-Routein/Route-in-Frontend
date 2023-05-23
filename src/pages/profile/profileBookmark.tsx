@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import Profile from '../../components/profile'
 import Tab from '../../components/tab'
 import PostSmall from '../../components/postSmall'
 import PageMoveBtn from '../../components/pageMoveBtn'
+import { type PostCardData, postDemo } from '../../dummy/post'
 
 interface TabContent {
   tabName: string
@@ -25,6 +26,15 @@ export default function ProfileBookmarkArticle(
     { tabName: '스토리', link: `/profile/${username}/story` },
     { tabName: '북마크', link: `/profile/${username}/bookmark` },
   ]
+  // 더미 데이터 용
+  const [posts, setPosts] = useState<PostCardData[]>([])
+  const loadPost = (): void => {
+    const post: PostCardData[] = postDemo
+    setPosts(post)
+  }
+  useEffect(() => {
+    loadPost()
+  }, [posts])
   return (
     <>
       <Profile />
@@ -34,12 +44,9 @@ export default function ProfileBookmarkArticle(
         handleTabfunc={props.handleTabfunc}
       />
       <TabArticle>
-        <PostSmall />
-        <PostSmall />
-        <PostSmall />
-        <PostSmall />
-        <PostSmall />
-        <PostSmall />
+        {posts !== undefined
+          ? posts.map((post, idx) => <PostSmall key={idx} post={post} />)
+          : null}
       </TabArticle>
       <PageMoveBtn />
     </>

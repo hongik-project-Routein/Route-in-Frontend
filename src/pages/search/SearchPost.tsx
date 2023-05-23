@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
 import PostSmall from '../../components/postSmall'
 import PageMoveBtn from '../../components/pageMoveBtn'
 import Tab from '../../components/tab'
 import SearchWindow from '../../components/searchWindow'
+import { type PostCardData, postDemo } from '../../dummy/post'
 
 interface TabContent {
   tabName: string
@@ -26,6 +27,16 @@ export default function SearchPostArticle(
     { tabName: '유저', link: '/search/user' },
   ]
   const [keyword, setKeyword] = useState<string>('')
+
+  // 더미 데이터 용
+  const [posts, setPosts] = useState<PostCardData[]>([])
+  const loadPost = (): void => {
+    const post: PostCardData[] = postDemo
+    setPosts(post)
+  }
+  useEffect(() => {
+    loadPost()
+  }, [posts])
   return (
     <>
       <SearchWindow setKeyword={setKeyword} />
@@ -41,12 +52,9 @@ export default function SearchPostArticle(
           : `와 관련된 게시글을 추천합니다.`}
       </SearchResultTitle>
       <SearchResultGrid>
-        <PostSmall />
-        <PostSmall />
-        <PostSmall />
-        <PostSmall />
-        <PostSmall />
-        <PostSmall />
+        {posts !== undefined
+          ? posts.map((post, idx) => <PostSmall key={idx} post={post} />)
+          : null}
       </SearchResultGrid>
       <PageMoveBtn />
     </>

@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons'
 import PostSmall from '../../components/postSmall'
 import PageMoveBtn from '../../components/pageMoveBtn'
 import Tab from '../../components/tab'
+import { type PostCardData, postDemo } from '../../dummy/post'
 
 interface TabContent {
   tabName: string
@@ -23,6 +24,18 @@ export default function LocationExploreArticle(
     { tabName: '현재 위치', link: '/explore/location' },
     { tabName: '추천', link: '/explore/recommend' },
   ]
+  // 더미 데이터 용
+  const [posts, setPosts] = useState<PostCardData[]>([])
+  const loadPost = (): void => {
+    const post: PostCardData[] = postDemo
+    const select = post.filter(
+      (item) => item.postId === '5' || item.postId === '6'
+    )
+    setPosts(select)
+  }
+  useEffect(() => {
+    loadPost()
+  }, [posts])
   return (
     <>
       <ExploreHeader>
@@ -40,12 +53,9 @@ export default function LocationExploreArticle(
         tabIndex={props.tabIndex}
       />
       <RecommandationResultGrid>
-        <PostSmall />
-        <PostSmall />
-        <PostSmall />
-        <PostSmall />
-        <PostSmall />
-        <PostSmall />
+        {posts !== undefined
+          ? posts.map((post, idx) => <PostSmall key={idx} post={post} />)
+          : null}
       </RecommandationResultGrid>
       <PageMoveBtn />
     </>

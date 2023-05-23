@@ -1,12 +1,21 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Header from '../components/header'
 import Sidebar from '../components/sidebar'
-import Post from '../components/post'
+import PostCard from '../components/postCard'
 import styled from 'styled-components'
 import UserRecommend from '../components/userRecommend'
 import theme from '../styles/Theme'
+import { postDemo, type PostCardData } from '../dummy/post'
 
 function Main(): JSX.Element {
+  const [posts, setPosts] = useState<PostCardData[]>([])
+  const loadPost = (): void => {
+    const post: PostCardData[] = postDemo
+    setPosts(post)
+  }
+  useEffect(() => {
+    loadPost()
+  }, [posts])
   return (
     <Grid>
       <HeaderGrid>
@@ -16,7 +25,9 @@ function Main(): JSX.Element {
         <Sidebar />
       </SidebarGrid>
       <PostGrid>
-        <Post />
+        {posts.map((post, idx) => (
+          <PostCard key={idx} loadPost={post} />
+        ))}
       </PostGrid>
       <RecommendGrid>
         <UserRecommend />
@@ -46,11 +57,14 @@ const HeaderGrid = styled.div`
   grid-area: header;
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 30;
   background-color: ${theme.colors.white};
 `
 const SidebarGrid = styled.div`
   grid-area: sidebar;
+  position: sticky;
+  top: 0;
+  z-index: 20;
 `
 const PostGrid = styled.div`
   grid-area: post;

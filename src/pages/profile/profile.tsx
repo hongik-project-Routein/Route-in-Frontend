@@ -21,6 +21,7 @@ export default function MyProfile(): JSX.Element {
   useEffect(() => {
     setSelectedTabIndex(curIndex)
   }, [selectedTabIndex])
+
   return (
     <>
       {selectedTabIndex === 0 ? (

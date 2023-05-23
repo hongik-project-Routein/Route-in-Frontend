@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import PostSmall from '../../components/postSmall'
 import PageMoveBtn from '../../components/pageMoveBtn'
 import Tab from '../../components/tab'
 import theme from '../../styles/Theme'
+import { type PostCardData, postDemo } from '../../dummy/post'
 
 interface TabContent {
   tabName: string
@@ -22,6 +23,19 @@ export default function UserRecommendExploreArticle(
     { tabName: '현재 위치', link: '/explore/location' },
     { tabName: '추천', link: '/explore/recommend' },
   ]
+  // 더미 데이터 용
+  const [posts, setPosts] = useState<PostCardData[]>([])
+  const loadPost = (): void => {
+    const post: PostCardData[] = postDemo
+    const select = post.filter(
+      (item) =>
+        item.postId === '4' || item.postId === '5' || item.postId === '6'
+    )
+    setPosts(select)
+  }
+  useEffect(() => {
+    loadPost()
+  }, [posts])
   return (
     <>
       <ExploreHeader>
@@ -40,12 +54,9 @@ export default function UserRecommendExploreArticle(
         tabIndex={props.tabIndex}
       />
       <RecommandationResultGrid>
-        <PostSmall />
-        <PostSmall />
-        <PostSmall />
-        <PostSmall />
-        <PostSmall />
-        <PostSmall />
+        {posts !== undefined
+          ? posts.map((post, idx) => <PostSmall key={idx} post={post} />)
+          : null}
       </RecommandationResultGrid>
       <PageMoveBtn />
     </>

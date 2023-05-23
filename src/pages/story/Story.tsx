@@ -9,7 +9,8 @@ import {
   type UserStoryInfoByClass,
   type StoryGroupItems,
   UserStoryInfoByclasses,
-} from './dummyData'
+} from '../../dummy/story'
+import StoryModal from '../../components/storyModal'
 
 export default function Story(): JSX.Element {
   return <HeaderAndSidebar article={<ShowStory />} />
@@ -18,7 +19,12 @@ export default function Story(): JSX.Element {
 function ShowStory(): JSX.Element {
   const [existStory, setExistStory] = useState<boolean>(false)
   const [stories, setStories] = useState<UserStoryInfoByClass>()
-  const myStory = true
+  // 전체가 다 열림
+  const [modalOpen, setModalOpen] = useState<boolean>(false)
+  const showModalOpen = (): void => {
+    setModalOpen(true)
+  }
+  const myStory = false
   useEffect(() => {
     setExistStory(myStory)
     setStories(UserStoryInfoByclasses) // 더미데이터 채워넣는 코드
@@ -43,7 +49,14 @@ function ShowStory(): JSX.Element {
           <MapIcon>
             <FontAwesomeIcon icon={faLocationDot} />
           </MapIcon>
-          {stories !== undefined && <StoryGroup storyGroup={stories.first} />}
+          {stories !== undefined && (
+            <StoryGroup
+              storyGroup={stories.first}
+              modalOpen={modalOpen}
+              showModalOpen={showModalOpen}
+              setModalOpen={setModalOpen}
+            />
+          )}
         </FirstClass>
         <FirstToSecond>
           <FirstToSecondLine />
@@ -52,7 +65,14 @@ function ShowStory(): JSX.Element {
           <MapIcon>
             <FontAwesomeIcon icon={faLocationDot} />
           </MapIcon>
-          {stories !== undefined && <StoryGroup storyGroup={stories.second} />}
+          {stories !== undefined && (
+            <StoryGroup
+              storyGroup={stories.second}
+              modalOpen={modalOpen}
+              showModalOpen={showModalOpen}
+              setModalOpen={setModalOpen}
+            />
+          )}
         </SecondClass>
         <SecondToThird>
           <SecondToThirdLine />
@@ -61,7 +81,14 @@ function ShowStory(): JSX.Element {
           <MapIcon>
             <FontAwesomeIcon icon={faLocationDot} />
           </MapIcon>
-          {stories !== undefined && <StoryGroup storyGroup={stories.third} />}
+          {stories !== undefined && (
+            <StoryGroup
+              storyGroup={stories.third}
+              modalOpen={modalOpen}
+              showModalOpen={showModalOpen}
+              setModalOpen={setModalOpen}
+            />
+          )}
         </ThirdClass>
         <ThirdToFourth>
           <ThirdToFourthLine />
@@ -70,7 +97,14 @@ function ShowStory(): JSX.Element {
           <MapIcon>
             <FontAwesomeIcon icon={faLocationDot} />
           </MapIcon>
-          {stories !== undefined && <StoryGroup storyGroup={stories.fourth} />}
+          {stories !== undefined && (
+            <StoryGroup
+              storyGroup={stories.fourth}
+              modalOpen={modalOpen}
+              showModalOpen={showModalOpen}
+              setModalOpen={setModalOpen}
+            />
+          )}
         </FourthClass>
       </ShowStoryContainer>
     </>
@@ -98,6 +132,9 @@ function StoryProfile(props: StoryProfileProps): JSX.Element {
 
 interface StoryGroupProps {
   storyGroup: StoryGroupItems[]
+  modalOpen: boolean
+  showModalOpen: () => void
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 function StoryGroup(props: StoryGroupProps): JSX.Element {
@@ -114,14 +151,16 @@ function StoryGroup(props: StoryGroupProps): JSX.Element {
   return (
     <ProfileGroup>
       {props.storyGroup.map((story, idx) => (
-        <ProfileUser key={`first-${idx}`}>
+        <ProfileUser key={idx}>
           <ProfileInStory
             src={story.profileImage}
             active={readState[idx]}
             onClick={() => {
+              props.showModalOpen()
               readStory(idx)
             }}
           />
+          {props.modalOpen && <StoryModal setModalOpen={props.setModalOpen} />}
           <NicknameInStoryGroup>{story.nickname}</NicknameInStoryGroup>
         </ProfileUser>
       ))}

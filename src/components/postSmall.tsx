@@ -1,29 +1,30 @@
 import React from 'react'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faHeart,
-  faComment,
-  faBookmark,
-} from '@fortawesome/free-solid-svg-icons'
+import { faHeart, faBookmark } from '@fortawesome/free-solid-svg-icons'
+import { type PostCardData } from '../dummy/post'
+import { Link } from 'react-router-dom'
 
-export default function PostSmall(): JSX.Element {
+interface PostSmallProps {
+  post: PostCardData
+}
+
+export default function PostSmall(props: PostSmallProps): JSX.Element {
+  console.log(props)
+
   return (
     <div>
       <PersonalInfoContainer>
-        <UserContent>
-          <Profile src="https://avatars.githubusercontent.com/u/81083461?v=4" />
-          <Nickname>jinhokim98</Nickname>
+        <UserContent to={`/profile/${props.post.writer}`}>
+          <Profile src={props.post.profile} />
+          <Nickname>{props.post.writer}</Nickname>
         </UserContent>
         <RestContent>
-          <NumOfHeart>100</NumOfHeart>
+          <NumOfHeart>{props.post.heartCount}</NumOfHeart>
           <Icons>
             <Heart>
               <FontAwesomeIcon icon={faHeart} />
             </Heart>
-            <DirectMessage>
-              <FontAwesomeIcon icon={faComment} />
-            </DirectMessage>
             <Bookmark>
               <FontAwesomeIcon icon={faBookmark} />
             </Bookmark>
@@ -31,7 +32,7 @@ export default function PostSmall(): JSX.Element {
         </RestContent>
       </PersonalInfoContainer>
       <PostImageContainer>
-        <PostImage src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8YWlycGxhbmV8ZW58MHx8MHx8&w=1000&q=80" />
+        <PostImage src={props.post.postImage} />
       </PostImageContainer>
     </div>
   )
@@ -44,7 +45,7 @@ const PersonalInfoContainer = styled.div`
   height: 60px;
 `
 
-const UserContent = styled.div`
+const UserContent = styled(Link)`
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -83,10 +84,6 @@ const Icons = styled.div`
 `
 
 const Heart = styled.div`
-  margin-right: 10px;
-`
-
-const DirectMessage = styled.div`
   margin-right: 10px;
 `
 

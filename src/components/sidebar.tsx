@@ -9,7 +9,6 @@ import {
   faImage,
   faMagnifyingGlass,
   faLocationDot,
-  faComment,
   faSquarePlus,
   faGear,
   type IconDefinition,
@@ -25,11 +24,10 @@ interface TapContent {
 }
 
 const TapContents: TapContent[] = [
-  { icon: faHouse, name: '홈', link: '/' },
+  { icon: faHouse, name: '홈', link: '/home' },
   { icon: faImage, name: '스토리', link: '/story' },
   { icon: faMagnifyingGlass, name: '검색', link: '/search' },
   { icon: faLocationDot, name: '탐색', link: '/explore' },
-  { icon: faComment, name: '메시지', link: '/directmessage' },
   { icon: faSquarePlus, name: '만들기', link: '/post/create' },
   { icon: faGear, name: '설정', link: '/setting' },
 ]

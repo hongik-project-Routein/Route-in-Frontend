@@ -8,68 +8,73 @@ import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faHeart,
-  faComment,
   faBookmark,
   faFaceSmile,
 } from '@fortawesome/free-solid-svg-icons'
 import HeaderAndSidebar from '../../components/headerAndSidebar'
 import Hashtag from '../../components/hashtag'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import theme from '../../styles/Theme'
 import EmojiPicker, { type EmojiClickData } from 'emoji-picker-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { type RootState } from '../../modules'
 import { ClickHeartButton, EnrollCommentAction } from '../../modules/comment'
 import { v4 as uuidV4 } from 'uuid'
+import { postDemo, type PostCardData } from '../../dummy/post'
 // import { useSelector, useDispatch } from 'react-redux'
-
-const postText: string = `#김포공항
-\n김포공항은 좋았다.
-\n#제주레포츠랜드
-\n레포츠랜드는 재밌었다.
-\n#스누피가든제주
-\n스누피가 너무 귀여웠다.
-\n#제주여행 #제주익사이팅
-\n이번 제주도 여행은~~~~
-`
 
 export default function PostDetail(): JSX.Element {
   return <HeaderAndSidebar article={<PostDetailArticle />} />
 }
 
 function PostDetailArticle(): JSX.Element {
+  const { postid } = useParams()
+
+  // 실제는 맞는 것만 요청해야겠지만 데모이기 때문에 다 불러와서 필터링임
+  const [post, setPost] = useState<PostCardData>()
+  const loadPost = (): void => {
+    const posts: PostCardData[] = postDemo
+    const select = posts.find((post) => post.postId === postid)
+    setPost(select)
+  }
+  useEffect(() => {
+    loadPost()
+  }, [post])
   return (
     <>
-      <PersonalInfoContainer>
-        <UserContent>
-          <Profile src="https://avatars.githubusercontent.com/u/81083461?v=4" />
-          <Nickname>jinhokim98</Nickname>
-          <DistanceFromMe>나와의 거리: 100km</DistanceFromMe>
-        </UserContent>
-        <RestContent>
-          <Icons>
-            <HeartAndNumber>
-              <Heart>
-                <FontAwesomeIcon icon={faHeart} />
-              </Heart>
-              <NumOfHeart>100</NumOfHeart>
-            </HeartAndNumber>
-            <DirectMessage>
-              <FontAwesomeIcon icon={faComment} />
-            </DirectMessage>
-            <Bookmark>
-              <FontAwesomeIcon icon={faBookmark} />
-            </Bookmark>
-          </Icons>
-        </RestContent>
-      </PersonalInfoContainer>
-      <PostContainer>
-        <PostImageContainer>
-          <PostImage src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8YWlycGxhbmV8ZW58MHx8MHx8&w=1000&q=80" />
-        </PostImageContainer>
-        <PostText>{<Hashtag postText={postText} />}</PostText>
-      </PostContainer>
-      <Comment />
+      {post !== undefined ? (
+        <>
+          <PersonalInfoContainer>
+            <UserContent>
+              <Profile src={post.profile} />
+              <Nickname>{post.writer}</Nickname>
+              <DistanceFromMe>나와의 거리: {post.direction}km</DistanceFromMe>
+            </UserContent>
+            <RestContent>
+              <Icons>
+                <HeartAndNumber>
+                  <Heart>
+                    <FontAwesomeIcon icon={faHeart} />
+                  </Heart>
+                  <NumOfHeart>{post.heartCount}</NumOfHeart>
+                </HeartAndNumber>
+                <Bookmark>
+                  <FontAwesomeIcon icon={faBookmark} />
+                </Bookmark>
+              </Icons>
+            </RestContent>
+          </PersonalInfoContainer>
+          <PostContainer>
+            <PostImageContainer>
+              <PostImage src={post.postImage} />
+            </PostImageContainer>
+            <PostText>{<Hashtag postText={post.postText} />}</PostText>
+          </PostContainer>
+          <Comment />
+        </>
+      ) : (
+        <></>
+      )}
     </>
   )
 }
@@ -289,11 +294,6 @@ const Heart = styled.div``
 const NumOfHeart = styled.div`
   font-size: 16px;
   margin-top: 5px;
-`
-
-const DirectMessage = styled.div`
-  width: 20px;
-  margin-right: 10px;
 `
 
 const Bookmark = styled.div`

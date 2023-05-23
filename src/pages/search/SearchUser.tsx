@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
-import PostSmall from '../../components/postSmall'
 import PageMoveBtn from '../../components/pageMoveBtn'
 import Tab from '../../components/tab'
 import SearchWindow from '../../components/searchWindow'
@@ -38,14 +37,7 @@ export default function SearchUserArticle(
         <SearchResultKeyword>{keyword}</SearchResultKeyword>
         {keyword === '' ? `검색어를 입력하세요` : `유저를 검색합니다.`}
       </SearchResultTitle>
-      <SearchResultGrid>
-        <PostSmall />
-        <PostSmall />
-        <PostSmall />
-        <PostSmall />
-        <PostSmall />
-        <PostSmall />
-      </SearchResultGrid>
+      <SearchResultGrid></SearchResultGrid>
       <PageMoveBtn />
     </>
   )

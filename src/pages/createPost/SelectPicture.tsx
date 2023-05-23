@@ -11,6 +11,7 @@ import { gps } from 'exifr'
 import Geocode from 'react-geocode'
 import { GoogleMap, MarkerF } from '@react-google-maps/api'
 import { type Post } from '../../types/postTypes'
+import ImageEditor from '../../components/imageEditor'
 
 interface GPSInfo {
   latitude: number
@@ -33,6 +34,7 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
   const [imgGPSInfoList, setImgGPSInfoList] = useState<GPSInfo[] | []>([])
   const [addresses, setAddresses] = useState<string[] | []>([])
   const [carouselIndex, setCarouselIndex] = useState<number>(0)
+  const [modalOpen, setModalOpen] = useState<boolean>(false)
   const dispatch = useDispatch()
 
   const fileSelectedHandler = async (
@@ -87,6 +89,10 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
     return undefined
   }
 
+  const runImageEditor = (): void => {
+    setModalOpen(true)
+  }
+
   // url이 변경됐을 때만 실행 => 사진을 넣을 때만 실행되길 원함
   useEffect(() => {
     const newImgTagList: JSX.Element[] = []
@@ -113,8 +119,13 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
 
           newPosts.push({
             picture: selectedFiles[i],
-            hashtagAuto: { hashtagAuto: `#${address}`, text: '' },
+            // hashtagAuto: { hashtagAuto: `#${address}`, text: '' },
+            hashtagAuto: { hashtagAuto: `#${dummyData[i]}`, text: '' },
             tag: imgTag,
+            LatLng: {
+              lat: imgGPSInfoList[i].latitude,
+              lng: imgGPSInfoList[i].longitude,
+            },
           })
           newImgTagList.push(imgTag)
           newAddressList.push(address)
@@ -161,6 +172,8 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
     return ''
   }
 
+  const dummyData = ['김포국제공항', '제주공항', '동현식당', '스누피가든']
+
   // test용 Effect
   useEffect(() => {
     console.log(imageList)
@@ -202,9 +215,13 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
               </>
             )}
           </InputImageContainer>
-          <EditPictureButton active={imgTagList !== undefined}>
+          <EditPictureButton
+            active={imgTagList !== undefined}
+            onClick={runImageEditor}
+          >
             사진편집
           </EditPictureButton>
+          {modalOpen && <ImageEditor setModalOpen={setModalOpen} />}
         </PictureGroup>
         <LocationGroup>
           <CarouselContainer>
@@ -229,7 +246,9 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
               </GoogleMap>
             ) : null}
           </CarouselContainer>
-          <LocationName># 김포공항</LocationName>
+          <LocationName>
+            {addresses.length > 0 ? `#${dummyData[carouselIndex]}` : ' '}
+          </LocationName>
           <LocationAddress>
             {addresses.length > 0
               ? addresses[carouselIndex]

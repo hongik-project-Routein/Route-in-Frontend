@@ -1,26 +1,18 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faHeart,
-  faComment,
-  faBookmark,
-} from '@fortawesome/free-solid-svg-icons'
+import { faHeart, faBookmark } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 import Hashtag from './hashtag'
 import theme from '../styles/Theme'
+import { type PostCardData } from '../dummy/post'
 
-const postText: string = `#김포공항
-\n김포공항은 좋았다. 시설도 좋고 깔끔했으며 여행가기 전 설레는 마음이 가득한 공간이었다.
-\n#제주레포츠랜드
-\n레포츠랜드에서 우리는 카트를 타고 씽씽 달리는 스릴 넘치는 시간이었다.
-\n#스누피가든제주
-\n스누피가 너무 귀여웠고 너무 잘 꾸며저있어서 행복했던 곳이다.
-\n#제주여행 #제주익사이팅
-\n이번 제주도 여행은~~~~
-`
+// 실제는 받는 양이 더 많지만 데모를 보여주기 위해 간략하게
+interface PostCardProps {
+  loadPost: PostCardData
+}
 
-export default function Post(): JSX.Element {
+export default function PostCard(props: PostCardProps): JSX.Element {
   const [heartCount, setHeartCount] = useState<number>(0)
   const [heartActive, setHeartActive] = useState(false)
   const [bookmarkActive, setbookmarkActive] = useState(false)
@@ -28,15 +20,22 @@ export default function Post(): JSX.Element {
     heartActive ? setHeartCount(heartCount - 1) : setHeartCount(heartCount + 1)
     setHeartActive(!heartActive)
   }
+  useEffect(() => {
+    setHeartCount(props.loadPost.heartCount)
+  }, [])
   return (
     <>
       <PersonalInfoContainer>
         <UserContent>
-          <ProfileLink to={`/profile/jinhokim98`}>
-            <Profile src="https://avatars.githubusercontent.com/u/81083461?v=4" />
+          <ProfileLink to={`/profile/${props.loadPost.writer}`}>
+            <Profile src={props.loadPost.profile} />
           </ProfileLink>
-          <Nickname to={`/profile/jinhokim98`}>jinhokim98</Nickname>
-          <DistanceFromMe>나와의 거리: 100km</DistanceFromMe>
+          <Nickname to={`/profile/${props.loadPost.writer}`}>
+            {props.loadPost.writer}
+          </Nickname>
+          <DistanceFromMe>
+            나와의 거리: {props.loadPost.direction}km
+          </DistanceFromMe>
         </UserContent>
         <RestContent>
           <Icons>
@@ -46,9 +45,6 @@ export default function Post(): JSX.Element {
               </Heart>
               <NumOfHeart>{heartCount}</NumOfHeart>
             </HeartAndNumber>
-            <DirectMessage>
-              <FontAwesomeIcon icon={faComment} />
-            </DirectMessage>
             <Bookmark
               active={bookmarkActive}
               onClick={() => {
@@ -61,19 +57,25 @@ export default function Post(): JSX.Element {
         </RestContent>
       </PersonalInfoContainer>
       <PostImageContainer>
-        <PostDetailLink to="/post/1">
-          <PostImage src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8YWlycGxhbmV8ZW58MHx8MHx8&w=1000&q=80" />
+        <PostDetailLink to={`/post/${props.loadPost.postId}`}>
+          <PostImage src={props.loadPost.postImage} />
         </PostDetailLink>
       </PostImageContainer>
-      <PostText />
+      <PostText postText={props.loadPost.postText} />
       <PostComment>
-        <Link to="/post/1">{`댓글 ${20}개 모두 보기`}</Link>
+        <Link
+          to={`/post/${props.loadPost.postId}`}
+        >{`댓글 ${0}개 모두 보기`}</Link>
       </PostComment>
     </>
   )
 }
 
-function PostText(): JSX.Element {
+interface PostTextProps {
+  postText: string
+}
+
+function PostText(props: PostTextProps): JSX.Element {
   const [limit, setLimit] = useState<number>(50)
   const toggleEllipsis = (
     str: JSX.Element,
@@ -129,9 +131,10 @@ function PostText(): JSX.Element {
   }
   return (
     <PostTextContainer>
-      {toggleEllipsis(<Hashtag postText={postText} />, limit).string}
-      {toggleEllipsis(<Hashtag postText={postText} />, limit).isShowMore && (
-        <MoreButton onClick={onClickMore(postText)}>...더보기</MoreButton>
+      {toggleEllipsis(<Hashtag postText={props.postText} />, limit).string}
+      {toggleEllipsis(<Hashtag postText={props.postText} />, limit)
+        .isShowMore && (
+        <MoreButton onClick={onClickMore(props.postText)}>...더보기</MoreButton>
       )}
     </PostTextContainer>
   )
@@ -203,11 +206,6 @@ const Heart = styled.div<{ active: boolean }>`
 const NumOfHeart = styled.div`
   font-size: 16px;
   margin-top: 5px;
-`
-
-const DirectMessage = styled.div`
-  width: 20px;
-  margin-right: 10px;
 `
 
 const Bookmark = styled.div<{ active: boolean }>`

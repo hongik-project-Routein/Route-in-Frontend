@@ -5,7 +5,6 @@ import CreatePost from './pages/createPost/CreatePost'
 import Search from './pages/search/Search'
 import CreateStory from './pages/story/CreateStory'
 import Setting from './pages/setting/Setting'
-import DiretMessage from './pages/directMessage/directMessage'
 import Explore from './pages/explore/explore'
 import MyProfile from './pages/profile/profile'
 import PostDetail from './pages/post/postDetail'
@@ -22,8 +21,8 @@ function Router(): JSX.Element {
       {/* 전체적으로 와일드카드 문제 해결하지 않음 */}
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Main />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/home" element={<Main />} />
+          <Route path="/" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/post/:postid" element={<PostDetail />} />
           {/* post/create 나중에 수정하기 */}
@@ -44,7 +43,6 @@ function Router(): JSX.Element {
           <Route path="/explore/*" element={<Explore />} />
           <Route path="/profile/:username/*" element={<MyProfile />} />
           <Route path="/setting" element={<Setting />} />
-          <Route path="/directmessage" element={<DiretMessage />} />
         </Routes>
       </BrowserRouter>
     </>

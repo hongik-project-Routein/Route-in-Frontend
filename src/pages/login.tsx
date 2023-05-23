@@ -15,11 +15,11 @@ export default function Login(): JSX.Element {
         <LoginContainer>
           <Title>Route in</Title>
           <Slogan>{sloganText}</Slogan>
-          <SignInButton>
+          <SignInButton to="/home">
             <SocialMark src="https://www.freepnglogos.com/uploads/google-logo-png/google-logo-png-google-icon-logo-png-transparent-svg-vector-bie-supply-14.png"></SocialMark>
             <SignInDesc>Sign in with Google</SignInDesc>
           </SignInButton>
-          <SignInButton>
+          <SignInButton to="/home">
             <SocialMark src={kakao}></SocialMark>
             <SignInDesc>Sign in with Kakao</SignInDesc>
           </SignInButton>
@@ -73,7 +73,7 @@ const Slogan = styled.p`
   white-space: pre-line;
   line-height: 10px;
 `
-const SignInButton = styled.div`
+const SignInButton = styled(Link)`
   display: flex;
   justify-content: center;
   width: 200px;
