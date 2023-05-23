@@ -11,6 +11,7 @@ import {
   UserStoryInfoByclasses,
 } from '../../dummy/story'
 import StoryModal from '../../components/storyModal'
+import routeImage from '../../img/routemodify.png'
 
 export default function Story(): JSX.Element {
   return <HeaderAndSidebar article={<ShowStory />} />
@@ -20,10 +21,6 @@ function ShowStory(): JSX.Element {
   const [existStory, setExistStory] = useState<boolean>(false)
   const [stories, setStories] = useState<UserStoryInfoByClass>()
   // 전체가 다 열림
-  const [modalOpen, setModalOpen] = useState<boolean>(false)
-  const showModalOpen = (): void => {
-    setModalOpen(true)
-  }
   const myStory = false
   useEffect(() => {
     setExistStory(myStory)
@@ -44,69 +41,42 @@ function ShowStory(): JSX.Element {
           <Introduce>김진호</Introduce>
         </NicknameContainer>
       </MyInfo>
-      <ShowStoryContainer>
-        <FirstClass>
-          <MapIcon>
-            <FontAwesomeIcon icon={faLocationDot} />
-          </MapIcon>
-          {stories !== undefined && (
-            <StoryGroup
-              storyGroup={stories.first}
-              modalOpen={modalOpen}
-              showModalOpen={showModalOpen}
-              setModalOpen={setModalOpen}
-            />
-          )}
-        </FirstClass>
-        <FirstToSecond>
-          <FirstToSecondLine />
-        </FirstToSecond>
-        <SecondClass>
-          <MapIcon>
-            <FontAwesomeIcon icon={faLocationDot} />
-          </MapIcon>
-          {stories !== undefined && (
-            <StoryGroup
-              storyGroup={stories.second}
-              modalOpen={modalOpen}
-              showModalOpen={showModalOpen}
-              setModalOpen={setModalOpen}
-            />
-          )}
-        </SecondClass>
-        <SecondToThird>
-          <SecondToThirdLine />
-        </SecondToThird>
-        <ThirdClass>
-          <MapIcon>
-            <FontAwesomeIcon icon={faLocationDot} />
-          </MapIcon>
-          {stories !== undefined && (
-            <StoryGroup
-              storyGroup={stories.third}
-              modalOpen={modalOpen}
-              showModalOpen={showModalOpen}
-              setModalOpen={setModalOpen}
-            />
-          )}
-        </ThirdClass>
-        <ThirdToFourth>
-          <ThirdToFourthLine />
-        </ThirdToFourth>
-        <FourthClass>
-          <MapIcon>
-            <FontAwesomeIcon icon={faLocationDot} />
-          </MapIcon>
-          {stories !== undefined && (
-            <StoryGroup
-              storyGroup={stories.fourth}
-              modalOpen={modalOpen}
-              showModalOpen={showModalOpen}
-              setModalOpen={setModalOpen}
-            />
-          )}
-        </FourthClass>
-      </ShowStoryContainer>
+      <LayerGroup>
+        <ShowStoryContainer>
+          <FirstClass>
+            {stories !== undefined && <StoryGroup storyGroup={stories.first} />}
+            <MapIcon>
+              <FontAwesomeIcon icon={faLocationDot} />
+            </MapIcon>
+          </FirstClass>
+          <SecondClass>
+            <SecondClassInner>
+              {stories !== undefined && (
+                <StoryGroup storyGroup={stories.second} />
+              )}
+              <MapIcon>
+                <FontAwesomeIcon icon={faLocationDot} />
+              </MapIcon>
+            </SecondClassInner>
+          </SecondClass>
+          <ThirdClass>
+            {stories !== undefined && <StoryGroup storyGroup={stories.third} />}
+            <MapIcon>
+              <FontAwesomeIcon icon={faLocationDot} />
+            </MapIcon>
+          </ThirdClass>
+          <FourthClass>
+            <FourthClassInner>
+              {stories !== undefined && (
+                <StoryGroup storyGroup={stories.fourth} />
+              )}
+              <MapIcon>
+                <FontAwesomeIcon icon={faLocationDot} />
+              </MapIcon>
+            </FourthClassInner>
+          </FourthClass>
+        </ShowStoryContainer>
+      </LayerGroup>
     </>
   )
 }
@@ -132,21 +102,29 @@ function StoryProfile(props: StoryProfileProps): JSX.Element {
 
 interface StoryGroupProps {
   storyGroup: StoryGroupItems[]
-  modalOpen: boolean
-  showModalOpen: () => void
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 function StoryGroup(props: StoryGroupProps): JSX.Element {
   const [readState, setReadState] = useState<boolean[]>([])
+  const [isModalOpen, setIsModalOpen] = useState<boolean[] | []>([])
+
   useEffect(() => {
     const storyReadStatus = props.storyGroup.map((story) => story.isRead)
     setReadState(storyReadStatus)
   }, [])
+
+  useEffect(() => {
+    setIsModalOpen(props.storyGroup.map(() => false))
+  }, [props.storyGroup])
+
   const readStory = (idx: number): void => {
     const updatedReadState = [...readState]
     updatedReadState[idx] = true
     setReadState(updatedReadState)
+  }
+  const setModalOpen = (idx: number): void => {
+    const updateIsModalOpen = isModalOpen.map((modal, index) => index === idx)
+    setIsModalOpen(updateIsModalOpen)
   }
   return (
     <ProfileGroup>
@@ -156,11 +134,16 @@ function StoryGroup(props: StoryGroupProps): JSX.Element {
             src={story.profileImage}
             active={readState[idx]}
             onClick={() => {
-              props.showModalOpen()
+              setModalOpen(idx)
               readStory(idx)
             }}
           />
-          {props.modalOpen && <StoryModal setModalOpen={props.setModalOpen} />}
+          {isModalOpen[idx] && (
+            <>
+              <Backdrop />
+              <StoryModal storyInfo={story} setModalOpen={setModalOpen} />
+            </>
+          )}
           <NicknameInStoryGroup>{story.nickname}</NicknameInStoryGroup>
         </ProfileUser>
       ))}
@@ -171,8 +154,7 @@ function StoryGroup(props: StoryGroupProps): JSX.Element {
 const MyInfo = styled.div`
   display: flex;
   height: 60px;
-  margin-top: 40px;
-  margin-bottom: 30px;
+  margin: 40px 0 30px 35px;
 `
 
 const Profile = styled.img<{ active: boolean }>`
@@ -204,47 +186,74 @@ const Introduce = styled.div`
   font-size: 16px;
 `
 
+const LayerGroup = styled.div`
+  position: relative;
+  width: 800px;
+  height: 300px;
+  margin-top: 70px;
+  background-image: url(${routeImage});
+  background-size: contain;
+  background-repeat: no-repeat;
+`
+
 const ShowStoryContainer = styled.div`
   display: grid;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0 40px;
   grid-template-rows: repeat(2, 1fr);
   grid-template-columns: repeat(4, 1fr);
-  grid-gap: 24px;
   grid-template-areas:
-    'first . third ThirdToFourth'
-    'FirstToSecond second SecondToThird fourth';
+    '. second . fourth'
+    'first . third .';
 `
 
 const FirstClass = styled.div`
   grid-area: first;
-  width: 200px;
+  width: 180px;
   height: 150px;
-  background-color: rgba(80, 187, 223, 0.4);
   border-radius: 8px;
 `
 const SecondClass = styled.div`
   grid-area: second;
-  width: 200px;
+  position: relative;
+`
+
+const SecondClassInner = styled.div`
+  position: absolute;
+  top: -90px;
+  width: 180px;
   height: 150px;
-  background-color: rgba(127, 206, 232, 0.4);
   border-radius: 8px;
 `
+
 const ThirdClass = styled.div`
   grid-area: third;
-  width: 200px;
+  width: 180px;
   height: 150px;
-  background-color: rgba(177, 226, 241, 0.4);
   border-radius: 8px;
 `
 const FourthClass = styled.div`
   grid-area: fourth;
-  width: 200px;
+  position: relative;
+`
+
+const FourthClassInner = styled.div`
+  position: absolute;
+  top: -90px;
+  left: -20px;
+  width: 180px;
   height: 150px;
-  background-color: rgba(224, 244, 249, 0.4);
   border-radius: 8px;
 `
 
 const MapIcon = styled.div`
-  margin: 10px;
+  width: 30px;
+  margin: 10px auto;
+  color: ${theme.colors.primaryColor};
   font-size: 30px;
 `
 
@@ -256,6 +265,11 @@ const ProfileGroup = styled.div`
   border-radius: 8px;
   overflow-x: scroll;
   overflow-y: hidden;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `
 
 const ProfileUser = styled.div`
@@ -280,53 +294,16 @@ const ProfileInStory = styled.img<{ active: boolean }>`
 `
 
 const NicknameInStoryGroup = styled.div`
+  color: ${theme.colors.white};
   font-size: 12px;
 `
 
-const FirstToSecond = styled.div`
-  grid-area: FirstToSecond;
-  display: grid;
-  grid-template-rows: repeat(2, 1fr);
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-areas:
-    '. border'
-    '. .';
-`
-
-const FirstToSecondLine = styled.div`
-  grid-area: border;
-  border-left: 2px dotted ${theme.colors.black};
-  border-bottom: 2px dotted ${theme.colors.black};
-`
-
-const SecondToThird = styled.div`
-  grid-area: SecondToThird;
-  display: grid;
-  grid-template-rows: repeat(2, 1fr);
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-areas:
-    'border .'
-    '. .';
-`
-
-const SecondToThirdLine = styled.div`
-  grid-area: border;
-  border-right: 2px dotted ${theme.colors.black};
-  border-bottom: 2px dotted ${theme.colors.black};
-`
-
-const ThirdToFourth = styled.div`
-  grid-area: ThirdToFourth;
-  display: grid;
-  grid-template-rows: repeat(2, 1fr);
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-areas:
-    '. .'
-    'border .';
-`
-
-const ThirdToFourthLine = styled.div`
-  grid-area: border;
-  border-top: 2px dotted ${theme.colors.black};
-  border-right: 2px dotted ${theme.colors.black};
+const Backdrop = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 998;
 `
