@@ -141,23 +141,27 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
   const getPlacesName = async (place: GPSInfo): Promise<string> => {
     try {
       const geocoder = new kakao.maps.services.Geocoder()
-      const coord = new kakao.maps.LatLng(place.latitude, place.longitude)
+      let address = ''
 
-      const callback = (result: any, status: any): any => {
+      const callback = (result: any, status: any): string => {
         console.log(status)
 
         if (status === kakao.maps.services.Status.OK) {
           console.log(result)
-          return result
+
+          address = result[0].address.address_name
+          console.log(address)
+          return address
         }
+        return ''
       }
 
-      geocoder.coord2Address(coord.getLat(), coord.getLng(), callback)
+      geocoder.coord2Address(place.longitude, place.latitude, callback)
+      return address
     } catch (error) {
       console.log(error)
       return ''
     }
-    return ''
   }
 
   const dummyData = ['김포국제공항', '제주공항', '동현식당', '스누피가든']
