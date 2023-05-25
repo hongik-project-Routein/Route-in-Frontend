@@ -2,6 +2,7 @@ import React, { useState, useEffect, type ChangeEvent } from 'react'
 import styled from 'styled-components'
 import Profile from '../../components/profile'
 import Tab from '../../components/tab'
+import { UserStoryInfoByclasses } from '../../dummy/story'
 
 interface TabContent {
   tabName: string
@@ -30,6 +31,16 @@ export default function ProfileStoryArticle(
   const onChangeDateBtn = (event: ChangeEvent<HTMLInputElement>): void => {
     setDate(event.target.value)
   }
+  const DummyMyStory = UserStoryInfoByclasses.first.map(
+    (story) => story.storyImages
+  )
+
+  const DummyStory = [
+    ...DummyMyStory[0],
+    ...DummyMyStory[1],
+    ...DummyMyStory[2],
+  ]
+
   return (
     <>
       <Profile />
@@ -46,11 +57,14 @@ export default function ProfileStoryArticle(
             onChange={onChangeDateBtn}
           ></DayButton>
           <MergeStoryBtn type="button">게시물로 변환</MergeStoryBtn>
-          <ShowWithoutLocationStoryBtn type="button">
-            위치정보가 없는 스토리 보기
-          </ShowWithoutLocationStoryBtn>
         </BtnGroup>
-        <MapContainer></MapContainer>
+        <StoryGrid>
+          {DummyStory !== undefined
+            ? DummyStory.map((story, idx) => (
+                <StoryImages key={idx} src={story} />
+              ))
+            : null}
+        </StoryGrid>
       </TabArticle>
     </>
   )
@@ -86,15 +100,17 @@ const MergeStoryBtn = styled.button`
   font-size: 16px;
 `
 
-const ShowWithoutLocationStoryBtn = styled.button`
-  width: 230px;
-  height: 50px;
-  background-color: #d9d9d9;
-  border-radius: 25px;
-  font-size: 16px;
+const StoryGrid = styled.div`
+  display: grid;
+  grid-template-rows: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 20px;
+  width: 9fr;
+  margin-right: 20px;
 `
-const MapContainer = styled.div`
-  width: 100%;
-  height: 400px;
-  border: 1px solid #d9d9d9;
+
+const StoryImages = styled.img`
+  width: 280px;
+  height: 300px;
+  object-fit: cover;
 `

@@ -26,7 +26,7 @@ export default function SignUp(): JSX.Element {
         </SignUpContainer>
         <GoSignInContainer>
           <GoSignInDesc>이미 계정이 있다면</GoSignInDesc>
-          <SignInButton to="/login">
+          <SignInButton to="/">
             <SignInDesc>Sign In</SignInDesc>
           </SignInButton>
         </GoSignInContainer>

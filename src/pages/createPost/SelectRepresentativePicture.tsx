@@ -121,6 +121,10 @@ export default function SelectRepresentativePicture(): JSX.Element {
       context.putImageData(imageData, 0, 0)
 
       const newImageData = canvas.toDataURL('image/png')
+      const link = document.createElement('a')
+      link.href = newImageData
+      link.download = 'map.png'
+      link.click()
       return newImageData
     }
   }

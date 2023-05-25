@@ -1,69 +1,24 @@
 import React from 'react'
 import styled from 'styled-components'
 import theme from '../styles/Theme'
-
-interface NoticeList {
-  image: string
-  nickname: string
-  noticeDesc: string
-  postImage: string
-}
+import { type NotificationData, notificationDummy } from '../dummy/notification'
 
 export default function NoticeModal(): JSX.Element {
-  const FollowLists: NoticeList[] = [
-    {
-      image: 'https://avatars.githubusercontent.com/u/81083461?v=4',
-      nickname: 'jinokim98',
-      noticeDesc: '님이 회원님의 게시물에 좋아요를 눌렀습니다.',
-      postImage:
-        'https://visitowa.com/wp-content/uploads/2021/02/DSC07749-1.jpg',
-    },
-    {
-      image: 'https://avatars.githubusercontent.com/u/81083461?v=4',
-      nickname: 'jinokim98',
-      noticeDesc: '님이 회원님의 게시물에 좋아요를 눌렀습니다.',
-      postImage:
-        'https://visitowa.com/wp-content/uploads/2021/02/DSC07749-1.jpg',
-    },
-    {
-      image: 'https://avatars.githubusercontent.com/u/81083461?v=4',
-      nickname: 'jinokim98',
-      noticeDesc: '님이 회원님의 게시물에 좋아요를 눌렀습니다.',
-      postImage:
-        'https://visitowa.com/wp-content/uploads/2021/02/DSC07749-1.jpg',
-    },
-    {
-      image: 'https://avatars.githubusercontent.com/u/81083461?v=4',
-      nickname: 'jinokim98',
-      noticeDesc: '님이 회원님의 게시물에 좋아요를 눌렀습니다.',
-      postImage:
-        'https://visitowa.com/wp-content/uploads/2021/02/DSC07749-1.jpg',
-    },
-    {
-      image: 'https://avatars.githubusercontent.com/u/81083461?v=4',
-      nickname: 'jinokim98',
-      noticeDesc: '님이 회원님의 게시물에 좋아요를 눌렀습니다.',
-      postImage:
-        'https://visitowa.com/wp-content/uploads/2021/02/DSC07749-1.jpg',
-    },
-    {
-      image: 'https://avatars.githubusercontent.com/u/81083461?v=4',
-      nickname: 'jinokim98',
-      noticeDesc: '님이 회원님의 게시물에 좋아요를 눌렀습니다.',
-      postImage:
-        'https://visitowa.com/wp-content/uploads/2021/02/DSC07749-1.jpg',
-    },
-  ]
+  const dummyNotification: NotificationData[] = notificationDummy
   return (
     <ModalContainer>
-      {FollowLists.map((item, idx) => (
+      {dummyNotification.map((notice, idx) => (
         <Row key={idx}>
-          <ProfileImage src={item.image} />
+          <ProfileImageContainer>
+            <ProfileImage src={notice.actorProfile} />
+          </ProfileImageContainer>
           <NoticeDesc>
-            <Nickname>{item.nickname}</Nickname>
-            {`${item.noticeDesc}`}
+            <Nickname>{notice.actor}</Nickname>
+            님이 회원님의{' '}
+            {notice.noticeType === 'post' ? '게시글에 ' : '스토리에 '}
+            {notice.noticeDesc}
           </NoticeDesc>
-          <PostImage src={item.postImage} />
+          <PostImage src={notice.postImage} />
         </Row>
       ))}
     </ModalContainer>
@@ -94,11 +49,21 @@ const Row = styled.div`
   }
 `
 
+const ProfileImageContainer = styled.div`
+  width: 50px;
+  height: 50px;
+  margin-right: 20px;
+`
+
 const ProfileImage = styled.img`
   width: 50px;
   height: 50px;
   margin-right: 20px;
   border-radius: 50%;
+  object-fit: cover;
+  &:hover {
+    cursor: pointer;
+  }
 `
 const NoticeDesc = styled.div`
   font-size: 12px;

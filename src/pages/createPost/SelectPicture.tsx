@@ -8,10 +8,9 @@ import { faImage } from '@fortawesome/free-solid-svg-icons'
 import { useDispatch } from 'react-redux'
 import { EnrollImages } from '../../modules/post'
 import { gps } from 'exifr'
-import Geocode from 'react-geocode'
-import { GoogleMap, MarkerF } from '@react-google-maps/api'
 import { type Post } from '../../types/postTypes'
 import ImageEditor from '../../components/imageEditor'
+import { Map, MapMarker } from 'react-kakao-maps-sdk'
 
 interface GPSInfo {
   latitude: number
@@ -24,6 +23,7 @@ interface SelectPictureProps {
 }
 
 export default function SelectPicture(props: SelectPictureProps): JSX.Element {
+  const { kakao } = window
   const [selectedFiles, setSelectedFiles] = useState<File[] | undefined>(
     undefined
   )
@@ -110,11 +110,7 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
           const imgTag = (
             <CarouselImageProps key={i} src={imageUrls[i]} alt="img" />
           )
-          const address = await getPlacesName(
-            imgGPSInfoList[i],
-            props.mapApi,
-            props.mapApiKey
-          )
+          const address = await getPlacesName(imgGPSInfoList[i])
           console.log(address)
 
           newPosts.push({
@@ -142,33 +138,25 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
     })
   }, [imageUrls])
 
-  const getPlacesName = async (
-    place: GPSInfo,
-    googleAPI: boolean,
-    googleAPIKey: string
-  ): Promise<string> => {
-    if (googleAPI) {
-      Geocode.setApiKey(googleAPIKey)
-      Geocode.setLanguage('ko')
-      Geocode.setRegion('kr')
-      Geocode.enableDebug()
+  const getPlacesName = async (place: GPSInfo): Promise<string> => {
+    try {
+      const geocoder = new kakao.maps.services.Geocoder()
+      const coord = new kakao.maps.LatLng(place.latitude, place.longitude)
 
-      try {
-        const response = await Geocode.fromLatLng(
-          place.latitude.toString(),
-          place.longitude.toString()
-        )
-        console.log(response)
+      const callback = (result: any, status: any): any => {
+        console.log(status)
 
-        const address = response.results[0].formatted_address
-        console.log(address)
-        return address
-      } catch (error) {
-        console.log(error)
-        return ''
+        if (status === kakao.maps.services.Status.OK) {
+          console.log(result)
+          return result
+        }
       }
+
+      geocoder.coord2Address(coord.getLat(), coord.getLng(), callback)
+    } catch (error) {
+      console.log(error)
+      return ''
     }
-    // 구글 키가 없을 때 빈 문자열 리턴
     return ''
   }
 
@@ -226,24 +214,20 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
         <LocationGroup>
           <CarouselContainer>
             {imgGPSInfoList.length > 0 ? (
-              <GoogleMap
-                zoom={15}
+              <Map
                 center={{
                   lat: imgGPSInfoList[carouselIndex].latitude,
                   lng: imgGPSInfoList[carouselIndex].longitude,
                 }}
-                mapContainerStyle={{
-                  width: '100%',
-                  height: '100%',
-                }}
+                style={{ width: '100%', height: '100%' }}
               >
-                <MarkerF
+                <MapMarker
                   position={{
                     lat: imgGPSInfoList[carouselIndex].latitude,
                     lng: imgGPSInfoList[carouselIndex].longitude,
                   }}
-                />
-              </GoogleMap>
+                ></MapMarker>
+              </Map>
             ) : null}
           </CarouselContainer>
           <LocationName>
