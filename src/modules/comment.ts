@@ -1,3 +1,5 @@
+import { request } from '../util/axios'
+
 const ENROLLCOMMENT = 'comment/ENROLLCOMMENT' as const
 const CLICKHEARTBUTTON = 'comment/CLICKHEARTBUTTON' as const
 
@@ -13,20 +15,25 @@ interface CommentContent {
 
 export const EnrollCommentAction = (
   diff: CommentContent
-): { type: typeof ENROLLCOMMENT; payload: CommentContent } => ({
-  type: ENROLLCOMMENT,
-  payload: diff,
-})
+): { type: typeof ENROLLCOMMENT; payload: CommentContent } => {
+  const sendComment = request<boolean>('post', 'enrollcomment', diff)
+  console.log(sendComment)
+
+  return {
+    type: ENROLLCOMMENT,
+    payload: diff,
+  }
+}
 
 export const ClickHeartButton = (
   key: string,
-  active: boolean
+  comment: CommentContent
 ): {
   type: typeof CLICKHEARTBUTTON
-  payload: { key: string; active: boolean }
+  payload: { key: string; comment: CommentContent }
 } => ({
   type: CLICKHEARTBUTTON,
-  payload: { key, active },
+  payload: { key, comment },
 })
 
 type CommentAction =
@@ -49,25 +56,21 @@ function commentReducer(
     case ENROLLCOMMENT:
       return { comment: [...state.comment, action.payload] }
     case CLICKHEARTBUTTON: {
-      const { key, active } = action.payload
-
-      const updatedComment = state.comment.map((comment) => {
-        if (comment.id === key) {
+      const updatedHeart = state.comment.map((comment) => {
+        if (comment.id === action.payload.key) {
           return {
             ...comment,
-            heartCount: active
-              ? comment.heartCount + 1
-              : comment.heartCount - 1,
+            heartCount: action.payload.comment.heartCount,
+            isHeartButtonClick: action.payload.comment.isHeartButtonClick,
           }
         }
         return comment
       })
       return {
         ...state,
-        comment: updatedComment,
+        comment: updatedHeart,
       }
     }
-
     default:
       return state
   }

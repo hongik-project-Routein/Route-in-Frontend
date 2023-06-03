@@ -1,9 +1,9 @@
 import { type PostSendToBackend, type Post } from '../types/postTypes'
 import { request } from '../util/axios'
-// import { request } from '../util/axios'
 
 const ENROLLIMAGE = 'post/ENROLLIMAGE' as const
 // const STYLEDIMAGE = 'post/STYLEDIMAGE' as const
+const CHANGEPLACE = 'post/CHANGEPLACE' as const
 const CHANGEHASHTAGANDTEXT = 'post/CHANGEHASHTAGANDTEXT' as const
 const SENDTOBACKEND = 'post/SENDTOBACKEND' as const
 
@@ -32,10 +32,19 @@ export const ChangeHashtagAndText = (
   payload: { posts, hashtagAndText },
 })
 
+export const ChangePlace = (
+  post: Post[]
+): { type: typeof CHANGEPLACE; payload: Post[] } => {
+  return {
+    type: CHANGEPLACE,
+    payload: post,
+  }
+}
+
 export const SavePost = (
   diff: PostSendToBackend
 ): { type: typeof SENDTOBACKEND; payload: PostSendToBackend } => {
-  const sendData = request<PostSendToBackend>('post', 'postdata', diff)
+  const sendData = request<boolean>('post', 'postdata', diff)
   console.log(sendData)
 
   return {
@@ -48,6 +57,7 @@ export const SavePost = (
 type PostAction =
   | ReturnType<typeof EnrollImages>
   | ReturnType<typeof ChangeHashtagAndText>
+  | ReturnType<typeof ChangePlace>
   | ReturnType<typeof SavePost>
 
 interface PostState {
@@ -75,6 +85,8 @@ function changePostReducer(
         post: action.payload.posts,
         hashtagAndText: action.payload.hashtagAndText,
       }
+    case CHANGEPLACE:
+      return { post: action.payload, hashtagAndText: { hashtag: [], text: '' } }
     case SENDTOBACKEND:
       return state
     default:

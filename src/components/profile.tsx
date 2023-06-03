@@ -3,9 +3,10 @@ import styled from 'styled-components'
 import theme from '../styles/Theme'
 import FollowModal from './followModal'
 import FollowingModal from './followingModal'
-import { useSelector, useDispatch } from 'react-redux'
-import { type RootState } from '../modules'
+import { useDispatch } from 'react-redux'
 import { changeIntroduction } from '../modules/profile'
+import { useParams } from 'react-router-dom'
+import { userDemo, type UserData } from '../dummy/user'
 
 export default function Profile(): JSX.Element {
   const dispatch = useDispatch()
@@ -17,13 +18,26 @@ export default function Profile(): JSX.Element {
     useState(false)
   const followRef = useRef<HTMLDivElement>(null)
   const followingRef = useRef<HTMLDivElement>(null)
-  const curIntroductionText = useSelector(
-    (state: RootState) => state.changeIntroductionReducer.data
-  )
+
+  const [isMyProfile, setIsMyProfile] = useState<boolean>(false)
+  const { username } = useParams()
+
+  const [userInfo, setUserInfo] = useState<UserData>()
+
   useEffect(() => {
-    setIntroductionText(curIntroductionText)
+    // 더미데이터여서
+    const totalUser: UserData[] = userDemo
+    const curUser: UserData | undefined = totalUser.find(
+      (user) => user.nickname === username
+    )
+    setUserInfo(curUser)
+    console.log(username)
+
+    setIsMyProfile(username === 'jinokim98')
+    setIntroductionText(curUser?.introduction ?? '')
     setActiveIntroductionModify(true)
   }, [])
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent): void => {
       if (
@@ -47,11 +61,12 @@ export default function Profile(): JSX.Element {
   return (
     <>
       <ProfileHeader>
-        <ProfileImage src="https://avatars.githubusercontent.com/u/81083461?v=4" />
+        <ProfileImage src={userInfo?.profile} />
         <ProfileDesc>
           <NameAndEditBtn>
-            <Nickname>jinokim98</Nickname>
+            <Nickname>{userInfo?.nickname}</Nickname>
             <EditButton
+              isMyProfile={isMyProfile}
               onClick={() => {
                 if (!activeIntroductionModify) {
                   dispatch(changeIntroduction(introductionText))
@@ -63,14 +78,14 @@ export default function Profile(): JSX.Element {
             </EditButton>
           </NameAndEditBtn>
           <Statistics>
-            <NumOfPosts>게시글 {25}</NumOfPosts>
+            <NumOfPosts>게시글 {userInfo?.postNum}</NumOfPosts>
             <FollowerContainer ref={followRef}>
               <Follower
                 onClick={() => {
                   setFollowModalVisibliity(!followModalVisibliity)
                 }}
               >
-                팔로워 {220}
+                팔로워 {userInfo?.followerNum}
               </Follower>
               {followModalVisibliity ? <FollowModal /> : null}
             </FollowerContainer>
@@ -80,7 +95,7 @@ export default function Profile(): JSX.Element {
                   setFollowingModalVisibliity(!followingModalVisibliity)
                 }}
               >
-                팔로우 {225}
+                팔로우 {userInfo?.followNum}
               </Follow>
               {followingModalVisibliity ? <FollowingModal /> : null}
             </FollowContainer>
@@ -127,7 +142,8 @@ const Nickname = styled.div`
   font-size: 25px;
   color: ${theme.colors.primaryColor};
 `
-const EditButton = styled.button`
+const EditButton = styled.button<{ isMyProfile: boolean }>`
+  display: ${(props) => (props.isMyProfile ? 'block' : 'none')};
   width: 100px;
   height: 30px;
   border-radius: 5px;

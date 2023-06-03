@@ -53,7 +53,7 @@ export default function SearchPostArticle(
       </SearchResultTitle>
       <SearchResultGrid>
         {posts !== undefined
-          ? posts.map((post, idx) => <PostSmall key={idx} post={post} />)
+          ? posts.map((post, idx) => <PostSmall key={idx} loadPost={post} />)
           : null}
       </SearchResultGrid>
       <PageMoveBtn />

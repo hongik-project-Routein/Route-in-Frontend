@@ -5,11 +5,11 @@ import { faHeart, faBookmark } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 import Hashtag from './hashtag'
 import theme from '../styles/Theme'
-import { type PostCardData } from '../dummy/post'
+import KakaoMapPost from './KakaoMapPost'
+import { type LoadPostMainPage } from '../types/postTypes'
 
-// 실제는 받는 양이 더 많지만 데모를 보여주기 위해 간략하게
 interface PostCardProps {
-  loadPost: PostCardData
+  loadPost: LoadPostMainPage // 연결 시 LoadPostMainPage로 변경
 }
 
 export default function PostCard(props: PostCardProps): JSX.Element {
@@ -21,7 +21,7 @@ export default function PostCard(props: PostCardProps): JSX.Element {
     setHeartActive(!heartActive)
   }
   useEffect(() => {
-    setHeartCount(props.loadPost.heartCount)
+    setHeartCount(props.loadPost.likeUsers)
   }, [])
   return (
     <>
@@ -33,9 +33,7 @@ export default function PostCard(props: PostCardProps): JSX.Element {
           <Nickname to={`/profile/${props.loadPost.writer}`}>
             {props.loadPost.writer}
           </Nickname>
-          <DistanceFromMe>
-            나와의 거리: {props.loadPost.direction}km
-          </DistanceFromMe>
+          <DistanceFromMe>나와의 거리: {100}km</DistanceFromMe>
         </UserContent>
         <RestContent>
           <Icons>
@@ -57,15 +55,18 @@ export default function PostCard(props: PostCardProps): JSX.Element {
         </RestContent>
       </PersonalInfoContainer>
       <PostImageContainer>
-        <PostDetailLink to={`/post/${props.loadPost.postId}`}>
-          <PostImage src={props.loadPost.postImage} />
-        </PostDetailLink>
+        <KakaoMapPost
+          size="582px"
+          pinCount={props.loadPost.pinCount}
+          pinImages={props.loadPost.pinImage}
+          latLng={props.loadPost.latLng}
+        ></KakaoMapPost>
       </PostImageContainer>
       <PostText postText={props.loadPost.postText} />
       <PostComment>
         <Link
           to={`/post/${props.loadPost.postId}`}
-        >{`댓글 ${0}개 모두 보기`}</Link>
+        >{`댓글 ${props.loadPost.commentCount}개 모두 보기`}</Link>
       </PostComment>
     </>
   )
@@ -221,11 +222,6 @@ const PostImageContainer = styled.div`
   height: 582px;
   margin-top: 20px;
 `
-const PostImage = styled.img`
-  object-fit: cover;
-  border-radius: 10px;
-`
-const PostDetailLink = styled(Link)``
 
 const PostTextContainer = styled.p`
   margin-top: 20px;

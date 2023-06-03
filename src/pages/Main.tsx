@@ -5,16 +5,31 @@ import PostCard from '../components/postCard'
 import styled from 'styled-components'
 import UserRecommend from '../components/userRecommend'
 import theme from '../styles/Theme'
-import { postDemo, type PostCardData } from '../dummy/post'
+// import { postDemo, type PostCardData } from '../dummy/post'
+import { type LoadPostMainPage } from '../types/postTypes'
+import { request } from '../util/axios'
 
 function Main(): JSX.Element {
-  const [posts, setPosts] = useState<PostCardData[]>([])
-  const loadPost = (): void => {
-    const post: PostCardData[] = postDemo
-    setPosts(post)
+  const [posts, setPosts] = useState<LoadPostMainPage[]>([])
+
+  const loadPost = async (): Promise<void> => {
+    const nickname = 'jinokim98'
+
+    try {
+      const loadPost = await request<LoadPostMainPage[]>(
+        'get',
+        `/api/post/${nickname}`
+      )
+      setPosts(loadPost)
+      console.log(loadPost)
+    } catch (err) {
+      console.log(err)
+    }
   }
   useEffect(() => {
-    loadPost()
+    loadPost().catch((err) => {
+      console.log(err)
+    })
   }, [posts])
   return (
     <Grid>

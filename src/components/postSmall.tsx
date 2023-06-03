@@ -4,23 +4,22 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart, faBookmark } from '@fortawesome/free-solid-svg-icons'
 import { type PostCardData } from '../dummy/post'
 import { Link } from 'react-router-dom'
+// import KakaoMapPost from './KakaoMapPost'
 
 interface PostSmallProps {
-  post: PostCardData
+  loadPost: PostCardData // 연결 시 LoadPostMainPage로 변경
 }
 
 export default function PostSmall(props: PostSmallProps): JSX.Element {
-  console.log(props)
-
   return (
     <div>
       <PersonalInfoContainer>
-        <UserContent to={`/profile/${props.post.writer}`}>
-          <Profile src={props.post.profile} />
-          <Nickname>{props.post.writer}</Nickname>
+        <UserContent to={`/profile/${props.loadPost.writer}`}>
+          <Profile src={props.loadPost.profile} />
+          <Nickname>{props.loadPost.writer}</Nickname>
         </UserContent>
         <RestContent>
-          <NumOfHeart>{props.post.heartCount}</NumOfHeart>
+          <NumOfHeart>{props.loadPost.likeUsers}</NumOfHeart>
           <Icons>
             <Heart>
               <FontAwesomeIcon icon={faHeart} />
@@ -32,8 +31,16 @@ export default function PostSmall(props: PostSmallProps): JSX.Element {
         </RestContent>
       </PersonalInfoContainer>
       <PostImageContainer>
-        <PostImage src={props.post.postImage} />
+        {/* <KakaoMapPost
+          size="300px"
+          pinCount={props.loadPost.pinCount}
+          pinImages={props.loadPost.pinImages}
+          latLng={props.loadPost.LatLngs}
+        ></KakaoMapPost> */}
       </PostImageContainer>
+      <PostDetailLink to={`/post/${props.loadPost.postId}`}>
+        상세 게시물로
+      </PostDetailLink>
     </div>
   )
 }
@@ -94,7 +101,10 @@ const PostImageContainer = styled.div`
   height: 300px;
   margin-top: 20px;
 `
-const PostImage = styled.img`
-  object-fit: cover;
-  border-radius: 10px;
+
+const PostDetailLink = styled(Link)`
+  display: inline-block;
+  width: 100%;
+  height: 50px;
+  margin-top: 10px;
 `

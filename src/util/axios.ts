@@ -1,7 +1,7 @@
 import axios, { type AxiosRequestConfig } from 'axios'
-import { BASE_URL } from '../config'
+import { SERVER_BASE_URL } from '../config'
 
-const domain: string = BASE_URL ?? ''
+const domain: string = SERVER_BASE_URL ?? ''
 axios.defaults.withCredentials = true
 
 export const request = async <T>(
@@ -14,6 +14,8 @@ export const request = async <T>(
     url: domain + url,
     data,
   }
+  console.log(config)
+
   return await axios(config)
     .then((res) => res.data)
     .catch((error) => {

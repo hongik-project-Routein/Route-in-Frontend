@@ -55,7 +55,7 @@ export default function UserRecommendExploreArticle(
       />
       <RecommandationResultGrid>
         {posts !== undefined
-          ? posts.map((post, idx) => <PostSmall key={idx} post={post} />)
+          ? posts.map((post, idx) => <PostSmall key={idx} loadPost={post} />)
           : null}
       </RecommandationResultGrid>
       <PageMoveBtn />

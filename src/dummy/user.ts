@@ -9,6 +9,15 @@ export interface UserData {
 
 export const userDemo: UserData[] = [
   {
+    nickname: 'jinokim98',
+    introduction: `김진호
+    홍익대학교 경영학과`,
+    profile: 'https://avatars.githubusercontent.com/u/81083461?v=4',
+    postNum: 25,
+    followerNum: 220,
+    followNum: 225,
+  },
+  {
     nickname: 'jane',
     introduction: 'my name is jane',
     profile:

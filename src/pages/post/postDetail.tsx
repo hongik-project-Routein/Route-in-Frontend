@@ -16,11 +16,13 @@ import Hashtag from '../../components/hashtag'
 import { Link, useParams } from 'react-router-dom'
 import theme from '../../styles/Theme'
 import EmojiPicker, { type EmojiClickData } from 'emoji-picker-react'
-import { useDispatch, useSelector } from 'react-redux'
-import { type RootState } from '../../modules'
+import { useDispatch } from 'react-redux'
 import { ClickHeartButton, EnrollCommentAction } from '../../modules/comment'
 import { v4 as uuidV4 } from 'uuid'
-import { postDemo, type PostCardData } from '../../dummy/post'
+// import { postDemo, type PostCardData } from '../../dummy/post'
+import KakaoMapPost from '../../components/KakaoMapPost'
+import { type LoadPostDetail, type CommentContent } from '../../types/postTypes'
+import { request } from '../../util/axios'
 // import { useSelector, useDispatch } from 'react-redux'
 
 export default function PostDetail(): JSX.Element {
@@ -31,14 +33,31 @@ function PostDetailArticle(): JSX.Element {
   const { postid } = useParams()
 
   // 실제는 맞는 것만 요청해야겠지만 데모이기 때문에 다 불러와서 필터링임
-  const [post, setPost] = useState<PostCardData>()
-  const loadPost = (): void => {
-    const posts: PostCardData[] = postDemo
-    const select = posts.find((post) => post.postId === postid)
-    setPost(select)
+  // const [post, setPost] = useState<PostCardData>()
+  // const loadPost = (): void => {
+  //   const posts: PostCardData[] = postDemo
+  //   const select = posts.find((post) => post.postId === postid)
+  //   setPost(select)
+  // }
+
+  const [post, setPost] = useState<LoadPostDetail>()
+  const loadPost = async (): Promise<void> => {
+    try {
+      const loadPost = await request<LoadPostDetail>(
+        'get',
+        'loadpostdetail',
+        postid
+      )
+      setPost(loadPost)
+    } catch (err) {
+      console.log(err)
+    }
   }
+
   useEffect(() => {
-    loadPost()
+    loadPost().catch((err) => {
+      console.log(err)
+    })
   }, [post])
   return (
     <>
@@ -56,7 +75,7 @@ function PostDetailArticle(): JSX.Element {
                   <Heart>
                     <FontAwesomeIcon icon={faHeart} />
                   </Heart>
-                  <NumOfHeart>{post.heartCount}</NumOfHeart>
+                  <NumOfHeart>{post.likeUsers}</NumOfHeart>
                 </HeartAndNumber>
                 <Bookmark>
                   <FontAwesomeIcon icon={faBookmark} />
@@ -66,11 +85,16 @@ function PostDetailArticle(): JSX.Element {
           </PersonalInfoContainer>
           <PostContainer>
             <PostImageContainer>
-              <PostImage src={post.postImage} />
+              <KakaoMapPost
+                size="400px"
+                pinCount={post.pinCount}
+                pinImages={post.pinImage}
+                latLng={post.latLng}
+              ></KakaoMapPost>
             </PostImageContainer>
             <PostText>{<Hashtag postText={post.postText} />}</PostText>
           </PostContainer>
-          <Comment />
+          <Comment postId={post.postId} comments={post.comment} />
         </>
       ) : (
         <></>
@@ -79,35 +103,24 @@ function PostDetailArticle(): JSX.Element {
   )
 }
 
-interface CommentContent {
-  id: string
-  image: string
-  commentWriter: string
-  comment: string
-  time: number
-  heartCount: number
-  isHeartButtonClick: boolean
+interface CommentProps {
+  postId: string
+  comments: CommentContent[] | undefined
 }
 
-interface HeartButtonState {
-  id: string
-  active: boolean
-}
-
-function Comment(): JSX.Element {
+function Comment(props: CommentProps): JSX.Element {
   const [text, setText] = useState<string>('')
   const [comments, setComments] = useState<CommentContent[] | []>([])
   const [emojiClick, setEmojiClick] = useState(false)
-  const [heartButtonStates, setHeartButtonStates] = useState<
-    HeartButtonState[]
-  >([])
-  const [curHeartButtonidx, setCurHeartButtonidx] = useState<number>(-1)
-  const [renderCounter, setRenderCounter] = useState<number>(0)
 
   const dispatch = useDispatch()
-  const enrolledComments = useSelector(
-    (state: RootState) => state.commentReducer.comment
-  )
+  // const enrolledComments = useSelector(
+  //   (state: RootState) => state.commentReducer.comment
+  // )
+
+  useEffect(() => {
+    props.comments !== undefined ? setComments(props.comments) : setComments([])
+  }, [comments])
 
   const EmojiButtonClick = (): void => {
     setEmojiClick((cur) => !cur)
@@ -122,6 +135,7 @@ function Comment(): JSX.Element {
     } = event
     setText(value)
   }
+
   const onSubmit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault()
 
@@ -132,8 +146,8 @@ function Comment(): JSX.Element {
       image: 'https://avatars.githubusercontent.com/u/81083461?v=4',
       commentWriter: 'jinokim98',
       comment: text,
-      time: 60,
-      heartCount: 1,
+      time: 1,
+      heartCount: 0,
       isHeartButtonClick: false,
     }
 
@@ -141,71 +155,18 @@ function Comment(): JSX.Element {
     setText('')
     dispatch(EnrollCommentAction(newComment))
   }
+
   const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>): void => {
     if (event.key === 'Enter') event.preventDefault()
   }
-  const onHeartButtonClick = (idx: number): void => {
-    setHeartButtonStates((prev) => {
-      const newStates = [...prev]
-      newStates[idx].active = !newStates[idx].active
-      return newStates
-    })
-    setCurHeartButtonidx(idx)
-  }
 
-  // 좋아요 기능 해결하지 못함....
-  useEffect(() => {
-    const loadHeartButtonStates: HeartButtonState[] = enrolledComments.map(
-      (item) => ({
-        id: item.id,
-        active: item.isHeartButtonClick,
-      })
-    )
-    setComments(enrolledComments)
-    setHeartButtonStates(loadHeartButtonStates)
-  }, [comments, renderCounter])
-
-  useEffect(() => {
-    if (curHeartButtonidx === -1) return
-    console.log(curHeartButtonidx)
-
-    const { id, active } = heartButtonStates[curHeartButtonidx]
-    console.log(id, active)
-
-    dispatch(ClickHeartButton(id, active))
-    setRenderCounter((pre) => pre + 1)
-  }, [heartButtonStates[curHeartButtonidx], curHeartButtonidx])
   return (
     <>
       <CommentContainer>
-        {comments.map((item, idx) => (
-          <Row key={`${item.id}`}>
-            <CommentProfile src={item.image} />
-            <CommentMain>
-              <Maintext>
-                <CommentNickname to="/profile/jinokim98">
-                  {item.commentWriter}
-                </CommentNickname>
-                <CommentDesc>{item.comment}</CommentDesc>
-              </Maintext>
-              <Rest>
-                <Time>{`${item.time}분전`}</Time>
-                <HeartCount>{`좋아요 ${item.heartCount}개`}</HeartCount>
-                <ReplyButton>댓글 달기</ReplyButton>
-              </Rest>
-              <ViewReply></ViewReply>
-            </CommentMain>
-            <HeartButton
-              onClick={() => {
-                onHeartButtonClick(idx)
-              }}
-              key={`${item.id}`}
-              active={item.isHeartButtonClick}
-            >
-              <FontAwesomeIcon icon={faHeart} />
-            </HeartButton>
-          </Row>
-        ))}
+        {comments.length > 0 &&
+          comments.map((comment, idx) => (
+            <CommentComponent key={idx} comment={comment} />
+          ))}
       </CommentContainer>
       <WriteCommentContainer onSubmit={onSubmit}>
         <Emoji onClick={EmojiButtonClick}>
@@ -233,6 +194,50 @@ function Comment(): JSX.Element {
         </EnrollComment>
       </WriteCommentContainer>
     </>
+  )
+}
+
+interface CommentComponentProps {
+  comment: CommentContent
+}
+
+function CommentComponent(props: CommentComponentProps): JSX.Element {
+  const [likes, setLikes] = useState<number>(props.comment.heartCount)
+  const [liked, setLiked] = useState<boolean>(props.comment.isHeartButtonClick)
+  const dispatch = useDispatch()
+
+  const handleLikeClick = (): void => {
+    liked ? setLikes(likes - 1) : setLikes(likes + 1)
+    setLiked(!liked)
+    dispatch(ClickHeartButton(props.comment.id, props.comment))
+  }
+
+  return (
+    <Row>
+      <CommentProfile src={props.comment.image} />
+      <CommentMain>
+        <Maintext>
+          <CommentNickname to="/profile/jinokim98">
+            {props.comment.commentWriter}
+          </CommentNickname>
+          <CommentDesc>{props.comment.comment}</CommentDesc>
+        </Maintext>
+        <Rest>
+          <Time>{`${props.comment.time}분전`}</Time>
+          <HeartCount>{`좋아요 ${likes}개`}</HeartCount>
+          <ReplyButton>댓글 달기</ReplyButton>
+        </Rest>
+        <ViewReply></ViewReply>
+      </CommentMain>
+      <HeartButton
+        onClick={() => {
+          handleLikeClick()
+        }}
+        active={liked}
+      >
+        <FontAwesomeIcon icon={faHeart} />
+      </HeartButton>
+    </Row>
   )
 }
 
@@ -313,14 +318,11 @@ const PostImageContainer = styled.div`
   margin-top: 20px;
   margin-right: 50px;
 `
-const PostImage = styled.img`
-  object-fit: cover;
-  border-radius: 10px;
-`
+
 const PostText = styled.p`
   width: 300px;
   height: 400px;
-  margin-top: 20px;
+  margin-top: 40px;
   padding: 8px 12px;
   border: 1px solid #98a2b3;
   border-radius: 8px;
@@ -423,28 +425,3 @@ const EnrollComment = styled.button<{ disabled: boolean }>`
   color: ${(props) => (props.disabled ? '#b1e2f1' : theme.colors.primaryColor)};
   font-weight: 700;
 `
-
-/*
-const commentContents: CommentContent[] = [
-    {
-      image: 'https://avatars.githubusercontent.com/u/81083461?v=4',
-      commentWriter: 'jinokim98',
-      comment: '와 정말 재밌겠다.',
-      time: 4,
-      heartCount: 1,
-    },
-    {
-      image: 'https://avatars.githubusercontent.com/u/81083461?v=4',
-      commentWriter: 'jinokim98',
-      comment: '와 정말 멋있다.',
-      time: 30,
-      heartCount: 1,
-    },
-    {
-      image: 'https://avatars.githubusercontent.com/u/81083461?v=4',
-      commentWriter: 'jinokim98',
-      comment: '와 정말 좋다.',
-      time: 60,
-      heartCount: 1,
-    },
-  ] */

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, type ChangeEvent } from 'react'
+import React, { useState, useEffect, useRef, type ChangeEvent } from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
 import { Link } from 'react-router-dom'
@@ -6,7 +6,7 @@ import CarouselSelectPicture from './../../components/carouselSelectPicture'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faImage } from '@fortawesome/free-solid-svg-icons'
 import { useDispatch } from 'react-redux'
-import { EnrollImages } from '../../modules/post'
+import { ChangePlace, EnrollImages } from '../../modules/post'
 import { gps } from 'exifr'
 import { type Post } from '../../types/postTypes'
 import ImageEditor from '../../components/imageEditor'
@@ -22,20 +22,27 @@ interface SelectPictureProps {
   mapApiKey: string
 }
 
+interface PlaceInfo {
+  placeName: string
+  address: string
+  gpsInfo: GPSInfo
+}
+
 export default function SelectPicture(props: SelectPictureProps): JSX.Element {
   const { kakao } = window
   const [selectedFiles, setSelectedFiles] = useState<File[] | undefined>(
     undefined
   )
   // 최적화 필요
-  const [imageList, setImageList] = useState<Post[]>([])
+  const [postList, setPostList] = useState<Post[]>([])
   const [imageUrls, setImageUrls] = useState<string[] | undefined>(undefined)
   const [imgTagList, setImgTagList] = useState<JSX.Element[]>()
   const [imgGPSInfoList, setImgGPSInfoList] = useState<GPSInfo[] | []>([])
-  const [addresses, setAddresses] = useState<string[] | []>([])
+  const [addresses, setAddresses] = useState<PlaceInfo[] | []>([])
   const [carouselIndex, setCarouselIndex] = useState<number>(0)
   const [modalOpen, setModalOpen] = useState<boolean>(false)
   const dispatch = useDispatch()
+  const mapRef = useRef(null)
 
   const fileSelectedHandler = async (
     event: ChangeEvent<HTMLInputElement>
@@ -97,7 +104,7 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
   useEffect(() => {
     const newImgTagList: JSX.Element[] = []
     const newPosts: Post[] = []
-    const newAddressList: string[] = []
+    const newAddressList: PlaceInfo[] = []
     const fileLength = selectedFiles?.length
 
     const processImages = async (): Promise<void> => {
@@ -110,13 +117,12 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
           const imgTag = (
             <CarouselImageProps key={i} src={imageUrls[i]} alt="img" />
           )
-          const address = await getPlacesName(imgGPSInfoList[i])
-          console.log(address)
+          const placeInfo = await getPlacesName(imgGPSInfoList[i])
 
           newPosts.push({
             picture: selectedFiles[i],
             // hashtagAuto: { hashtagAuto: `#${address}`, text: '' },
-            hashtagAuto: { hashtagAuto: `#${dummyData[i]}`, text: '' },
+            hashtagAuto: { hashtagAuto: `#${placeInfo.placeName}`, text: '' },
             tag: imgTag,
             LatLng: {
               lat: imgGPSInfoList[i].latitude,
@@ -124,10 +130,10 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
             },
           })
           newImgTagList.push(imgTag)
-          newAddressList.push(address)
+          newAddressList.push(placeInfo)
         }
         setImgTagList(newImgTagList)
-        setImageList(newPosts)
+        setPostList(newPosts)
         setAddresses(newAddressList)
         dispatch(EnrollImages(newPosts))
       }
@@ -138,38 +144,101 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
     })
   }, [imageUrls])
 
-  const getPlacesName = async (place: GPSInfo): Promise<string> => {
+  const getPlacesName = async (place: GPSInfo): Promise<PlaceInfo> => {
     try {
       const geocoder = new kakao.maps.services.Geocoder()
-      let address = ''
 
-      const callback = (result: any, status: any): string => {
-        console.log(status)
+      const getAddress = async (): Promise<PlaceInfo> => {
+        return await new Promise<PlaceInfo>((resolve) => {
+          const callback = (result: any, status: any): void => {
+            console.log(status)
 
-        if (status === kakao.maps.services.Status.OK) {
-          console.log(result)
-
-          address = result[0].address.address_name
-          console.log(address)
-          return address
-        }
-        return ''
+            if (status === kakao.maps.services.Status.OK) {
+              const addressResult = result[0].address.address_name
+              const buildingName = result[0].road_address.building_name
+              resolve({
+                placeName: buildingName,
+                address: addressResult,
+                gpsInfo: {
+                  latitude: place.latitude,
+                  longitude: place.longitude,
+                },
+              })
+            }
+          }
+          geocoder.coord2Address(place.longitude, place.latitude, callback)
+        })
       }
 
-      geocoder.coord2Address(place.longitude, place.latitude, callback)
-      return address
+      const placeInfo: PlaceInfo = await getAddress()
+      return placeInfo
     } catch (error) {
       console.log(error)
-      return ''
+      return {
+        placeName: '',
+        address: '',
+        gpsInfo: { latitude: -1, longitude: -1 },
+      }
     }
   }
 
-  const dummyData = ['김포국제공항', '제주공항', '동현식당', '스누피가든']
+  const searchPlace = async (idx: number): Promise<void> => {
+    const keyword = window.prompt('장소 입력')
+    const places = new kakao.maps.services.Places()
+
+    const getPlace = async (): Promise<PlaceInfo> => {
+      return await new Promise<PlaceInfo>((resolve) => {
+        if (keyword !== null) {
+          places.keywordSearch(keyword, (result, status) => {
+            if (status === kakao.maps.services.Status.OK) {
+              console.log(result)
+
+              resolve({
+                placeName: result[0].place_name,
+                address: result[0].road_address_name,
+                gpsInfo: {
+                  latitude: Number(result[0].y),
+                  longitude: Number(result[0].x),
+                },
+              })
+            }
+          })
+        }
+      })
+    }
+
+    const result = await getPlace()
+    const updatedAddresses = addresses
+    updatedAddresses[idx].address = result.address
+    updatedAddresses[idx].placeName = result.placeName
+
+    const updatedGPSInfoList = imgGPSInfoList
+    updatedGPSInfoList[idx] = result.gpsInfo
+
+    setAddresses(updatedAddresses)
+    setImgGPSInfoList(updatedGPSInfoList)
+  }
+
+  const enrollHashtagAuto = (): void => {
+    const newPost = postList.map((post, idx) => {
+      return {
+        ...post,
+        hashtagAuto: { hashtagAuto: `#${addresses[idx].placeName}`, text: '' },
+        LatLng: {
+          lat: imgGPSInfoList[idx].latitude,
+          lng: imgGPSInfoList[idx].longitude,
+        },
+      }
+    })
+    console.log(newPost)
+
+    dispatch(ChangePlace(newPost))
+  }
 
   // test용 Effect
   useEffect(() => {
-    console.log(imageList)
-  }, [imageList])
+    console.log(postList)
+  }, [postList])
   return (
     <>
       <Title>사진 선택</Title>
@@ -224,6 +293,7 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
                   lng: imgGPSInfoList[carouselIndex].longitude,
                 }}
                 style={{ width: '100%', height: '100%' }}
+                ref={mapRef}
               >
                 <MapMarker
                   position={{
@@ -235,11 +305,25 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
             ) : null}
           </CarouselContainer>
           <LocationName>
-            {addresses.length > 0 ? `#${dummyData[carouselIndex]}` : ' '}
+            {addresses.length > 0 ? (
+              addresses[carouselIndex].placeName !== '' ? (
+                `#${addresses[carouselIndex].placeName}`
+              ) : (
+                <SearchPlaceButton
+                  onClick={() => {
+                    searchPlace(carouselIndex).catch((err) => {
+                      console.log(err)
+                    })
+                  }}
+                >
+                  장소 찾기
+                </SearchPlaceButton>
+              )
+            ) : null}
           </LocationName>
           <LocationAddress>
             {addresses.length > 0
-              ? addresses[carouselIndex]
+              ? addresses[carouselIndex].address
               : '사진을 입력하세요'}
           </LocationAddress>
         </LocationGroup>
@@ -247,7 +331,7 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
       <ButtonContainer>
         <Blank />
         <NextButtonLink to="/post/create/text">
-          <NextButton>{`다음으로`}</NextButton>
+          <NextButton onClick={enrollHashtagAuto}>{`다음으로`}</NextButton>
         </NextButtonLink>
         <Blank />
       </ButtonContainer>
@@ -369,4 +453,11 @@ const NextButton = styled.button`
   color: ${theme.colors.white};
   border-radius: 8px;
   font-size: 16px;
+`
+
+const SearchPlaceButton = styled.button`
+  padding: 8px;
+  background-color: ${theme.colors.primaryColor};
+  color: white;
+  border-radius: 5px;
 `

@@ -56,7 +56,7 @@ export default function Sidebar(): JSX.Element {
       >
         <Profile src="https://avatars.githubusercontent.com/u/81083461?v=4" />
         <NicknameContainer>
-          <Nickname>Jinhokim98</Nickname>
+          <Nickname>Jinokim98</Nickname>
           <Introduce>김진호</Introduce>
         </NicknameContainer>
       </UserContainer>
