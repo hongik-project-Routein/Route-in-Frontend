@@ -69,3 +69,9 @@ const RightButton = styled.button`
   border-radius: 50%;
   color: ${theme.colors.white};
 `
+const CarouselImageProps = styled.img`
+  width: 350px;
+  height: 350px;
+  object-fit: cover;
+  border-radius: 10px;
+`

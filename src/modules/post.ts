@@ -1,4 +1,4 @@
-import { type PostSendToBackend, type Post } from '../types/postTypes'
+import { type PostSendToBackend, type Pin } from '../types/postTypes'
 import { request } from '../util/axios'
 
 const ENROLLIMAGE = 'post/ENROLLIMAGE' as const
@@ -13,8 +13,8 @@ interface HashtagAndText {
 }
 
 export const EnrollImages = (
-  diff: Post[]
-): { type: typeof ENROLLIMAGE; payload: Post[] } => {
+  diff: Pin[]
+): { type: typeof ENROLLIMAGE; payload: Pin[] } => {
   return {
     type: ENROLLIMAGE,
     payload: diff,
@@ -22,19 +22,19 @@ export const EnrollImages = (
 }
 
 export const ChangeHashtagAndText = (
-  posts: Post[],
+  posts: Pin[],
   hashtagAndText: HashtagAndText
 ): {
   type: typeof CHANGEHASHTAGANDTEXT
-  payload: { posts: Post[]; hashtagAndText: HashtagAndText }
+  payload: { posts: Pin[]; hashtagAndText: HashtagAndText }
 } => ({
   type: CHANGEHASHTAGANDTEXT,
   payload: { posts, hashtagAndText },
 })
 
 export const ChangePlace = (
-  post: Post[]
-): { type: typeof CHANGEPLACE; payload: Post[] } => {
+  post: Pin[]
+): { type: typeof CHANGEPLACE; payload: Pin[] } => {
   return {
     type: CHANGEPLACE,
     payload: post,
@@ -61,7 +61,7 @@ type PostAction =
   | ReturnType<typeof SavePost>
 
 interface PostState {
-  post: Post[]
+  post: Pin[]
   hashtagAndText: HashtagAndText
 }
 

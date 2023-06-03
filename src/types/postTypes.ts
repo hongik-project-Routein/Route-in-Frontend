@@ -1,4 +1,4 @@
-export interface Post {
+export interface Pin {
   picture: File
   hashtagAuto: HashtagAutoAndText
   tag: JSX.Element
@@ -13,7 +13,7 @@ interface HashtagAutoAndText {
 export interface PostSendToBackend {
   writer: string
   text: string
-  posts: Post[]
+  posts: Pin[]
 }
 
 export interface LoadPostMainPage {

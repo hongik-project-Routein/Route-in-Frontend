@@ -8,13 +8,14 @@ import { faImage } from '@fortawesome/free-solid-svg-icons'
 import { useDispatch } from 'react-redux'
 import { ChangePlace, EnrollImages } from '../../modules/post'
 import { gps } from 'exifr'
-import { type Post } from '../../types/postTypes'
+import { type Pin } from '../../types/postTypes'
 import ImageEditor from '../../components/imageEditor'
 import { Map, MapMarker } from 'react-kakao-maps-sdk'
 
 interface GPSInfo {
   latitude: number
   longitude: number
+  placeId: number
 }
 
 interface SelectPictureProps {
@@ -34,13 +35,14 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
     undefined
   )
   // 최적화 필요
-  const [postList, setPostList] = useState<Post[]>([])
+  const [postList, setPostList] = useState<Pin[]>([])
   const [imageUrls, setImageUrls] = useState<string[] | undefined>(undefined)
   const [imgTagList, setImgTagList] = useState<JSX.Element[]>()
   const [imgGPSInfoList, setImgGPSInfoList] = useState<GPSInfo[] | []>([])
   const [addresses, setAddresses] = useState<PlaceInfo[] | []>([])
   const [carouselIndex, setCarouselIndex] = useState<number>(0)
   const [modalOpen, setModalOpen] = useState<boolean>(false)
+  const [searchModalOpen, setSearchModalOpen] = useState<boolean>(false)
   const dispatch = useDispatch()
   const mapRef = useRef(null)
 
@@ -66,6 +68,7 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
           : newGPSInfo.push({
               latitude: NaN,
               longitude: NaN,
+              placeId: NaN,
             })
       }
       setSelectedFiles(newFiles)
@@ -88,7 +91,11 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
     try {
       const exifData = await gps(file)
       if (exifData.latitude !== null && exifData.longitude !== null) {
-        return { latitude: exifData.latitude, longitude: exifData.longitude }
+        return {
+          latitude: exifData.latitude,
+          longitude: exifData.longitude,
+          placeId: NaN,
+        }
       }
     } catch (error) {
       console.error('Error extracting location from image:', error)
@@ -100,10 +107,14 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
     setModalOpen(true)
   }
 
+  const runSearchPlace = (): void => {
+    setSearchModalOpen(true)
+  }
+
   // url이 변경됐을 때만 실행 => 사진을 넣을 때만 실행되길 원함
   useEffect(() => {
     const newImgTagList: JSX.Element[] = []
-    const newPosts: Post[] = []
+    const newPosts: Pin[] = []
     const newAddressList: PlaceInfo[] = []
     const fileLength = selectedFiles?.length
 
@@ -154,14 +165,35 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
             console.log(status)
 
             if (status === kakao.maps.services.Status.OK) {
+              console.log(result)
+
+              // 결과에서 첫 번째의 주소와 장소 이름을 얻는다. placeId는 Geocoder서비스로 얻을 수 없어서 NaN
               const addressResult = result[0].address.address_name
-              const buildingName = result[0].road_address.building_name
+              const buildingName = result[0].road_address.building_name.replace(
+                /\s+/g,
+                '_'
+              )
+              let placeId = NaN
+              if (buildingName !== '') {
+                const places = new kakao.maps.services.Places()
+
+                // 여기에서 애로사항: 과연 buildingName으로 장소를 검색한 결과 첫 번째가 해당 장소일까?
+                places.keywordSearch(
+                  result[0].road_address.building_name,
+                  (result, status) => {
+                    if (status === kakao.maps.services.Status.OK) {
+                      placeId = Number(result[0].id)
+                    }
+                  }
+                )
+              }
               resolve({
                 placeName: buildingName,
                 address: addressResult,
                 gpsInfo: {
                   latitude: place.latitude,
                   longitude: place.longitude,
+                  placeId,
                 },
               })
             }
@@ -177,46 +209,9 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
       return {
         placeName: '',
         address: '',
-        gpsInfo: { latitude: -1, longitude: -1 },
+        gpsInfo: { latitude: -1, longitude: -1, placeId: -1 },
       }
     }
-  }
-
-  const searchPlace = async (idx: number): Promise<void> => {
-    const keyword = window.prompt('장소 입력')
-    const places = new kakao.maps.services.Places()
-
-    const getPlace = async (): Promise<PlaceInfo> => {
-      return await new Promise<PlaceInfo>((resolve) => {
-        if (keyword !== null) {
-          places.keywordSearch(keyword, (result, status) => {
-            if (status === kakao.maps.services.Status.OK) {
-              console.log(result)
-
-              resolve({
-                placeName: result[0].place_name,
-                address: result[0].road_address_name,
-                gpsInfo: {
-                  latitude: Number(result[0].y),
-                  longitude: Number(result[0].x),
-                },
-              })
-            }
-          })
-        }
-      })
-    }
-
-    const result = await getPlace()
-    const updatedAddresses = addresses
-    updatedAddresses[idx].address = result.address
-    updatedAddresses[idx].placeName = result.placeName
-
-    const updatedGPSInfoList = imgGPSInfoList
-    updatedGPSInfoList[idx] = result.gpsInfo
-
-    setAddresses(updatedAddresses)
-    setImgGPSInfoList(updatedGPSInfoList)
   }
 
   const enrollHashtagAuto = (): void => {
@@ -311,15 +306,23 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
               ) : (
                 <SearchPlaceButton
                   onClick={() => {
-                    searchPlace(carouselIndex).catch((err) => {
-                      console.log(err)
-                    })
+                    runSearchPlace()
                   }}
                 >
                   장소 찾기
                 </SearchPlaceButton>
               )
             ) : null}
+            {searchModalOpen && (
+              <SearchPlaceModal
+                setModalOpen={setSearchModalOpen}
+                index={carouselIndex}
+                addresses={addresses}
+                setAddresses={setAddresses}
+                imgGPSInfoList={imgGPSInfoList}
+                setImgGPSInfoList={setImgGPSInfoList}
+              />
+            )}
           </LocationName>
           <LocationAddress>
             {addresses.length > 0
@@ -338,6 +341,256 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
     </>
   )
 }
+
+interface SearchPlaceModalProps {
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+  index: number
+  addresses: [] | PlaceInfo[]
+  setAddresses: React.Dispatch<React.SetStateAction<[] | PlaceInfo[]>>
+  imgGPSInfoList: GPSInfo[]
+  setImgGPSInfoList: React.Dispatch<React.SetStateAction<[] | GPSInfo[]>>
+}
+
+function SearchPlaceModal(props: SearchPlaceModalProps): JSX.Element {
+  const [keyword, setKeyword] = useState<string>('')
+  const [searchResults, setSearchResults] = useState<undefined | any[]>(
+    undefined
+  )
+  const [resultIndex, setResultIndex] = useState<number>(0)
+
+  const onChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    setKeyword(event.target.value)
+  }
+
+  const closeModal = (): void => {
+    props.setModalOpen(false)
+  }
+
+  const modalRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handler = (event: MouseEvent): void => {
+      if (
+        modalRef.current == null ||
+        !modalRef.current.contains(event.target as HTMLElement)
+      ) {
+        props.setModalOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handler)
+    return () => {
+      document.removeEventListener('mousedown', handler)
+    }
+  })
+
+  const searchPlace = (): void => {
+    const places = new kakao.maps.services.Places()
+
+    places.keywordSearch(keyword, (result, status) => {
+      if (status === kakao.maps.services.Status.OK) {
+        console.log(result)
+
+        setSearchResults(result)
+      }
+    })
+  }
+
+  const clickPlace = (index: number): void => {
+    setResultIndex(index)
+  }
+
+  const setPlaceInfo = (): void => {
+    if (searchResults !== undefined) {
+      const updatedAddresses = props.addresses
+
+      updatedAddresses[props.index].address =
+        searchResults[resultIndex].road_address_name
+
+      updatedAddresses[props.index].placeName = searchResults[
+        resultIndex
+      ].place_name.replace(/\s+/g, '_')
+
+      const updatedGPSInfoList = props.imgGPSInfoList
+      updatedGPSInfoList[props.index] = {
+        latitude: Number(searchResults[resultIndex].y),
+        longitude: Number(searchResults[resultIndex].x),
+        placeId: Number(searchResults[resultIndex].id),
+      }
+
+      props.setAddresses(updatedAddresses)
+      props.setImgGPSInfoList(updatedGPSInfoList)
+      props.setModalOpen(false)
+    }
+  }
+
+  return (
+    <SearchPlaceModalContainer ref={modalRef}>
+      <ModalHeader>
+        <CloseButton onClick={closeModal}>X</CloseButton>
+      </ModalHeader>
+      <SearchBarContainer>
+        <SearchBar type="text" value={keyword} onChange={onChange}></SearchBar>
+        <SearchButton onClick={searchPlace} disabled={keyword === ''}>
+          검색
+        </SearchButton>
+      </SearchBarContainer>
+      <SearchResultContainer>
+        <PlaceList>
+          {searchResults?.map((result, idx) => (
+            <SearchResultRow
+              key={idx}
+              onClick={() => {
+                clickPlace(idx)
+              }}
+              current={resultIndex === idx}
+            >
+              <PlaceName>{result.place_name}</PlaceName>
+              <Address>{result.road_address_name}</Address>
+            </SearchResultRow>
+          ))}
+        </PlaceList>
+        <MapContainer>
+          {searchResults !== undefined ? (
+            <Map
+              center={{
+                lat: Number(searchResults[resultIndex].y),
+                lng: Number(searchResults[resultIndex].x),
+              }}
+              style={{ width: '100%', height: '100%' }}
+              draggable={false}
+              zoomable={false}
+            >
+              <MapMarker
+                position={{
+                  lat: Number(searchResults[resultIndex].y),
+                  lng: Number(searchResults[resultIndex].x),
+                }}
+              ></MapMarker>
+            </Map>
+          ) : null}
+        </MapContainer>
+      </SearchResultContainer>
+      <SelectPlaceButton
+        onClick={setPlaceInfo}
+        disabled={searchResults === undefined}
+      >
+        선택
+      </SelectPlaceButton>
+    </SearchPlaceModalContainer>
+  )
+}
+
+const SearchPlaceModalContainer = styled.div`
+  position: fixed;
+  top: 55%;
+  left: 55%;
+  transform: translate(-50%, -50%);
+
+  height: 430px;
+  z-index: 999;
+
+  background-color: rgb(0, 0, 0);
+  border: 1px solid black;
+  border-radius: 8px;
+`
+
+const ModalHeader = styled.header`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  height: 30px;
+  padding-top: 5px;
+`
+
+const SearchBarContainer = styled.div`
+  display: flex;
+  width: 600px;
+  height: 50px;
+  margin-left: 12px;
+`
+
+const SearchBar = styled.input`
+  width: 300px;
+  height: 30px;
+  margin-right: 30px;
+  padding: 0 5px;
+  background-color: white;
+`
+
+const SearchButton = styled.button<{ disabled: boolean }>`
+  width: 50px;
+  height: 30px;
+  background-color: ${(props) =>
+    props.disabled ? '#d9d9d9' : theme.colors.primaryColor};
+  color: white;
+  &:hover {
+    cursor: ${(props) => (props.disabled ? 'default' : 'pointer')};
+  }
+`
+
+const SearchResultContainer = styled.div`
+  display: flex;
+  width: 600px;
+  height: 300px;
+  padding: 8px 12px;
+`
+
+const PlaceList = styled.div`
+  width: 200px;
+  height: 100%;
+  margin-right: 30px;
+  padding: 8px 12px;
+  background-color: white;
+  overflow-y: scroll;
+`
+
+const SearchResultRow = styled.div<{ current: boolean }>`
+  margin-bottom: 10px;
+  padding: 3px;
+  background-color: ${(props) => (props.current ? '#d9d9d9' : 'white')};
+  border-bottom: 1px solid black;
+  &:hover {
+    cursor: pointer;
+    background-color: #d9d9d9;
+  }
+`
+
+const PlaceName = styled.p`
+  font-size: 14px;
+  margin-bottom: 2px;
+`
+
+const Address = styled.p`
+  font-size: 10px;
+`
+
+const MapContainer = styled.div`
+  width: 350px;
+  height: 100%;
+  background-color: white;
+`
+
+const CloseButton = styled.button`
+  margin-right: 20px;
+  color: white;
+  &:hover {
+    cursor: pointer;
+  }
+`
+
+const SelectPlaceButton = styled.button<{ disabled: boolean }>`
+  width: 50px;
+  height: 30px;
+  margin-left: 12px;
+  background-color: ${(props) =>
+    props.disabled ? '#d9d9d9' : theme.colors.primaryColor};
+  color: white;
+  &:hover {
+    cursor: ${(props) => (props.disabled ? 'default' : 'pointer')};
+  }
+`
 
 const Title = styled.h1`
   color: ${theme.colors.primaryColor};
@@ -461,3 +714,42 @@ const SearchPlaceButton = styled.button`
   color: white;
   border-radius: 5px;
 `
+
+/*
+console.log(result)
+
+                  resolve({
+                    placeName: result[0].place_name,
+                    address: result[0].road_address_name,
+                    gpsInfo: {
+                      latitude: Number(result[0].y),
+                      longitude: Number(result[0].x),
+                    },
+                  })
+*/
+
+/* 
+const searchPlace = async (): Promise<void> => {
+    const places = new kakao.maps.services.Places()
+    console.log('jhi')
+
+    const getPlace =
+      async (): Promise<kakao.maps.services.PlacesSearchResult> => {
+        return await new Promise<kakao.maps.services.PlacesSearchResult>(
+          (resolve) => {
+            if (keyword !== '') {
+              places.keywordSearch(keyword, (result, status) => {
+                if (status === kakao.maps.services.Status.OK) {
+                  resolve(result)
+                }
+              })
+            }
+          }
+        )
+      }
+
+    const result = await getPlace()
+    console.log(result)
+
+    setSearchResults(result)
+  } */

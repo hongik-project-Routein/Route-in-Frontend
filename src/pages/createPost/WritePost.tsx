@@ -8,7 +8,7 @@ import { type RootState } from '../../modules'
 import { ChangeHashtagAndText } from '../../modules/post'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMinus } from '@fortawesome/free-solid-svg-icons'
-import { type Post } from '../../types/postTypes'
+import { type Pin } from '../../types/postTypes'
 
 // 자동 생성된 해시태그의 이름과 값
 interface HashtagAutoAndText {
@@ -65,7 +65,7 @@ export default function WritePost(): JSX.Element {
         }
       })
     })
-    const newPosts: Post[] = posts.map((post, idx) => {
+    const newPosts: Pin[] = posts.map((post, idx) => {
       return {
         ...post,
         hashtagAuto: hashtagAutoTextList[idx],
