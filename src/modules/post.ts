@@ -13,31 +13,39 @@ interface HashtagAndText {
 }
 
 export const EnrollImages = (
-  diff: Pin[]
-): { type: typeof ENROLLIMAGE; payload: Pin[] } => {
+  pins: Pin[],
+  imgUrls: string[]
+): {
+  type: typeof ENROLLIMAGE
+  payload: { pins: Pin[]; imgUrls: string[] }
+} => {
   return {
     type: ENROLLIMAGE,
-    payload: diff,
+    payload: { pins, imgUrls },
   }
 }
 
 export const ChangeHashtagAndText = (
-  posts: Pin[],
+  pins: Pin[],
   hashtagAndText: HashtagAndText
 ): {
   type: typeof CHANGEHASHTAGANDTEXT
-  payload: { posts: Pin[]; hashtagAndText: HashtagAndText }
+  payload: { pins: Pin[]; hashtagAndText: HashtagAndText }
 } => ({
   type: CHANGEHASHTAGANDTEXT,
-  payload: { posts, hashtagAndText },
+  payload: { pins, hashtagAndText },
 })
 
 export const ChangePlace = (
-  post: Pin[]
-): { type: typeof CHANGEPLACE; payload: Pin[] } => {
+  pins: Pin[],
+  imgUrls: string[]
+): {
+  type: typeof CHANGEPLACE
+  payload: { pins: Pin[]; imgUrls: string[] }
+} => {
   return {
     type: CHANGEPLACE,
-    payload: post,
+    payload: { pins, imgUrls },
   }
 }
 
@@ -61,16 +69,18 @@ type PostAction =
   | ReturnType<typeof SavePost>
 
 interface PostState {
-  post: Pin[]
+  pins: Pin[]
   hashtagAndText: HashtagAndText
+  imgUrls: string[]
 }
 
 const initialState: PostState = {
-  post: [],
+  pins: [],
   hashtagAndText: {
     hashtag: [],
     text: '',
   },
+  imgUrls: [],
 }
 
 function changePostReducer(
@@ -79,14 +89,23 @@ function changePostReducer(
 ): PostState {
   switch (action.type) {
     case ENROLLIMAGE:
-      return { post: action.payload, hashtagAndText: { hashtag: [], text: '' } }
+      return {
+        pins: action.payload.pins,
+        hashtagAndText: { hashtag: [], text: '' },
+        imgUrls: action.payload.imgUrls,
+      }
     case CHANGEHASHTAGANDTEXT:
       return {
-        post: action.payload.posts,
+        pins: action.payload.pins,
         hashtagAndText: action.payload.hashtagAndText,
+        imgUrls: state.imgUrls,
       }
     case CHANGEPLACE:
-      return { post: action.payload, hashtagAndText: { hashtag: [], text: '' } }
+      return {
+        pins: action.payload.pins,
+        hashtagAndText: { hashtag: [], text: '' },
+        imgUrls: action.payload.imgUrls,
+      }
     case SENDTOBACKEND:
       return state
     default:

@@ -8,7 +8,7 @@ import {
 import theme from '../styles/Theme'
 
 interface CarouselProps {
-  items: JSX.Element[]
+  items: string[]
   setCarouselIndex: React.Dispatch<React.SetStateAction<number>>
 }
 
@@ -35,7 +35,7 @@ export default function CarouselSelectPicture(
       <LeftButton onClick={handlePrevClick}>
         <FontAwesomeIcon icon={faChevronLeft} />
       </LeftButton>
-      <div>{props.items[currentIndex]}</div>
+      <CarouselImage src={props.items[currentIndex]} alt="img" />
       <RightButton onClick={handleNextClick}>
         <FontAwesomeIcon icon={faChevronRight} />
       </RightButton>
@@ -69,7 +69,8 @@ const RightButton = styled.button`
   border-radius: 50%;
   color: ${theme.colors.white};
 `
-const CarouselImageProps = styled.img`
+
+const CarouselImage = styled.img`
   width: 350px;
   height: 350px;
   object-fit: cover;

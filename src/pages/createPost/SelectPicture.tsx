@@ -35,9 +35,8 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
     undefined
   )
   // 최적화 필요
-  const [postList, setPostList] = useState<Pin[]>([])
+  const [pinList, setPinList] = useState<Pin[]>([])
   const [imageUrls, setImageUrls] = useState<string[] | undefined>(undefined)
-  const [imgTagList, setImgTagList] = useState<JSX.Element[]>()
   const [imgGPSInfoList, setImgGPSInfoList] = useState<GPSInfo[] | []>([])
   const [addresses, setAddresses] = useState<PlaceInfo[] | []>([])
   const [carouselIndex, setCarouselIndex] = useState<number>(0)
@@ -113,8 +112,7 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
 
   // url이 변경됐을 때만 실행 => 사진을 넣을 때만 실행되길 원함
   useEffect(() => {
-    const newImgTagList: JSX.Element[] = []
-    const newPosts: Pin[] = []
+    const newPins: Pin[] = []
     const newAddressList: PlaceInfo[] = []
     const fileLength = selectedFiles?.length
 
@@ -125,28 +123,22 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
         imageUrls !== undefined
       ) {
         for (let i = 0; i < fileLength; i++) {
-          const imgTag = (
-            <CarouselImageProps key={i} src={imageUrls[i]} alt="img" />
-          )
           const placeInfo = await getPlacesName(imgGPSInfoList[i])
 
-          newPosts.push({
+          newPins.push({
             picture: selectedFiles[i],
-            // hashtagAuto: { hashtagAuto: `#${address}`, text: '' },
             hashtagAuto: { hashtagAuto: `#${placeInfo.placeName}`, text: '' },
-            tag: imgTag,
             LatLng: {
               lat: imgGPSInfoList[i].latitude,
               lng: imgGPSInfoList[i].longitude,
             },
+            placeId: placeInfo.gpsInfo.placeId,
           })
-          newImgTagList.push(imgTag)
           newAddressList.push(placeInfo)
         }
-        setImgTagList(newImgTagList)
-        setPostList(newPosts)
+        setPinList(newPins)
         setAddresses(newAddressList)
-        dispatch(EnrollImages(newPosts))
+        dispatch(EnrollImages(newPins, imageUrls))
       }
     }
 
@@ -215,7 +207,8 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
   }
 
   const enrollHashtagAuto = (): void => {
-    const newPost = postList.map((post, idx) => {
+    if (imageUrls === undefined) return
+    const newPost = pinList.map((post, idx) => {
       return {
         ...post,
         hashtagAuto: { hashtagAuto: `#${addresses[idx].placeName}`, text: '' },
@@ -227,13 +220,13 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
     })
     console.log(newPost)
 
-    dispatch(ChangePlace(newPost))
+    dispatch(ChangePlace(newPost, imageUrls))
   }
 
   // test용 Effect
   useEffect(() => {
-    console.log(postList)
-  }, [postList])
+    console.log(pinList)
+  }, [pinList])
   return (
     <>
       <Title>사진 선택</Title>
@@ -244,9 +237,9 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
       <GroupContainer>
         <PictureGroup>
           <InputImageContainer>
-            {imgTagList != null ? (
+            {imageUrls != null ? (
               <CarouselSelectPicture
-                items={imgTagList}
+                items={imageUrls}
                 setCarouselIndex={setCarouselIndex}
               />
             ) : (
@@ -272,7 +265,7 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
             )}
           </InputImageContainer>
           <EditPictureButton
-            active={imgTagList !== undefined}
+            active={imageUrls !== undefined}
             onClick={runImageEditor}
           >
             사진편집
@@ -333,7 +326,7 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
       </GroupContainer>
       <ButtonContainer>
         <Blank />
-        <NextButtonLink to="/post/create/text">
+        <NextButtonLink to="/post/create/text" active={imageUrls !== undefined}>
           <NextButton onClick={enrollHashtagAuto}>{`다음으로`}</NextButton>
         </NextButtonLink>
         <Blank />
@@ -646,13 +639,6 @@ const ImageIconDesc = styled.div`
   text-align: center;
 `
 
-const CarouselImageProps = styled.img`
-  width: 350px;
-  height: 350px;
-  object-fit: cover;
-  border-radius: 10px;
-`
-
 // PictureGroup, LocationGroup을 묶어주는 컨테이너
 const GroupContainer = styled.div`
   display: flex;
@@ -696,7 +682,8 @@ const ButtonContainer = styled.div`
 
 const Blank = styled.div``
 
-const NextButtonLink = styled(Link)`
+const NextButtonLink = styled(Link)<{ active: boolean }>`
+  display: ${(props) => (props.active ? 'block' : 'none')};
   margin: auto;
 `
 const NextButton = styled.button`

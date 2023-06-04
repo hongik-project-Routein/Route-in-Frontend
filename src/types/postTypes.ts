@@ -1,19 +1,18 @@
 export interface Pin {
   picture: File
   hashtagAuto: HashtagAutoAndText
-  tag: JSX.Element
   LatLng: { lat: number; lng: number }
+  placeId: number
 }
 
-interface HashtagAutoAndText {
+export interface HashtagAutoAndText {
   hashtagAuto: string
   text: string
 }
 
 export interface PostSendToBackend {
-  writer: string
   text: string
-  posts: Pin[]
+  pins: Pin[]
 }
 
 export interface LoadPostMainPage {
@@ -31,6 +30,39 @@ export interface LoadPostMainPage {
   taggedUsers?: string[]
 
   commentCount: number
+}
+
+export interface LoadPostFromBack {
+  post: {
+    id: number
+    writer: string
+    content: string
+    pin_count: number
+    like_count: number
+    like_users: string[]
+    bookmark_users: string[]
+    comment_count: number
+  }
+  pin: PinFromBack[]
+  user: {
+    image: string
+  }
+  comment: CommentFromBack[]
+}
+
+interface CommentFromBack {
+  id: number
+  updated_at: string
+  post: number
+  writer: string
+  content: string
+  like_count: number
+}
+
+interface PinFromBack {
+  image: string
+  latitude: number
+  longitude: number
 }
 
 export interface LoadPostDetail {

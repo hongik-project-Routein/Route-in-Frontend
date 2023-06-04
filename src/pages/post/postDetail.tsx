@@ -21,8 +21,13 @@ import { ClickHeartButton, EnrollCommentAction } from '../../modules/comment'
 import { v4 as uuidV4 } from 'uuid'
 // import { postDemo, type PostCardData } from '../../dummy/post'
 import KakaoMapPost from '../../components/KakaoMapPost'
-import { type LoadPostDetail, type CommentContent } from '../../types/postTypes'
+import {
+  type LoadPostDetail,
+  type CommentContent,
+  type LoadPostFromBack,
+} from '../../types/postTypes'
 import { request } from '../../util/axios'
+import { coordinatePostDetailType } from '../../modules/types/loadPost'
 // import { useSelector, useDispatch } from 'react-redux'
 
 export default function PostDetail(): JSX.Element {
@@ -41,14 +46,18 @@ function PostDetailArticle(): JSX.Element {
   // }
 
   const [post, setPost] = useState<LoadPostDetail>()
+  const [likes, setLikes] = useState<number>(0)
+  const [liked, setLiked] = useState<boolean>(false)
+
   const loadPost = async (): Promise<void> => {
     try {
-      const loadPost = await request<LoadPostDetail>(
-        'get',
-        'loadpostdetail',
-        postid
-      )
-      setPost(loadPost)
+      if (postid !== undefined) {
+        const loadPost = await request<LoadPostFromBack>(
+          'get',
+          `api/post/${postid}`
+        )
+        setPost(coordinatePostDetailType(loadPost))
+      }
     } catch (err) {
       console.log(err)
     }
@@ -58,7 +67,30 @@ function PostDetailArticle(): JSX.Element {
     loadPost().catch((err) => {
       console.log(err)
     })
-  }, [post])
+    setLikes(post?.likeUsers ?? 0)
+  }, [])
+
+  const handleLikeClickPost = async (): Promise<void> => {
+    try {
+      await likeActionToBack(post?.postId ?? '')
+      liked ? setLikes(likes - 1) : setLikes(likes + 1)
+      setLiked(!liked)
+    } catch (err) {
+      console.log(err)
+    }
+
+    // 나중에 reducer 추가해서 redux에서 상태관리하기
+  }
+  const likeActionToBack = async (postid: string): Promise<void> => {
+    if (postid === '') return
+    await request('post', `api/post/${postid}/like`)
+  }
+
+  useEffect(() => {
+    console.log(likes)
+    console.log(liked)
+  }, [liked])
+
   return (
     <>
       {post !== undefined ? (
@@ -72,10 +104,13 @@ function PostDetailArticle(): JSX.Element {
             <RestContent>
               <Icons>
                 <HeartAndNumber>
-                  <Heart>
+                  <HeartButtonPost
+                    active={liked}
+                    onClick={handleLikeClickPost as () => void}
+                  >
                     <FontAwesomeIcon icon={faHeart} />
-                  </Heart>
-                  <NumOfHeart>{post.likeUsers}</NumOfHeart>
+                  </HeartButtonPost>
+                  <NumOfHeart>{likes}</NumOfHeart>
                 </HeartAndNumber>
                 <Bookmark>
                   <FontAwesomeIcon icon={faBookmark} />
@@ -294,7 +329,14 @@ const HeartAndNumber = styled.div`
   margin-right: 10px;
 `
 
-const Heart = styled.div``
+const HeartButtonPost = styled.button<{ active: boolean }>`
+  width: 30px;
+  height: 30px;
+  color: ${(props) => (props.active ? theme.colors.primaryColor : 'black')};
+  &:hover {
+    cursor: pointer;
+  }
+`
 
 const NumOfHeart = styled.div`
   font-size: 16px;

@@ -20,8 +20,8 @@ export default function UserRecommendExploreArticle(
   props: UserRecommendExploreArticleProps
 ): JSX.Element {
   const tabContents: TabContent[] = [
-    { tabName: '현재 위치', link: '/explore/location' },
     { tabName: '추천', link: '/explore/recommend' },
+    { tabName: '현재 위치', link: '/explore/location' },
   ]
   // 더미 데이터 용
   const [posts, setPosts] = useState<PostCardData[]>([])

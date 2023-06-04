@@ -31,10 +31,12 @@ export const ClickHeartButton = (
 ): {
   type: typeof CLICKHEARTBUTTON
   payload: { key: string; comment: CommentContent }
-} => ({
-  type: CLICKHEARTBUTTON,
-  payload: { key, comment },
-})
+} => {
+  return {
+    type: CLICKHEARTBUTTON,
+    payload: { key, comment },
+  }
+}
 
 type CommentAction =
   | ReturnType<typeof EnrollCommentAction>

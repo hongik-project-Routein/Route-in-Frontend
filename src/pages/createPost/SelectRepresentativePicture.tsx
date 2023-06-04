@@ -7,28 +7,55 @@ import { type RootState } from '../../modules'
 import { SavePost } from '../../modules/post'
 import { Map, MapMarker } from 'react-kakao-maps-sdk'
 import PostModal from '../../components/PostModal'
+import { type HashtagAutoAndText } from '../../types/postTypes'
 
 export default function SelectRepresentativePicture(): JSX.Element {
+  const [hashtagAutoText, setHashtagAutoText] = useState<
+    HashtagAutoAndText[] | []
+  >([])
+  const [restHashtag, setRestHashtag] = useState<string[] | []>([])
   const [text, setText] = useState<string>('')
+  const [holeText, setHoleText] = useState<string>('')
+
   const [points, setPoints] = useState<kakao.maps.LatLng[]>([])
   const [map, setMap] = useState<kakao.maps.Map>()
   const [index, setIndex] = useState<number>(-1)
   const dispatch = useDispatch()
 
-  const posts = useSelector((state: RootState) => state.changePostReducer.post)
+  const pins = useSelector((state: RootState) => state.changePostReducer.pins)
+  const imgUrls = useSelector(
+    (state: RootState) => state.changePostReducer.imgUrls
+  )
+
   const rest = useSelector(
     (state: RootState) => state.changePostReducer.hashtagAndText
   )
+
   const [carouselOpen, setCarouselOpen] = useState<boolean[]>(
-    Array(posts.length).fill(false)
+    Array(pins.length).fill(false)
   )
   const loadText = (): void => {
-    const hashtagAutoText: string[] = posts.map((hashtag) => {
+    // 자동 해시태그
+    setHashtagAutoText(
+      pins.map((pin) => {
+        return pin.hashtagAuto
+      })
+    )
+
+    // 추가로 만든 해시태그
+    setRestHashtag(rest.hashtag)
+
+    // 해시태그를 뺀 나머지
+    const removeHashtag: string = rest.text.replace(/#\w+\s?/g, '')
+    setText(removeHashtag)
+
+    // 모든 문자열 저장 => 백엔드에 보내지는 텍스트
+    const hashtagAutoText: string[] = pins.map((hashtag) => {
       return `${hashtag.hashtagAuto.hashtagAuto}\n${hashtag.hashtagAuto.text}\n\n`
     })
 
-    const returnText = hashtagAutoText.join(' ') + rest.text
-    setText(returnText)
+    const returnText: string = hashtagAutoText.join(' ') + rest.text
+    setHoleText(returnText)
   }
 
   // 본문 읽어오기
@@ -37,15 +64,15 @@ export default function SelectRepresentativePicture(): JSX.Element {
   }, [])
 
   const savePost = (): void => {
-    dispatch(SavePost({ writer: 'jinokim98', posts, text }))
+    dispatch(SavePost({ pins, text: holeText }))
   }
 
   const calculateCenter = (map: kakao.maps.Map): void => {
-    if (posts.length > 0) {
+    if (pins.length > 0) {
       const bounds = new kakao.maps.LatLngBounds()
       const newPoint: kakao.maps.LatLng[] = []
 
-      posts.forEach((GPSInfo) => {
+      pins.forEach((GPSInfo) => {
         const { lat, lng } = GPSInfo.LatLng
         const point = new kakao.maps.LatLng(lat, lng)
         bounds.extend(point)
@@ -96,11 +123,11 @@ export default function SelectRepresentativePicture(): JSX.Element {
       <GroupContainer>
         <LayerGroup>
           <KakaoMapContainer ref={mapContainerRef}>
-            {posts.length > 0 && (
+            {pins.length > 0 && (
               <Map
                 center={{
-                  lat: posts[0].LatLng.lat,
-                  lng: posts[0].LatLng.lng,
+                  lat: pins[0].LatLng.lat,
+                  lng: pins[0].LatLng.lng,
                 }}
                 style={{ width: '100%', height: '100%' }}
                 onCreate={(map) => {
@@ -124,21 +151,83 @@ export default function SelectRepresentativePicture(): JSX.Element {
             )}
           </KakaoMapContainer>
           <ImageGroup active={index !== -1}>
-            {posts.length > 0 && index !== -1 && (
+            {pins.length > 0 && index !== -1 && (
               <PostModal
-                postImage={posts[index].tag}
+                postImage={<CarouselImage src={imgUrls[index]} />}
                 setModalOpen={changeIndex}
               ></PostModal>
             )}
           </ImageGroup>
         </LayerGroup>
         <LocationGroup>
-          <WriteSpace>{text}</WriteSpace>
+          <WriteSpace>
+            <ProcessHashtagBlue
+              hashtagAutoText={hashtagAutoText}
+              restHashtag={restHashtag}
+              text={text}
+            />
+          </WriteSpace>
         </LocationGroup>
       </GroupContainer>
       <ButtonContainer>
         <NextButton onClick={savePost}>추가하기</NextButton>
       </ButtonContainer>
+    </>
+  )
+}
+
+interface ProcessHashtagBlueProps {
+  hashtagAutoText: HashtagAutoAndText[] | []
+  restHashtag: string[] | []
+  text: string
+}
+
+function ProcessHashtagBlue(props: ProcessHashtagBlueProps): JSX.Element {
+  const processHashtagAutoBlue = (): JSX.Element[] | undefined => {
+    if (props.hashtagAutoText.length === 0) return undefined
+
+    return props.hashtagAutoText.map((item, idx) => {
+      return (
+        <>
+          <HashtagStyle
+            key={`hashtagAuto${idx}`}
+            style={{ color: `${theme.colors.primaryColor}` }}
+          >
+            {item.hashtagAuto}
+          </HashtagStyle>
+          <br />
+          <TextStyle>{item.text}</TextStyle>
+          <br />
+          <br />
+        </>
+      )
+    })
+  }
+
+  const parsing = props.text.split('\n')
+  // 해시태그가 들어가있는 줄은 무조건 한 줄로 작성하세요..
+  const processHashtagBlue = (parsing: string[]): JSX.Element[] => {
+    return parsing.map((parse, index) => {
+      if (parse.startsWith('#')) {
+        const deleteBlank = parse.trim()
+
+        return (
+          <React.Fragment key={index}>
+            <HashtagStyle style={{ color: `${theme.colors.primaryColor}` }}>
+              {deleteBlank}
+            </HashtagStyle>
+            <br />
+          </React.Fragment>
+        )
+      }
+      return <div key={`nohashtag${index}`}>{parse}</div>
+    })
+  }
+
+  return (
+    <>
+      {processHashtagAutoBlue()}
+      {processHashtagBlue(parsing)}
     </>
   )
 }
@@ -220,3 +309,26 @@ const NextButton = styled.button`
   border-radius: 8px;
   font-size: 16px;
 `
+
+const CarouselImage = styled.img`
+  width: 350px;
+  height: 350px;
+  object-fit: cover;
+  border-radius: 10px;
+`
+
+const HashtagStyle = styled.span`
+  color: ${theme.colors.primaryColor};
+`
+const TextStyle = styled.span``
+
+/*
+const loadText = (): void => {
+    const hashtagAutoText: string[] = pins.map((hashtag) => {
+      return `${hashtag.hashtagAuto.hashtagAuto}\n${hashtag.hashtagAuto.text}\n\n`
+    })
+
+    const returnText: string = hashtagAutoText.join(' ') + rest.text
+    setText(returnText)
+  }
+*/

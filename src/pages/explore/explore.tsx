@@ -24,7 +24,7 @@ export default function Explore(): JSX.Element {
       {selectedTabIndex === 0 ? (
         <HeaderAndSidebar
           article={
-            <LocationExploreArticle
+            <UserRecommendExploreArticle
               handleTabfunc={handleTabClick}
               tabIndex={selectedTabIndex}
             />
@@ -33,7 +33,7 @@ export default function Explore(): JSX.Element {
       ) : selectedTabIndex === 1 ? (
         <HeaderAndSidebar
           article={
-            <UserRecommendExploreArticle
+            <LocationExploreArticle
               handleTabfunc={handleTabClick}
               tabIndex={selectedTabIndex}
             />

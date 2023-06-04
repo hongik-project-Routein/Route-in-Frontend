@@ -28,13 +28,16 @@ export default function WritePost(): JSX.Element {
   >([])
   const [text, setText] = useState<string>('')
 
-  const posts = useSelector((state: RootState) => state.changePostReducer.post)
+  const pins = useSelector((state: RootState) => state.changePostReducer.pins)
+  const imgUrls = useSelector(
+    (state: RootState) => state.changePostReducer.imgUrls
+  )
 
   const dispatch = useDispatch()
 
   // 초기 해시태그 자동 값 가져오기
   useEffect(() => {
-    const loadHashtagAuto: HashtagAutoAndText[] = posts.map((item) => {
+    const loadHashtagAuto: HashtagAutoAndText[] = pins.map((item) => {
       return {
         hashtagAuto: item.hashtagAuto.hashtagAuto,
         text: '',
@@ -65,9 +68,9 @@ export default function WritePost(): JSX.Element {
         }
       })
     })
-    const newPosts: Pin[] = posts.map((post, idx) => {
+    const newPins: Pin[] = pins.map((pin, idx) => {
       return {
-        ...post,
+        ...pin,
         hashtagAuto: hashtagAutoTextList[idx],
       }
     })
@@ -77,7 +80,7 @@ export default function WritePost(): JSX.Element {
       text: `${text}`,
     }
 
-    dispatch(ChangeHashtagAndText(newPosts, payload))
+    dispatch(ChangeHashtagAndText(newPins, payload))
   }
   return (
     <>
@@ -85,7 +88,11 @@ export default function WritePost(): JSX.Element {
       <Paragraph>{`장소에 대한 해시태그가 자동으로 완성됩니다.`}</Paragraph>
       <GroupContainer>
         <PictureGroup>
-          <Carousel items={posts.map((item) => item.tag)}></Carousel>
+          <Carousel
+            items={imgUrls.map((item, idx) => (
+              <CarouselImage key={idx} src={item} />
+            ))}
+          ></Carousel>
         </PictureGroup>
         <LocationGroup>
           {hashtagAutoTextList.map((hashtag, idx) => (
@@ -233,4 +240,11 @@ const NextButton = styled.button`
   color: ${theme.colors.white};
   border-radius: 8px;
   font-size: 16px;
+`
+
+const CarouselImage = styled.img`
+  width: 350px;
+  height: 350px;
+  object-fit: cover;
+  border-radius: 10px;
 `

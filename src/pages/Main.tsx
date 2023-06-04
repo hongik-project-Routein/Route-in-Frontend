@@ -6,20 +6,20 @@ import styled from 'styled-components'
 import UserRecommend from '../components/userRecommend'
 import theme from '../styles/Theme'
 // import { postDemo, type PostCardData } from '../dummy/post'
-import { type LoadPostMainPage } from '../types/postTypes'
+import {
+  type LoadPostFromBack,
+  type LoadPostMainPage,
+} from '../types/postTypes'
 import { request } from '../util/axios'
 
 function Main(): JSX.Element {
   const [posts, setPosts] = useState<LoadPostMainPage[]>([])
 
   const loadPost = async (): Promise<void> => {
-    const nickname = 'jinokim98'
-
     try {
-      const loadPost = await request<LoadPostMainPage[]>(
-        'get',
-        `/api/post/${nickname}`
-      )
+      const loadPost = await request<LoadPostFromBack[]>('get', `/api/post/`)
+      console.log(loadPost)
+
       setPosts(loadPost)
       console.log(loadPost)
     } catch (err) {
