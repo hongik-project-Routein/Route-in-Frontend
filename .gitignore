@@ -224,4 +224,4 @@ FakesAssemblies/
 
 .vscode
 
-*.jpg
+public/img/
