@@ -1,6 +1,8 @@
 import {
+  type LoadPostFromBackMain,
   type LoadPostDetail,
   type LoadPostFromBack,
+  type LoadPostMainPage,
 } from '../../types/postTypes'
 
 export function coordinatePostDetailType(
@@ -39,4 +41,29 @@ export function coordinatePostDetailType(
       }
     }),
   }
+}
+
+export function coordinatePostType(
+  posts: LoadPostFromBackMain[]
+): LoadPostMainPage[] {
+  return posts.map((post) => {
+    return {
+      postId: String(post.id),
+      writer: post.writer,
+      profile: post.user.image,
+      postText: post.content,
+
+      pinCount: post.pin_count,
+      pinImage: post.pin.map((pin) => {
+        return pin.image
+      }),
+      latLng: post.pin.map((pin) => {
+        return { lat: pin.latitude, lng: pin.longitude }
+      }),
+      likeUsers: post.like_count,
+      bookmark: false,
+
+      commentCount: post.comment_count,
+    }
+  })
 }

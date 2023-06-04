@@ -50,6 +50,22 @@ export interface LoadPostFromBack {
   comment: CommentFromBack[]
 }
 
+export interface LoadPostFromBackMain {
+  id: number
+  writer: string
+  content: string
+  pin_count: number
+  like_count: number
+  like_users: string[]
+  bookmark_users: string[]
+  comment_count: number
+  pin: PinFromBack[]
+  user: {
+    image: string
+  }
+  comment: CommentFromBack[]
+}
+
 interface CommentFromBack {
   id: number
   updated_at: string
@@ -100,4 +116,18 @@ export interface CommentSendToBackend {
   post: string
   content: string
   tagged_users?: string[]
+}
+
+export interface PostSendToBackType {
+  content: string
+  pins: PinsSendToBackType[]
+}
+
+export interface PinsSendToBackType {
+  image: File
+  pin_hashtag: string
+  content: string
+  latitude: number
+  longitude: number
+  mapID: string
 }

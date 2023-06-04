@@ -5,23 +5,21 @@ import PostCard from '../components/postCard'
 import styled from 'styled-components'
 import UserRecommend from '../components/userRecommend'
 import theme from '../styles/Theme'
-// import { postDemo, type PostCardData } from '../dummy/post'
 import {
-  type LoadPostFromBack,
+  type LoadPostFromBackMain,
   type LoadPostMainPage,
 } from '../types/postTypes'
 import { request } from '../util/axios'
+import { coordinatePostType } from '../modules/types/loadPost'
 
 function Main(): JSX.Element {
   const [posts, setPosts] = useState<LoadPostMainPage[]>([])
 
   const loadPost = async (): Promise<void> => {
     try {
-      const loadPost = await request<LoadPostFromBack[]>('get', `/api/post/`)
-      console.log(loadPost)
+      const loadPost = await request<LoadPostFromBackMain[]>('get', `api/post/`)
 
-      setPosts(loadPost)
-      console.log(loadPost)
+      setPosts(coordinatePostType(loadPost))
     } catch (err) {
       console.log(err)
     }
@@ -30,7 +28,7 @@ function Main(): JSX.Element {
     loadPost().catch((err) => {
       console.log(err)
     })
-  }, [posts])
+  }, [])
   return (
     <Grid>
       <HeaderGrid>

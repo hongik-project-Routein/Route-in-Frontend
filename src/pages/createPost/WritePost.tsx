@@ -82,6 +82,7 @@ export default function WritePost(): JSX.Element {
 
     dispatch(ChangeHashtagAndText(newPins, payload))
   }
+
   return (
     <>
       <Title>새 게시물 만들기</Title>

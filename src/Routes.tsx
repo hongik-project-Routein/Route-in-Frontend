@@ -18,14 +18,12 @@ import Story from './pages/story/Story'
 function Router(): JSX.Element {
   return (
     <>
-      {/* 전체적으로 와일드카드 문제 해결하지 않음 */}
       <BrowserRouter>
         <Routes>
           <Route path="/home" element={<Main />} />
           <Route path="/" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/post/:postid" element={<PostDetail />} />
-          {/* post/create 나중에 수정하기 */}
           <Route path="/post/create/" element={<CreatePost />} />
           <Route
             path="/post/create/text"

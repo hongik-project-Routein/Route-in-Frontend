@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart, faBookmark } from '@fortawesome/free-solid-svg-icons'
 import { type PostCardData } from '../dummy/post'
 import { Link } from 'react-router-dom'
-// import KakaoMapPost from './KakaoMapPost'
+import KakaoMapPost from './KakaoMapPost'
 
 interface PostSmallProps {
   loadPost: PostCardData // 연결 시 LoadPostMainPage로 변경
@@ -31,12 +31,12 @@ export default function PostSmall(props: PostSmallProps): JSX.Element {
         </RestContent>
       </PersonalInfoContainer>
       <PostImageContainer>
-        {/* <KakaoMapPost
+        <KakaoMapPost
           size="300px"
           pinCount={props.loadPost.pinCount}
           pinImages={props.loadPost.pinImages}
           latLng={props.loadPost.LatLngs}
-        ></KakaoMapPost> */}
+        ></KakaoMapPost>
       </PostImageContainer>
       <PostDetailLink to={`/post/${props.loadPost.postId}`}>
         상세 게시물로

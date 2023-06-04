@@ -84,10 +84,10 @@ export default function SelectRepresentativePicture(): JSX.Element {
 
       const polyline = new kakao.maps.Polyline({
         path: newPoint,
-        strokeWeight: 5, // 선의 두께 입니다
-        strokeColor: 'red', // 선의 색깔입니다
-        strokeOpacity: 0.7, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
-        strokeStyle: 'solid', // 선의 스타일입니다
+        strokeWeight: 5,
+        strokeColor: 'red',
+        strokeOpacity: 0.7,
+        strokeStyle: 'solid',
       })
 
       polyline.setMap(map)
@@ -115,10 +115,10 @@ export default function SelectRepresentativePicture(): JSX.Element {
 
   return (
     <>
-      <Title>대표 이미지 설정</Title>
+      <Title>게시글 확인</Title>
       <Paragraph>
-        {`설정한 이미지 위로 핀이 표시됩니다.
-        기본 이미지 버튼을 누르면 지도 이미지로 전환됩니다.`}
+        {`지도 위에 핀이 표시됩니다.
+        지도 위에 핀을 누르면 선택한 사진이 나옵니다.`}
       </Paragraph>
       <GroupContainer>
         <LayerGroup>
@@ -175,6 +175,10 @@ export default function SelectRepresentativePicture(): JSX.Element {
     </>
   )
 }
+
+// const HiddenFormTag = styled.form`
+//   display: none;
+// `
 
 interface ProcessHashtagBlueProps {
   hashtagAutoText: HashtagAutoAndText[] | []
@@ -321,14 +325,3 @@ const HashtagStyle = styled.span`
   color: ${theme.colors.primaryColor};
 `
 const TextStyle = styled.span``
-
-/*
-const loadText = (): void => {
-    const hashtagAutoText: string[] = pins.map((hashtag) => {
-      return `${hashtag.hashtagAuto.hashtagAuto}\n${hashtag.hashtagAuto.text}\n\n`
-    })
-
-    const returnText: string = hashtagAutoText.join(' ') + rest.text
-    setText(returnText)
-  }
-*/

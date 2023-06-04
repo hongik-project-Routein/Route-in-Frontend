@@ -28,7 +28,6 @@ import {
 } from '../../types/postTypes'
 import { request } from '../../util/axios'
 import { coordinatePostDetailType } from '../../modules/types/loadPost'
-// import { useSelector, useDispatch } from 'react-redux'
 
 export default function PostDetail(): JSX.Element {
   return <HeaderAndSidebar article={<PostDetailArticle />} />
@@ -36,14 +35,6 @@ export default function PostDetail(): JSX.Element {
 
 function PostDetailArticle(): JSX.Element {
   const { postid } = useParams()
-
-  // 실제는 맞는 것만 요청해야겠지만 데모이기 때문에 다 불러와서 필터링임
-  // const [post, setPost] = useState<PostCardData>()
-  // const loadPost = (): void => {
-  //   const posts: PostCardData[] = postDemo
-  //   const select = posts.find((post) => post.postId === postid)
-  //   setPost(select)
-  // }
 
   const [post, setPost] = useState<LoadPostDetail>()
   const [likes, setLikes] = useState<number>(0)

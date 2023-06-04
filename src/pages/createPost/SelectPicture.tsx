@@ -97,7 +97,7 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
         }
       }
     } catch (error) {
-      console.error('Error extracting location from image:', error)
+      console.error('no gps info', error)
     }
     return undefined
   }
@@ -154,40 +154,57 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
       const getAddress = async (): Promise<PlaceInfo> => {
         return await new Promise<PlaceInfo>((resolve) => {
           const callback = (result: any, status: any): void => {
-            console.log(status)
-
             if (status === kakao.maps.services.Status.OK) {
-              console.log(result)
-
               // 결과에서 첫 번째의 주소와 장소 이름을 얻는다. placeId는 Geocoder서비스로 얻을 수 없어서 NaN
               const addressResult = result[0].address.address_name
               const buildingName = result[0].road_address.building_name.replace(
                 /\s+/g,
                 '_'
               )
-              let placeId = NaN
+              let getPlaceId = NaN
+
               if (buildingName !== '') {
                 const places = new kakao.maps.services.Places()
 
-                // 여기에서 애로사항: 과연 buildingName으로 장소를 검색한 결과 첫 번째가 해당 장소일까?
-                places.keywordSearch(
-                  result[0].road_address.building_name,
-                  (result, status) => {
-                    if (status === kakao.maps.services.Status.OK) {
-                      placeId = Number(result[0].id)
+                const getPlaceIdUsingAPI = new Promise<number>((resolve) => {
+                  places.keywordSearch(
+                    result[0].road_address.building_name,
+                    (result, status) => {
+                      if (status === kakao.maps.services.Status.OK) {
+                        resolve(Number(result[0].id))
+                      }
                     }
-                  }
-                )
+                  )
+                })
+
+                Promise.all([getPlaceIdUsingAPI])
+                  .then(([placeId]) => {
+                    getPlaceId = placeId
+
+                    resolve({
+                      placeName: buildingName,
+                      address: addressResult,
+                      gpsInfo: {
+                        latitude: place.latitude,
+                        longitude: place.longitude,
+                        placeId: getPlaceId,
+                      },
+                    })
+                  })
+                  .catch((err) => {
+                    console.log(err)
+                  })
+              } else {
+                resolve({
+                  placeName: buildingName,
+                  address: addressResult,
+                  gpsInfo: {
+                    latitude: place.latitude,
+                    longitude: place.longitude,
+                    placeId: getPlaceId,
+                  },
+                })
               }
-              resolve({
-                placeName: buildingName,
-                address: addressResult,
-                gpsInfo: {
-                  latitude: place.latitude,
-                  longitude: place.longitude,
-                  placeId,
-                },
-              })
             }
           }
           geocoder.coord2Address(place.longitude, place.latitude, callback)
@@ -213,12 +230,12 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
         ...post,
         hashtagAuto: { hashtagAuto: `#${addresses[idx].placeName}`, text: '' },
         LatLng: {
-          lat: imgGPSInfoList[idx].latitude,
-          lng: imgGPSInfoList[idx].longitude,
+          lat: addresses[idx].gpsInfo.latitude,
+          lng: addresses[idx].gpsInfo.longitude,
         },
+        placeId: addresses[idx].gpsInfo.placeId,
       }
     })
-    console.log(newPost)
 
     dispatch(ChangePlace(newPost, imageUrls))
   }
@@ -382,8 +399,6 @@ function SearchPlaceModal(props: SearchPlaceModalProps): JSX.Element {
 
     places.keywordSearch(keyword, (result, status) => {
       if (status === kakao.maps.services.Status.OK) {
-        console.log(result)
-
         setSearchResults(result)
       }
     })
@@ -404,18 +419,22 @@ function SearchPlaceModal(props: SearchPlaceModalProps): JSX.Element {
         resultIndex
       ].place_name.replace(/\s+/g, '_')
 
-      const updatedGPSInfoList = props.imgGPSInfoList
-      updatedGPSInfoList[props.index] = {
+      updatedAddresses[props.index].gpsInfo = {
         latitude: Number(searchResults[resultIndex].y),
         longitude: Number(searchResults[resultIndex].x),
         placeId: Number(searchResults[resultIndex].id),
       }
 
+      console.log(updatedAddresses)
+
       props.setAddresses(updatedAddresses)
-      props.setImgGPSInfoList(updatedGPSInfoList)
       props.setModalOpen(false)
     }
   }
+
+  useEffect(() => {
+    console.log(props.addresses)
+  }, [])
 
   return (
     <SearchPlaceModalContainer ref={modalRef}>
@@ -701,42 +720,3 @@ const SearchPlaceButton = styled.button`
   color: white;
   border-radius: 5px;
 `
-
-/*
-console.log(result)
-
-                  resolve({
-                    placeName: result[0].place_name,
-                    address: result[0].road_address_name,
-                    gpsInfo: {
-                      latitude: Number(result[0].y),
-                      longitude: Number(result[0].x),
-                    },
-                  })
-*/
-
-/* 
-const searchPlace = async (): Promise<void> => {
-    const places = new kakao.maps.services.Places()
-    console.log('jhi')
-
-    const getPlace =
-      async (): Promise<kakao.maps.services.PlacesSearchResult> => {
-        return await new Promise<kakao.maps.services.PlacesSearchResult>(
-          (resolve) => {
-            if (keyword !== '') {
-              places.keywordSearch(keyword, (result, status) => {
-                if (status === kakao.maps.services.Status.OK) {
-                  resolve(result)
-                }
-              })
-            }
-          }
-        )
-      }
-
-    const result = await getPlace()
-    console.log(result)
-
-    setSearchResults(result)
-  } */

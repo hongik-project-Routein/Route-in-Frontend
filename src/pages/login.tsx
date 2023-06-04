@@ -1,31 +1,14 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import image from '../img/background-image.jpg'
 import kakao from '../img/kakao.png'
 import theme from '../styles/Theme'
 import { Link } from 'react-router-dom'
-import { request } from '../util/axios'
-
-interface Demo {
-  id: number
-}
 
 export default function Login(): JSX.Element {
   const sloganText = `장소와 장소를 이어줌으로써
 \n사람과 사람을 이어준다.`
-  const fetch = async (): Promise<void> => {
-    try {
-      const data = await request<Demo>('get', '/api/post/')
-      console.log(data)
-    } catch (err) {
-      console.log(err)
-    }
-  }
-  useEffect(() => {
-    fetch().catch((err) => {
-      console.log(err)
-    })
-  }, [])
+
   return (
     <LoginPageContainer>
       <BackgroundImage src={image} />
