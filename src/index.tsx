@@ -8,8 +8,14 @@ import { legacy_createStore as createStore } from 'redux'
 import rootReducer from './modules'
 import { Provider } from 'react-redux'
 import { composeWithDevTools } from 'redux-devtools-extension'
+import { worker } from './mocks/browser'
 
 const store = createStore(rootReducer, composeWithDevTools())
+
+if (process.env.NODE_ENV === 'development') {
+  // eslint-disable-next-line @typescript-eslint/no-floating-promises
+  worker.start()
+}
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(

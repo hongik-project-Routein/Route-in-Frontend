@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Main from './pages/Main'
 import CreatePost from './pages/createPost/CreatePost'
 import Search from './pages/search/Search'
@@ -20,8 +20,9 @@ function Router(): JSX.Element {
     <>
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<Navigate to="/login" />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/home" element={<Main />} />
-          <Route path="/" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/post/:postid" element={<PostDetail />} />
           <Route path="/post/create/" element={<CreatePost />} />
