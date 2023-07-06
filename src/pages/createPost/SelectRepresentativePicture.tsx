@@ -8,6 +8,7 @@ import { SavePost } from '../../modules/post'
 import { Map, MapMarker } from 'react-kakao-maps-sdk'
 import PostModal from '../../components/PostModal'
 import { type HashtagAutoAndText } from '../../types/postTypes'
+import { Link } from 'react-router-dom'
 
 export default function SelectRepresentativePicture(): JSX.Element {
   const [hashtagAutoText, setHashtagAutoText] = useState<
@@ -169,7 +170,7 @@ export default function SelectRepresentativePicture(): JSX.Element {
           </WriteSpace>
         </LocationGroup>
       </GroupContainer>
-      <ButtonContainer>
+      <ButtonContainer to="/home">
         <NextButton onClick={savePost}>추가하기</NextButton>
       </ButtonContainer>
     </>
@@ -299,7 +300,7 @@ const WriteSpace = styled.div`
   white-space: pre-line;
 `
 
-const ButtonContainer = styled.div`
+const ButtonContainer = styled(Link)`
   display: flex;
   margin: 30px 0;
 `

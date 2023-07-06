@@ -18,6 +18,7 @@ function Main(): JSX.Element {
   const loadPost = async (): Promise<void> => {
     try {
       const loadPost = await request<LoadPostFromBackMain[]>('get', `api/post/`)
+      console.log(loadPost)
 
       setPosts(coordinatePostType(loadPost))
     } catch (err) {

@@ -47,7 +47,10 @@ function PostDetailArticle(): JSX.Element {
           'get',
           `api/post/${postid}`
         )
-        setPost(coordinatePostDetailType(loadPost))
+        const post_ = coordinatePostDetailType(loadPost)
+        console.log(post_)
+
+        setPost(post_)
       }
     } catch (err) {
       console.log(err)
@@ -309,14 +312,16 @@ const DistanceFromMe = styled.span`
 const Icons = styled.div`
   display: flex;
   justify-content: flex-start;
+  align-items: center;
 `
 
 const HeartAndNumber = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
   width: 40px;
+  margin-top: 20px;
   margin-right: 10px;
 `
 

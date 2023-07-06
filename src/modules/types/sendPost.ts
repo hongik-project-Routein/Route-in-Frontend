@@ -9,8 +9,6 @@ export function coordinatePostSendType(
   return {
     content: pins.text,
     pins: pins.pins.map((pin) => {
-      console.log(pin.picture)
-
       return {
         image: pin.picture,
         pin_hashtag: pin.hashtagAuto.hashtagAuto,
