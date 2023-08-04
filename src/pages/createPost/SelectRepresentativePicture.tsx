@@ -1,13 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
-import { useSelector, useDispatch } from 'react-redux'
-import { type RootState } from '../../modules'
-// import mapMarker from '../../img/mapMarker.svg'
-import { SavePost } from '../../modules/post'
 import { Map, MapMarker } from 'react-kakao-maps-sdk'
 import PostModal from '../../components/PostModal'
-import { type HashtagAutoAndText } from '../../types/postTypes'
+import { type Pin, type HashtagAutoAndText } from '../../types/postTypes'
+import usePost from '../../modules/hooks/usePost'
 
 export default function SelectRepresentativePicture(): JSX.Element {
   const [hashtagAutoText, setHashtagAutoText] = useState<
@@ -20,16 +17,8 @@ export default function SelectRepresentativePicture(): JSX.Element {
   const [points, setPoints] = useState<kakao.maps.LatLng[]>([])
   const [map, setMap] = useState<kakao.maps.Map>()
   const [index, setIndex] = useState<number>(-1)
-  const dispatch = useDispatch()
 
-  const pins = useSelector((state: RootState) => state.changePostReducer.pins)
-  const imgUrls = useSelector(
-    (state: RootState) => state.changePostReducer.imgUrls
-  )
-
-  const rest = useSelector(
-    (state: RootState) => state.changePostReducer.hashtagAndText
-  )
+  const { pins, imgUrls, hashtagAndText, savePost } = usePost()
 
   const [carouselOpen, setCarouselOpen] = useState<boolean[]>(
     Array(pins.length).fill(false)
@@ -37,24 +26,25 @@ export default function SelectRepresentativePicture(): JSX.Element {
   const loadText = (): void => {
     // 자동 해시태그
     setHashtagAutoText(
-      pins.map((pin) => {
+      pins.map((pin: Pin) => {
         return pin.hashtagAuto
       })
     )
 
     // 추가로 만든 해시태그
-    setRestHashtag(rest.hashtag)
+    setRestHashtag(hashtagAndText.hashtag)
 
     // 해시태그를 뺀 나머지
-    const removeHashtag: string = rest.text.replace(/#\w+\s?/g, '')
+    const removeHashtag: string = hashtagAndText.text.replace(/#\w+\s?/g, '')
     setText(removeHashtag)
 
     // 모든 문자열 저장 => 백엔드에 보내지는 텍스트
-    const hashtagAutoText: string[] = pins.map((hashtag) => {
-      return `${hashtag.hashtagAuto.hashtagAuto}\n${hashtag.hashtagAuto.text}\n\n`
+    const hashtagAutoText: string[] = pins.map((pin: Pin) => {
+      return `${pin.hashtagAuto.hashtagAuto}\n${pin.hashtagAuto.text}\n\n`
     })
 
-    const returnText: string = hashtagAutoText.join(' ') + rest.text
+    // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+    const returnText: string = hashtagAutoText.join(' ') + hashtagAndText.text
     setHoleText(returnText)
   }
 
@@ -63,8 +53,8 @@ export default function SelectRepresentativePicture(): JSX.Element {
     loadText()
   }, [])
 
-  const savePost = (): void => {
-    dispatch(SavePost({ pins, text: holeText }))
+  const sendPost = (): void => {
+    savePost({ pins, content: holeText })
   }
 
   const calculateCenter = (map: kakao.maps.Map): void => {
@@ -72,8 +62,8 @@ export default function SelectRepresentativePicture(): JSX.Element {
       const bounds = new kakao.maps.LatLngBounds()
       const newPoint: kakao.maps.LatLng[] = []
 
-      pins.forEach((GPSInfo) => {
-        const { lat, lng } = GPSInfo.LatLng
+      pins.forEach((pin: Pin) => {
+        const { lat, lng } = pin.LatLng
         const point = new kakao.maps.LatLng(lat, lng)
         bounds.extend(point)
         newPoint.push(point)
@@ -170,7 +160,7 @@ export default function SelectRepresentativePicture(): JSX.Element {
         </LocationGroup>
       </GroupContainer>
       <ButtonContainer>
-        <NextButton onClick={savePost}>추가하기</NextButton>
+        <NextButton onClick={sendPost}>추가하기</NextButton>
       </ButtonContainer>
     </>
   )

@@ -2,24 +2,24 @@ import React from 'react'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart, faBookmark } from '@fortawesome/free-solid-svg-icons'
-import { type PostCardData } from '../dummy/post'
 import { Link } from 'react-router-dom'
 import KakaoMapPost from './KakaoMapPost'
+import { type LoadPost } from '../types/postTypes'
 
 interface PostSmallProps {
-  loadPost: PostCardData // 연결 시 LoadPostMainPage로 변경
+  loadPost: LoadPost // 연결 시 LoadPostMainPage로 변경
 }
 
 export default function PostSmall(props: PostSmallProps): JSX.Element {
   return (
     <div>
       <PersonalInfoContainer>
-        <UserContent to={`/profile/${props.loadPost.writer}`}>
-          <Profile src={props.loadPost.profile} />
-          <Nickname>{props.loadPost.writer}</Nickname>
+        <UserContent to={`/profile/${props.loadPost.post.writer}`}>
+          <Profile src={props.loadPost.user.image} />
+          <Nickname>{props.loadPost.post.writer}</Nickname>
         </UserContent>
         <RestContent>
-          <NumOfHeart>{props.loadPost.likeUsers}</NumOfHeart>
+          <NumOfHeart>{props.loadPost.post.like_count}</NumOfHeart>
           <Icons>
             <Heart>
               <FontAwesomeIcon icon={faHeart} />
@@ -33,12 +33,15 @@ export default function PostSmall(props: PostSmallProps): JSX.Element {
       <PostImageContainer>
         <KakaoMapPost
           size="300px"
-          pinCount={props.loadPost.pinCount}
-          pinImages={props.loadPost.pinImages}
-          latLng={props.loadPost.LatLngs}
+          pinCount={props.loadPost.post.pin_count}
+          pinImages={props.loadPost.pin.map((pin) => pin.image)}
+          latLng={props.loadPost.pin.map((pin) => ({
+            lat: pin.latitude,
+            lng: pin.longitude,
+          }))}
         ></KakaoMapPost>
       </PostImageContainer>
-      <PostDetailLink to={`/post/${props.loadPost.postId}`}>
+      <PostDetailLink to={`/post/${props.loadPost.post.id}`}>
         상세 게시물로
       </PostDetailLink>
     </div>

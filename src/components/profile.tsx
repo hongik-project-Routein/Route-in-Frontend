@@ -1,63 +1,78 @@
 import React, { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
 import theme from '../styles/Theme'
-import FollowModal from './followModal'
+import FollowerModal from './followerModal'
 import FollowingModal from './followingModal'
-import { useDispatch } from 'react-redux'
-import { changeIntroduction } from '../modules/profile'
 import { useParams } from 'react-router-dom'
-import { userDemo, type UserData } from '../dummy/user'
+import useModal from '../hooks/useModal'
+import { request } from '../util/axios'
+import { type UserData } from './../mocks/data/user'
+import useFollow from '../modules/hooks/useFollow'
 
 export default function Profile(): JSX.Element {
-  const dispatch = useDispatch()
   const [introductionText, setIntroductionText] = useState<string>('')
   const [activeIntroductionModify, setActiveIntroductionModify] =
     useState(false)
-  const [followModalVisibliity, setFollowModalVisibliity] = useState(false)
-  const [followingModalVisibliity, setFollowingModalVisibliity] =
-    useState(false)
-  const followRef = useRef<HTMLDivElement>(null)
+
+  const followerRef = useRef<HTMLDivElement>(null)
   const followingRef = useRef<HTMLDivElement>(null)
+
+  const followModalOpen = useModal(followerRef)
+  const followingModalOpen = useModal(followingRef)
 
   const [isMyProfile, setIsMyProfile] = useState<boolean>(false)
   const { username } = useParams()
 
   const [userInfo, setUserInfo] = useState<UserData>()
 
-  useEffect(() => {
-    // 더미데이터여서
-    const totalUser: UserData[] = userDemo
-    const curUser: UserData | undefined = totalUser.find(
-      (user) => user.nickname === username
-    )
-    setUserInfo(curUser)
-    console.log(username)
+  const { follower, following, loadFollowList } = useFollow()
 
-    setIsMyProfile(username === 'jinokim98')
-    setIntroductionText(curUser?.introduction ?? '')
-    setActiveIntroductionModify(true)
+  const fetchData = async (): Promise<UserData> => {
+    try {
+      const response = await request<UserData>(
+        'get',
+        `/api/user/${username as string}`
+      )
+      return response
+    } catch (error) {
+      console.log(error)
+      throw error
+    }
+  }
+
+  useEffect(() => {
+    const loadUserInfo = async (): Promise<void> => {
+      const result = await fetchData()
+      setUserInfo(result)
+      loadFollowList(result)
+
+      setIsMyProfile(username === 'jinokim98')
+      setIntroductionText(result.introduction)
+      setActiveIntroductionModify(true)
+    }
+
+    loadUserInfo().catch((error) => {
+      console.log(error)
+    })
   }, [])
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent): void => {
-      if (
-        followRef.current == null ||
-        !followRef.current.contains(event.target as HTMLElement)
-      ) {
-        setFollowModalVisibliity(false)
+  const handleIntroduction = async (): Promise<void> => {
+    if (!activeIntroductionModify) {
+      try {
+        const response = await request<string>('post', '/api/user/profile', {
+          introduction: introductionText,
+        })
+        setIntroductionText(response)
+        setActiveIntroductionModify(true)
+      } catch (error) {
+        console.log(error)
+        throw error
       }
-      if (
-        followingRef.current == null ||
-        !followingRef.current.contains(event.target as HTMLElement)
-      ) {
-        setFollowingModalVisibliity(false)
-      }
+    } else {
+      setActiveIntroductionModify(!activeIntroductionModify)
     }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [followRef, followingRef])
+  }
+
   return (
     <>
       <ProfileHeader>
@@ -65,39 +80,23 @@ export default function Profile(): JSX.Element {
         <ProfileDesc>
           <NameAndEditBtn>
             <Nickname>{userInfo?.nickname}</Nickname>
-            <EditButton
-              isMyProfile={isMyProfile}
-              onClick={() => {
-                if (!activeIntroductionModify) {
-                  dispatch(changeIntroduction(introductionText))
-                }
-                setActiveIntroductionModify(!activeIntroductionModify)
-              }}
-            >
+            <EditButton isMyProfile={isMyProfile} onClick={handleIntroduction}>
               {activeIntroductionModify ? '프로필 편집' : '저장'}
             </EditButton>
           </NameAndEditBtn>
           <Statistics>
             <NumOfPosts>게시글 {userInfo?.postNum}</NumOfPosts>
-            <FollowerContainer ref={followRef}>
-              <Follower
-                onClick={() => {
-                  setFollowModalVisibliity(!followModalVisibliity)
-                }}
-              >
-                팔로워 {userInfo?.followerNum}
-              </Follower>
-              {followModalVisibliity ? <FollowModal /> : null}
+            <FollowerContainer ref={followerRef}>
+              <Follower>팔로워 {follower.length}</Follower>
+              {followModalOpen && userInfo !== undefined ? (
+                <FollowerModal followerList={follower} />
+              ) : null}
             </FollowerContainer>
             <FollowContainer ref={followingRef}>
-              <Follow
-                onClick={() => {
-                  setFollowingModalVisibliity(!followingModalVisibliity)
-                }}
-              >
-                팔로우 {userInfo?.followNum}
-              </Follow>
-              {followingModalVisibliity ? <FollowingModal /> : null}
+              <Follow>팔로잉 {following.length}</Follow>
+              {followingModalOpen && userInfo !== undefined ? (
+                <FollowingModal followList={following} />
+              ) : null}
             </FollowContainer>
           </Statistics>
           <Introduction

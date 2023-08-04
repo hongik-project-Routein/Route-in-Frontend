@@ -5,12 +5,11 @@ import { Link } from 'react-router-dom'
 import CarouselSelectPicture from './../../components/carouselSelectPicture'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faImage } from '@fortawesome/free-solid-svg-icons'
-import { useDispatch } from 'react-redux'
-import { ChangePlace, EnrollImages } from '../../modules/post'
 import { gps } from 'exifr'
 import { type Pin } from '../../types/postTypes'
 import ImageEditor from '../../components/imageEditor'
 import { Map, MapMarker } from 'react-kakao-maps-sdk'
+import usePost from '../../modules/hooks/usePost'
 
 interface GPSInfo {
   latitude: number
@@ -42,8 +41,9 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
   const [carouselIndex, setCarouselIndex] = useState<number>(0)
   const [modalOpen, setModalOpen] = useState<boolean>(false)
   const [searchModalOpen, setSearchModalOpen] = useState<boolean>(false)
-  const dispatch = useDispatch()
   const mapRef = useRef(null)
+
+  const { enrollImages, changePlace } = usePost()
 
   const fileSelectedHandler = async (
     event: ChangeEvent<HTMLInputElement>
@@ -138,7 +138,8 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
         }
         setPinList(newPins)
         setAddresses(newAddressList)
-        dispatch(EnrollImages(newPins, imageUrls))
+        // dispatch(EnrollImages(newPins, imageUrls))
+        enrollImages(newPins, imageUrls)
       }
     }
 
@@ -237,7 +238,8 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
       }
     })
 
-    dispatch(ChangePlace(newPost, imageUrls))
+    // dispatch(ChangePlace(newPost, imageUrls))
+    changePlace(newPost, imageUrls)
   }
 
   // test용 Effect

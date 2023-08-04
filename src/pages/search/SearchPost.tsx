@@ -3,14 +3,11 @@ import styled from 'styled-components'
 import theme from '../../styles/Theme'
 import PostSmall from '../../components/postSmall'
 import PageMoveBtn from '../../components/pageMoveBtn'
-import Tab from '../../components/tab'
 import SearchWindow from '../../components/searchWindow'
-import { type PostCardData, postDemo } from '../../dummy/post'
-
-interface TabContent {
-  tabName: string
-  link: string
-}
+import { postDemo } from '../../dummy/post'
+import useSearch from '../../modules/hooks/useSearch'
+import SearchTab from '../../components/searchTab'
+import { type LoadPost } from '../../types/postTypes'
 
 interface SearchPostArticleProps {
   handleTabfunc: (index: number) => void
@@ -20,18 +17,12 @@ interface SearchPostArticleProps {
 export default function SearchPostArticle(
   props: SearchPostArticleProps
 ): JSX.Element {
-  const tabContents: TabContent[] = [
-    { tabName: '게시글', link: '/search/post' },
-    { tabName: '핀', link: '/search/pin' },
-    { tabName: '지도', link: '/search/map' },
-    { tabName: '유저', link: '/search/user' },
-  ]
-  const [keyword, setKeyword] = useState<string>('')
+  const { keyword } = useSearch()
 
   // 더미 데이터 용
-  const [posts, setPosts] = useState<PostCardData[]>([])
+  const [posts, setPosts] = useState<LoadPost[]>([])
   const loadPost = (): void => {
-    const post: PostCardData[] = postDemo
+    const post: LoadPost[] = postDemo
     setPosts(post)
   }
   useEffect(() => {
@@ -39,9 +30,8 @@ export default function SearchPostArticle(
   }, [posts])
   return (
     <>
-      <SearchWindow setKeyword={setKeyword} />
-      <Tab
-        tabContent={tabContents}
+      <SearchWindow />
+      <SearchTab
         tabIndex={props.tabIndex}
         handleTabfunc={props.handleTabfunc}
       />

@@ -6,49 +6,90 @@ import { Link } from 'react-router-dom'
 import Hashtag from './hashtag'
 import theme from '../styles/Theme'
 import KakaoMapPost from './KakaoMapPost'
-import { type LoadPostMainPage } from '../types/postTypes'
+import { request } from '../util/axios'
+
+import { type BookMarkType } from '../types/postTypes'
+import { type LoadPost } from './../types/postTypes'
+import useUser from '../modules/hooks/useUser'
 
 interface PostCardProps {
-  loadPost: LoadPostMainPage // 연결 시 LoadPostMainPage로 변경
+  loadPost: LoadPost
 }
 
 export default function PostCard(props: PostCardProps): JSX.Element {
-  const [heartCount, setHeartCount] = useState<number>(0)
-  const [heartActive, setHeartActive] = useState(false)
+  const [likeCount, setLikeCount] = useState<number>(0)
+  const [likeStatus, setLikeStatus] = useState(props.loadPost.post.is_liked)
   const [bookmarkActive, setbookmarkActive] = useState(false)
-  const handleHeartButton = (): void => {
-    heartActive ? setHeartCount(heartCount - 1) : setHeartCount(heartCount + 1)
-    setHeartActive(!heartActive)
+  const { accessToken } = useUser()
+
+  const likeButtonClick = async (): Promise<void> => {
+    try {
+      const response = await request<string>(
+        'post',
+        `/api/post/${props.loadPost.post.id}/like/`,
+        {
+          postid: props.loadPost.post.id,
+          like_count: likeCount,
+          like_status: likeStatus,
+        },
+        {
+          Authorization: `Bearer ${accessToken as string}`,
+        }
+      )
+
+      console.log(response)
+
+      setLikeCount(
+        response === '좋아요 성공' ? (prev) => prev + 1 : (prev) => prev - 1
+      )
+      setLikeStatus((prev) => !prev)
+    } catch (error) {
+      console.log(error)
+    }
   }
+
+  const handleBookmarkButton = async (): Promise<void> => {
+    try {
+      const response = await request<BookMarkType>(
+        'post',
+        '/api/post/bookmark',
+        {
+          postid: props.loadPost.post.id,
+          bookmark: bookmarkActive,
+        }
+      )
+      console.log(response)
+
+      setbookmarkActive((prev) => !prev)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   useEffect(() => {
-    setHeartCount(props.loadPost.likeUsers)
+    setLikeCount(props.loadPost.post.like_count)
   }, [])
   return (
     <>
       <PersonalInfoContainer>
         <UserContent>
-          <ProfileLink to={`/profile/${props.loadPost.writer}`}>
-            <Profile src={props.loadPost.profile} />
+          <ProfileLink to={`/profile/${props.loadPost.post.writer}`}>
+            <Profile src={props.loadPost.user.image} />
           </ProfileLink>
-          <Nickname to={`/profile/${props.loadPost.writer}`}>
-            {props.loadPost.writer}
+          <Nickname to={`/profile/${props.loadPost.post.writer}`}>
+            {props.loadPost.post.writer}
           </Nickname>
           <DistanceFromMe>나와의 거리: {100}km</DistanceFromMe>
         </UserContent>
         <RestContent>
           <Icons>
-            <HeartAndNumber>
-              <Heart onClick={handleHeartButton} active={heartActive}>
+            <LikeAndNumber>
+              <Like active={likeStatus} onClick={likeButtonClick}>
                 <FontAwesomeIcon icon={faHeart} />
-              </Heart>
-              <NumOfHeart>{heartCount}</NumOfHeart>
-            </HeartAndNumber>
-            <Bookmark
-              active={bookmarkActive}
-              onClick={() => {
-                setbookmarkActive(!bookmarkActive)
-              }}
-            >
+              </Like>
+              <NumOfLike>{likeCount}</NumOfLike>
+            </LikeAndNumber>
+            <Bookmark active={bookmarkActive} onClick={handleBookmarkButton}>
               <FontAwesomeIcon icon={faBookmark} />
             </Bookmark>
           </Icons>
@@ -57,16 +98,19 @@ export default function PostCard(props: PostCardProps): JSX.Element {
       <PostImageContainer>
         <KakaoMapPost
           size="582px"
-          pinCount={props.loadPost.pinCount}
-          pinImages={props.loadPost.pinImage}
-          latLng={props.loadPost.latLng}
+          pinCount={props.loadPost.post.pin_count}
+          pinImages={props.loadPost.pin.map((pin) => pin.image)}
+          latLng={props.loadPost.pin.map((pin) => ({
+            lat: pin.latitude,
+            lng: pin.longitude,
+          }))}
         ></KakaoMapPost>
       </PostImageContainer>
-      <PostText postText={props.loadPost.postText} />
+      <PostText postText={props.loadPost.post.content} />
       <PostComment>
         <Link
-          to={`/post/${props.loadPost.postId}`}
-        >{`댓글 ${props.loadPost.commentCount}개 모두 보기`}</Link>
+          to={`/post/${props.loadPost.post.id}`}
+        >{`댓글 ${props.loadPost.post.comment_count}개 모두 보기`}</Link>
       </PostComment>
     </>
   )
@@ -188,7 +232,7 @@ const Icons = styled.div`
   justify-content: flex-start;
 `
 
-const HeartAndNumber = styled.div`
+const LikeAndNumber = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -197,20 +241,22 @@ const HeartAndNumber = styled.div`
   margin-right: 10px;
 `
 
-const Heart = styled.div<{ active: boolean }>`
-  color: ${(props) => (props.active ? theme.colors.primaryColor : 'black')};
+const Like = styled.div<{ active: boolean }>`
+  color: ${(props) =>
+    props.active ? theme.colors.primaryColor : theme.colors.disable};
   &:hover {
     cursor: pointer;
   }
 `
 
-const NumOfHeart = styled.div`
+const NumOfLike = styled.div`
   font-size: 16px;
   margin-top: 5px;
 `
 
 const Bookmark = styled.div<{ active: boolean }>`
-  color: ${(props) => (props.active ? theme.colors.primaryColor : 'black')};
+  color: ${(props) =>
+    props.active ? theme.colors.primaryColor : theme.colors.disable};
   width: 20px;
   margin-right: 10px;
   &:hover {

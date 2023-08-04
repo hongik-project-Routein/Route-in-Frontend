@@ -4,21 +4,27 @@ import Router from './Routes'
 import { ThemeProvider } from './styles/theme-components'
 import theme from './styles/Theme'
 import GlobalStyle from './styles/GlobalStyle'
-import { legacy_createStore as createStore } from 'redux'
-import rootReducer from './modules'
 import { Provider } from 'react-redux'
-import { composeWithDevTools } from 'redux-devtools-extension'
+import store from './modules/store'
+import { CookiesProvider } from 'react-cookie'
 
-const store = createStore(rootReducer, composeWithDevTools())
+// import { worker } from './mocks/browser'
+
+// if (process.env.NODE_ENV === 'development') {
+//   // eslint-disable-next-line @typescript-eslint/no-floating-promises
+//   worker.start()
+// }
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
   <>
     <GlobalStyle />
     <ThemeProvider theme={theme}>
-      <Provider store={store}>
-        <Router />
-      </Provider>
+      <CookiesProvider>
+        <Provider store={store}>
+          <Router />
+        </Provider>
+      </CookiesProvider>
     </ThemeProvider>
   </>
 )

@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { useSelector, useDispatch } from 'react-redux/es/exports'
-import { type RootState } from '../modules'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faHouse,
-  faImage,
   faMagnifyingGlass,
   faLocationDot,
   faSquarePlus,
@@ -15,7 +12,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 
 import theme from '../styles/Theme'
-import { changeNavbarIndex } from '../modules/tap/navbar'
+import useTab from '../modules/hooks/useTab'
+import useUser from '../modules/hooks/useUser'
 
 interface TapContent {
   icon: IconDefinition
@@ -25,7 +23,6 @@ interface TapContent {
 
 const TapContents: TapContent[] = [
   { icon: faHouse, name: '홈', link: '/home' },
-  { icon: faImage, name: '스토리', link: '/story' },
   { icon: faMagnifyingGlass, name: '검색', link: '/search' },
   { icon: faLocationDot, name: '탐색', link: '/explore' },
   { icon: faSquarePlus, name: '만들기', link: '/post/create' },
@@ -33,22 +30,26 @@ const TapContents: TapContent[] = [
 ]
 
 export default function Sidebar(): JSX.Element {
-  const dispatch = useDispatch()
-  const [selectedTabIndex, setselectedTabIndex] = useState<number>(0)
-  const curIndex = useSelector(
-    (state: RootState) => state.changeNavbarReducer.index
-  )
+  const { navbar, changeNavbarIndex } = useTab()
+
+  const [selectedTabIndex, setselectedTabIndex] = useState<number>(navbar)
+
+  const { loadUserInfo } = useUser()
+
+  const userinfo = loadUserInfo()
+
   const handleTabClick = (index: number): void => {
     setselectedTabIndex(index)
-    dispatch(changeNavbarIndex(index))
+    changeNavbarIndex(index)
   }
   useEffect(() => {
-    setselectedTabIndex(curIndex)
+    setselectedTabIndex(navbar)
   }, [selectedTabIndex])
+
   return (
     <SidebarContainer>
       <UserContainer
-        to="/profile/jinokim98"
+        to={`/profile/${userinfo.nickname as string}`}
         active={selectedTabIndex === -1}
         onClick={() => {
           handleTabClick(-1)
@@ -56,8 +57,8 @@ export default function Sidebar(): JSX.Element {
       >
         <Profile src="https://avatars.githubusercontent.com/u/81083461?v=4" />
         <NicknameContainer>
-          <Nickname>Jinokim98</Nickname>
-          <Introduce>김진호</Introduce>
+          <Nickname>{userinfo.nickname}</Nickname>
+          <Introduce>{userinfo.name}</Introduce>
         </NicknameContainer>
       </UserContainer>
       <Tab>

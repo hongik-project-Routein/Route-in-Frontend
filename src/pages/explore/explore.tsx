@@ -1,23 +1,20 @@
 import React, { useState, useEffect } from 'react'
 import HeaderAndSidebar from '../../components/headerAndSidebar'
-import { useSelector, useDispatch } from 'react-redux'
-import { type RootState } from '../../modules'
-import { changeExploreTabIndex } from '../../modules/tap/Exploretab'
 import UserRecommendExploreArticle from './userRecommendExplore'
 import LocationExploreArticle from './locationExplore'
+import useTab from '../../modules/hooks/useTab'
 
 export default function Explore(): JSX.Element {
-  const dispatch = useDispatch()
-  const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0)
-  const curIndex = useSelector(
-    (state: RootState) => state.changeExploreTabReducer.index
-  )
+  const { explore, changeExploreTabIndex } = useTab()
+
+  const [selectedTabIndex, setSelectedTabIndex] = useState<number>(explore)
+
   const handleTabClick = (index: number): void => {
     setSelectedTabIndex(index)
-    dispatch(changeExploreTabIndex(index))
+    changeExploreTabIndex(index)
   }
   useEffect(() => {
-    setSelectedTabIndex(curIndex)
+    setSelectedTabIndex(explore)
   }, [selectedTabIndex])
   return (
     <>

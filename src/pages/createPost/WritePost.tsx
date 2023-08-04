@@ -3,24 +3,14 @@ import styled from 'styled-components'
 import theme from '../../styles/Theme'
 import Carousel from '../../components/carousel'
 import { Link } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
-import { type RootState } from '../../modules'
-import { ChangeHashtagAndText } from '../../modules/post'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMinus } from '@fortawesome/free-solid-svg-icons'
-import { type Pin } from '../../types/postTypes'
-
-// 자동 생성된 해시태그의 이름과 값
-interface HashtagAutoAndText {
-  hashtagAuto: string
-  text: string
-}
-
-// 추가로 작성한 해시태그 리스트와 전체 텍스트
-interface HashtagAndText {
-  hashtag: string[]
-  text: string
-}
+import {
+  type HashtagAndText,
+  type HashtagAutoAndText,
+  type Pin,
+} from '../../types/postTypes'
+import usePost from '../../modules/hooks/usePost'
 
 export default function WritePost(): JSX.Element {
   const [hashtagAutoTextList, setHashtagAutoTextList] = useState<
@@ -28,16 +18,11 @@ export default function WritePost(): JSX.Element {
   >([])
   const [text, setText] = useState<string>('')
 
-  const pins = useSelector((state: RootState) => state.changePostReducer.pins)
-  const imgUrls = useSelector(
-    (state: RootState) => state.changePostReducer.imgUrls
-  )
-
-  const dispatch = useDispatch()
+  const { pins, imgUrls, changeHashtagAndText } = usePost()
 
   // 초기 해시태그 자동 값 가져오기
   useEffect(() => {
-    const loadHashtagAuto: HashtagAutoAndText[] = pins.map((item) => {
+    const loadHashtagAuto: HashtagAutoAndText[] = pins.map((item: Pin) => {
       return {
         hashtagAuto: item.hashtagAuto.hashtagAuto,
         text: '',
@@ -68,7 +53,7 @@ export default function WritePost(): JSX.Element {
         }
       })
     })
-    const newPins: Pin[] = pins.map((pin, idx) => {
+    const newPins: Pin[] = pins.map((pin: Pin, idx: number) => {
       return {
         ...pin,
         hashtagAuto: hashtagAutoTextList[idx],
@@ -80,7 +65,7 @@ export default function WritePost(): JSX.Element {
       text: `${text}`,
     }
 
-    dispatch(ChangeHashtagAndText(newPins, payload))
+    changeHashtagAndText(newPins, payload)
   }
 
   return (
@@ -90,7 +75,7 @@ export default function WritePost(): JSX.Element {
       <GroupContainer>
         <PictureGroup>
           <Carousel
-            items={imgUrls.map((item, idx) => (
+            items={imgUrls.map((item: string, idx: number) => (
               <CarouselImage key={idx} src={item} />
             ))}
           ></Carousel>

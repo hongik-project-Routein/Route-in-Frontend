@@ -1,14 +1,10 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
 import PageMoveBtn from '../../components/pageMoveBtn'
-import Tab from '../../components/tab'
 import SearchWindow from '../../components/searchWindow'
-
-interface TabContent {
-  tabName: string
-  link: string
-}
+import useSearch from '../../modules/hooks/useSearch'
+import SearchTab from '../../components/searchTab'
 
 interface SearchMapArticleProps {
   handleTabfunc: (index: number) => void
@@ -18,18 +14,11 @@ interface SearchMapArticleProps {
 export default function SearchMapArticle(
   props: SearchMapArticleProps
 ): JSX.Element {
-  const tabContents: TabContent[] = [
-    { tabName: '게시글', link: '/search/post' },
-    { tabName: '핀', link: '/search/pin' },
-    { tabName: '지도', link: '/search/map' },
-    { tabName: '유저', link: '/search/user' },
-  ]
-  const [keyword, setKeyword] = useState<string>('')
+  const { keyword } = useSearch()
   return (
     <>
-      <SearchWindow setKeyword={setKeyword} />
-      <Tab
-        tabContent={tabContents}
+      <SearchWindow />
+      <SearchTab
         tabIndex={props.tabIndex}
         handleTabfunc={props.handleTabfunc}
       />

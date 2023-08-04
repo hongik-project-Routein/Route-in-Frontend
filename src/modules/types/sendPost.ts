@@ -1,16 +1,14 @@
 import {
-  type PostSendToBackType,
+  type SendPostCoordinate,
   type PostSendToBackend,
 } from '../../types/postTypes'
 
 export function coordinatePostSendType(
   pins: PostSendToBackend
-): PostSendToBackType {
+): SendPostCoordinate {
   return {
-    content: pins.text,
+    content: pins.content,
     pins: pins.pins.map((pin) => {
-      console.log(pin.picture)
-
       return {
         image: pin.picture,
         pin_hashtag: pin.hashtagAuto.hashtagAuto,

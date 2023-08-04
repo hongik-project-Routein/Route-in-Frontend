@@ -4,8 +4,9 @@ import Profile from '../../components/profile'
 import Tab from '../../components/tab'
 import PostSmall from '../../components/postSmall'
 import PageMoveBtn from '../../components/pageMoveBtn'
-import { type PostCardData, postDemo } from '../../dummy/post'
 import { useParams } from 'react-router-dom'
+import { type LoadPost } from '../../types/postTypes'
+import { request } from '../../util/axios'
 
 interface TabContent {
   tabName: string
@@ -24,18 +25,35 @@ export default function ProfileBookmarkArticle(
   const tabContents: TabContent[] = [
     { tabName: '지도', link: `/profile/${username ?? ''}/map` },
     { tabName: '게시글', link: `/profile/${username ?? ''}/post` },
-    { tabName: '스토리', link: `/profile/${username ?? ''}/story` },
     { tabName: '북마크', link: `/profile/${username ?? ''}/bookmark` },
   ]
   // 더미 데이터 용
-  const [posts, setPosts] = useState<PostCardData[]>([])
-  const loadPost = (): void => {
-    const post: PostCardData[] = postDemo
-    setPosts(post)
+  const [posts, setPosts] = useState<LoadPost[]>([])
+
+  const fetchData = async (): Promise<LoadPost[]> => {
+    try {
+      const response = await request<LoadPost[]>(
+        'get',
+        `/api/user/profilepost/${username as string}`
+      )
+      return response
+    } catch (error) {
+      console.log(error)
+      throw error
+    }
   }
+
   useEffect(() => {
-    loadPost()
-  }, [posts])
+    const loadPost = async (): Promise<void> => {
+      const result = await fetchData()
+      setPosts(result)
+    }
+
+    loadPost().catch((error) => {
+      console.log(error)
+    })
+  }, [])
+
   return (
     <>
       <Profile />
