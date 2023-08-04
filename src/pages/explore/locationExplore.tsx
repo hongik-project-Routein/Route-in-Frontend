@@ -5,7 +5,8 @@ import { faLocationDot } from '@fortawesome/free-solid-svg-icons'
 import PostSmall from '../../components/postSmall'
 import PageMoveBtn from '../../components/pageMoveBtn'
 import Tab from '../../components/tab'
-import { type PostCardData, postDemo } from '../../dummy/post'
+import { postDemo } from '../../dummy/post'
+import { type LoadPost } from '../../types/postTypes'
 
 interface TabContent {
   tabName: string
@@ -25,12 +26,10 @@ export default function LocationExploreArticle(
     { tabName: '현재 위치', link: '/explore/location' },
   ]
   // 더미 데이터 용
-  const [posts, setPosts] = useState<PostCardData[]>([])
+  const [posts, setPosts] = useState<LoadPost[]>([])
   const loadPost = (): void => {
-    const post: PostCardData[] = postDemo
-    const select = post.filter(
-      (item) => item.postId === '5' || item.postId === '6'
-    )
+    const post: LoadPost[] = postDemo
+    const select = post.filter((item) => item.post.id >= 5)
     setPosts(select)
   }
   useEffect(() => {

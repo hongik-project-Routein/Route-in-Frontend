@@ -5,21 +5,21 @@ import PostCard from '../components/postCard'
 import styled from 'styled-components'
 import UserRecommend from '../components/userRecommend'
 import theme from '../styles/Theme'
-import {
-  type LoadPostFromBackMain,
-  type LoadPostMainPage,
-} from '../types/postTypes'
+import { type LoadPost } from '../types/postTypes'
 import { request } from '../util/axios'
-import { coordinatePostType } from '../modules/types/loadPost'
+import useUser from '../modules/hooks/useUser'
 
 function Main(): JSX.Element {
-  const [posts, setPosts] = useState<LoadPostMainPage[]>([])
+  const [posts, setPosts] = useState<LoadPost[]>([])
+  const { accessToken } = useUser()
 
   const loadPost = async (): Promise<void> => {
     try {
-      const loadPost = await request<LoadPostFromBackMain[]>('get', `api/post/`)
+      const loadPost = await request<LoadPost[]>('get', `/api/post`, null, {
+        Authorization: `Bearer ${accessToken as string}`,
+      })
 
-      setPosts(coordinatePostType(loadPost))
+      setPosts(loadPost)
     } catch (err) {
       console.log(err)
     }

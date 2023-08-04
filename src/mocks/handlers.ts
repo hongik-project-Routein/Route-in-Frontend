@@ -1,9 +1,15 @@
-import { rest } from 'msw'
+import { authHandler } from './handlers/auth'
+import { PostHandler } from './handlers/post'
+import { profileHandler } from './handlers/profile'
+import { searchHandler } from './handlers/search'
+import { CommentHandler } from './handlers/comment'
+import { UserHandler } from './handlers/user'
 
 export const handlers = [
-  rest.get(
-    '/fruits',
-    async (req, res, ctx) =>
-      await res(ctx.status(200), ctx.json(['사과', '바나나']))
-  ),
+  ...authHandler,
+  ...PostHandler,
+  ...profileHandler,
+  ...searchHandler,
+  ...CommentHandler,
+  ...UserHandler,
 ]

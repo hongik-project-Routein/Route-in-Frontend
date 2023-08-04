@@ -3,17 +3,28 @@ import styled from 'styled-components'
 import theme from '../styles/Theme'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+import { useNavigate } from 'react-router-dom'
+import useSearch from '../modules/hooks/useSearch'
 
-interface SearchWindowProps {
-  setKeyword: React.Dispatch<React.SetStateAction<string>>
-}
-
-export default function SearchWindow(props: SearchWindowProps): JSX.Element {
+export default function SearchWindow(): JSX.Element {
   const [keyword, setKeyword] = useState<string>('')
-  const onSubmit = (event: FormEvent<HTMLFormElement>): void => {
+  const { changeKeyword, category, searchKeyword } = useSearch()
+  const navigate = useNavigate()
+  const onSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault()
-    if (keyword === '') return
-    props.setKeyword(keyword)
+
+    if (keyword.trim() === '') return
+
+    const params = new URLSearchParams()
+    params.append('query', keyword)
+
+    changeKeyword(keyword)
+
+    // 실제로 검색 실행
+    const response = await searchKeyword()
+    console.log(response)
+
+    navigate(`/search/${category as string}?${params.toString()}`)
   }
   const onChange = (event: FormEvent<HTMLInputElement>): void => {
     const {
@@ -22,6 +33,7 @@ export default function SearchWindow(props: SearchWindowProps): JSX.Element {
     setKeyword(value)
   }
   return (
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     <SearchWindowContainer onSubmit={onSubmit}>
       <InputKeyword
         value={keyword}

@@ -4,7 +4,8 @@ import PostSmall from '../../components/postSmall'
 import PageMoveBtn from '../../components/pageMoveBtn'
 import Tab from '../../components/tab'
 import theme from '../../styles/Theme'
-import { type PostCardData, postDemo } from '../../dummy/post'
+import { postDemo } from '../../dummy/post'
+import { type LoadPost } from '../../types/postTypes'
 
 interface TabContent {
   tabName: string
@@ -24,13 +25,10 @@ export default function UserRecommendExploreArticle(
     { tabName: '현재 위치', link: '/explore/location' },
   ]
   // 더미 데이터 용
-  const [posts, setPosts] = useState<PostCardData[]>([])
+  const [posts, setPosts] = useState<LoadPost[]>([])
   const loadPost = (): void => {
-    const post: PostCardData[] = postDemo
-    const select = post.filter(
-      (item) =>
-        item.postId === '4' || item.postId === '5' || item.postId === '6'
-    )
+    const post: LoadPost[] = postDemo
+    const select = post.filter((item) => item.post.id >= 4)
     setPosts(select)
   }
   useEffect(() => {

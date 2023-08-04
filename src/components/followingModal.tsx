@@ -1,58 +1,70 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import theme from '../styles/Theme'
+import { request } from '../util/axios'
+import { type UserData } from '../mocks/data/user'
+import useFollow from '../modules/hooks/useFollow'
 
-interface FollowList {
-  image: string
-  nickname: string
-  username: string
+interface FollowProps {
+  followList: string[]
 }
 
-export default function FollowingModal(): JSX.Element {
-  const FollowLists: FollowList[] = [
-    {
-      image: 'https://avatars.githubusercontent.com/u/81083461?v=4',
-      nickname: 'jinokim98',
-      username: '김진호',
-    },
-    {
-      image: 'https://avatars.githubusercontent.com/u/81083461?v=4',
-      nickname: 'jinokim98',
-      username: '김진호',
-    },
-    {
-      image: 'https://avatars.githubusercontent.com/u/81083461?v=4',
-      nickname: 'jinokim98',
-      username: '김진호',
-    },
-    {
-      image: 'https://avatars.githubusercontent.com/u/81083461?v=4',
-      nickname: 'jinokim98',
-      username: '김진호',
-    },
-    {
-      image: 'https://avatars.githubusercontent.com/u/81083461?v=4',
-      nickname: 'jinokim98',
-      username: '김진호',
-    },
-    {
-      image: 'https://avatars.githubusercontent.com/u/81083461?v=4',
-      nickname: 'jinokim98',
-      username: '김진호',
-    },
-  ]
+export default function FollowingModal(props: FollowProps): JSX.Element {
+  const [followLists, setFollowLists] = useState<UserData[]>([])
+  const { deleteFollowing } = useFollow()
+
+  const getFollowList = async (): Promise<UserData[]> => {
+    const followUserList: UserData[] = []
+    try {
+      for (const user of props.followList) {
+        const response = await request<UserData>('get', `/api/user/${user}`)
+        followUserList.push(response)
+      }
+      return followUserList
+    } catch (error) {
+      console.log(error)
+      throw error
+    }
+  }
+
+  useEffect(() => {
+    const loadFollowList = async (): Promise<void> => {
+      const result: UserData[] = await getFollowList()
+      setFollowLists(result)
+    }
+    loadFollowList().catch((error) => {
+      console.log(error)
+    })
+  }, [])
+
+  const handleDeleteFollowing = async (nickname: string): Promise<void> => {
+    try {
+      await request('delete', `/api/user/following/${nickname}`)
+      deleteFollowing(nickname)
+    } catch (error) {
+      console.log(error)
+      throw error
+    }
+  }
+
   return (
     <ModalContainer>
-      <ModalTitle>팔로잉</ModalTitle>
+      <ModalTitle>팔로워</ModalTitle>
       <ModalInner>
-        {FollowLists.map((item, idx) => (
+        {followLists?.map((user, idx) => (
           <Row key={idx}>
-            <ProfileImage src={item.image} />
+            <ProfileImage src={user.profile} />
             <NicknameAndName>
-              <Nickname>{item.nickname}</Nickname>
-              <Name>{item.username}</Name>
+              <Nickname>{user.nickname}</Nickname>
+              <Name>{user.name}</Name>
             </NicknameAndName>
-            <FollowButton>팔로잉</FollowButton>
+            <FollowButton
+              onClick={async () => {
+                await handleDeleteFollowing(user.nickname)
+              }}
+            >
+              팔로잉
+            </FollowButton>
           </Row>
         ))}
       </ModalInner>
