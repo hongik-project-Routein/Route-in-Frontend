@@ -7,11 +7,12 @@ import UserRecommend from '../components/userRecommend'
 import theme from '../styles/Theme'
 import { type LoadPost } from '../types/postTypes'
 import { request } from '../util/axios'
-import useUser from '../modules/hooks/useUser'
+import useUser from '../recoil/hooks/useUser'
 
 function Main(): JSX.Element {
   const [posts, setPosts] = useState<LoadPost[]>([])
-  const { accessToken } = useUser()
+  const { loadUserInfo } = useUser()
+  const accessToken = loadUserInfo().accessToken
 
   const loadPost = async (): Promise<void> => {
     try {

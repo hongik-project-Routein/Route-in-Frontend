@@ -7,12 +7,18 @@ import { useParams } from 'react-router-dom'
 import useModal from '../hooks/useModal'
 import { request } from '../util/axios'
 import { type UserData } from './../mocks/data/user'
-import useFollow from '../modules/hooks/useFollow'
+import useUser from '../recoil/hooks/useUser'
+import useFollow from '../recoil/hooks/useFollow'
 
 export default function Profile(): JSX.Element {
   const [introductionText, setIntroductionText] = useState<string>('')
   const [activeIntroductionModify, setActiveIntroductionModify] =
     useState(false)
+
+  const { loadUserInfo } = useUser()
+  const { followerList, followingList } = useFollow()
+
+  const myUname = loadUserInfo().uname
 
   const followerRef = useRef<HTMLDivElement>(null)
   const followingRef = useRef<HTMLDivElement>(null)
@@ -24,8 +30,6 @@ export default function Profile(): JSX.Element {
   const { username } = useParams()
 
   const [userInfo, setUserInfo] = useState<UserData>()
-
-  const { follower, following, loadFollowList } = useFollow()
 
   const fetchData = async (): Promise<UserData> => {
     try {
@@ -44,9 +48,8 @@ export default function Profile(): JSX.Element {
     const loadUserInfo = async (): Promise<void> => {
       const result = await fetchData()
       setUserInfo(result)
-      loadFollowList(result)
 
-      setIsMyProfile(username === 'jinokim98')
+      setIsMyProfile(username === myUname)
       setIntroductionText(result.introduction)
       setActiveIntroductionModify(true)
     }
@@ -87,15 +90,15 @@ export default function Profile(): JSX.Element {
           <Statistics>
             <NumOfPosts>게시글 {userInfo?.postNum}</NumOfPosts>
             <FollowerContainer ref={followerRef}>
-              <Follower>팔로워 {follower.length}</Follower>
+              <Follower>팔로워 {followerList.length}</Follower>
               {followModalOpen && userInfo !== undefined ? (
-                <FollowerModal followerList={follower} />
+                <FollowerModal followerList={followerList} />
               ) : null}
             </FollowerContainer>
             <FollowContainer ref={followingRef}>
-              <Follow>팔로잉 {following.length}</Follow>
+              <Follow>팔로잉 {followingList.length}</Follow>
               {followingModalOpen && userInfo !== undefined ? (
-                <FollowingModal followList={following} />
+                <FollowingModal followList={followingList} />
               ) : null}
             </FollowContainer>
           </Statistics>

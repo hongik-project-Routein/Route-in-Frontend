@@ -1,6 +1,7 @@
 import { rest } from 'msw'
 import { SERVER_BASE_URL } from '../../config'
 import { postDemo } from '../data/post'
+import { updatedPost } from '../data/updatePost'
 import { type BookMarkType } from '../../types/postTypes'
 
 export interface LikeResponse {
@@ -60,6 +61,28 @@ export const PostHandler = [
     `${SERVER_BASE_URL as string}/api/post/create/`,
     async (req, res, ctx) => {
       return await res(ctx.status(201), ctx.json(['success']))
+    }
+  ),
+
+  // 게시글 수정 정보 요청
+  rest.get(
+    `${SERVER_BASE_URL as string}/api/post/:postid/update`,
+    async (req, res, ctx) => {
+      const { postid } = req.params
+      console.log(postid)
+      const response = updatedPost
+      return await res(ctx.json(response))
+    }
+  ),
+
+  // 게시글 수정
+  rest.post(
+    `${SERVER_BASE_URL as string}/api/post/:postid/update`,
+    async (req, res, ctx) => {
+      const { postid } = req.params
+      console.log(postid)
+      const response = 'ok'
+      return await res(ctx.json(response))
     }
   ),
 ]

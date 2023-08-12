@@ -31,6 +31,20 @@ export interface SendPostCoordinate {
   pins: SendPinCoordinate[]
 }
 
+// 게시글 수정 시
+export interface UpdatePost {
+  content: string
+  pins: UpdatePin[]
+}
+
+// 핀 수정 시
+export interface UpdatePin {
+  image: string
+  hashtagAuto: HashtagAutoAndText
+  LatLng: { lat: number; lng: number }
+  placeId: number
+}
+
 export interface SendPinCoordinate {
   image: File
   pin_hashtag: string
@@ -53,6 +67,7 @@ export interface LoadPost {
     pin_count: number
     like_count: number
     like_users: string[]
+    is_bookmarked: boolean
     bookmark_users: string[]
     comment_count: number
   }
@@ -73,12 +88,14 @@ export interface LoadPin {
 // 댓글 불러오기
 export interface LoadComment {
   id: number
-  updated_at: string
-  post: number
+  writer_image: string
   writer: string
   content: string
+  tagged_users?: string[] | undefined
+  updated_at: string
+  post: number
   like_count: number
-  like_status: boolean
+  is_liked: boolean
 }
 
 // 댓글 작성

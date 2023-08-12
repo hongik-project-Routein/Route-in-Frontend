@@ -1,17 +1,17 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
 import { type UserData } from '../../mocks/data/user'
 import { Link } from 'react-router-dom'
-import useFollow from '../../modules/hooks/useFollow'
 import { request } from '../../util/axios'
+import useFollow from './../../recoil/hooks/useFollow'
 
 interface EachRecommendUserProps {
   eachUser: UserData
 }
 
 function EachRecommendUser(props: EachRecommendUserProps): JSX.Element {
-  const { addFollowing, following } = useFollow()
+  const { addFollowing } = useFollow()
 
   const handleAddFollowing = async (nickname: string): Promise<void> => {
     try {
@@ -23,9 +23,6 @@ function EachRecommendUser(props: EachRecommendUserProps): JSX.Element {
     }
   }
 
-  useEffect(() => {
-    console.log(following)
-  }, [following])
   return (
     <RecommendRow>
       <Link to={`/profile/${props.eachUser.nickname}`}>

@@ -12,6 +12,7 @@ import EmojiPicker, { type EmojiClickData } from 'emoji-picker-react'
 import { type LoadComment } from '../../types/postTypes'
 import EachComment from '../eachItem/EachComment'
 import { request } from '../../util/axios'
+import useUser from '../../recoil/hooks/useUser'
 
 interface CommentProps {
   postId: number
@@ -22,6 +23,8 @@ function Comment(props: CommentProps): JSX.Element {
   const [text, setText] = useState<string>('')
   const [comments, setComments] = useState<LoadComment[] | []>([])
   const [emojiClick, setEmojiClick] = useState(false)
+  const { loadUserInfo } = useUser()
+  const accessToken = loadUserInfo().accessToken
 
   useEffect(() => {
     props.comments !== undefined ? setComments(props.comments) : setComments([])
@@ -46,27 +49,23 @@ function Comment(props: CommentProps): JSX.Element {
 
     if (text === '') return
 
-    const newComment = {
-      id: 0,
-      updated_at: '1',
-      post: props.postId,
-      writer: 'jinokim98',
-      content: text,
-      like_count: 0,
-      like_status: false,
-    }
-
     setText('')
 
     try {
-      const response = await request<LoadComment[]>(
+      const response = await request<LoadComment>(
         'post',
-        '/api/comment',
-        newComment
+        `/api/post/${props.postId}/comment/`,
+        { content: text, tagged_users: [], post: props.postId },
+        {
+          Authorization: `Bearer ${accessToken as string}`,
+        }
       )
-      console.log(response)
 
-      setComments(response)
+      if (response !== undefined) {
+        const comments = [...(props.comments ?? [])]
+        comments.push(response)
+        setComments(comments)
+      }
     } catch (error) {
       console.log(error)
     }

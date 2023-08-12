@@ -2,16 +2,20 @@ import React from 'react'
 import KakaoLogin from 'react-kakao-login'
 import styled from 'styled-components'
 import { request } from '../../util/axios'
-import useUser from '../../modules/hooks/useUser'
 import { useNavigate } from 'react-router-dom'
+import { type UserState } from '../../recoil/atom/user'
+import useUser from '../../recoil/hooks/useUser'
 
 export interface Auth {
   name: string
-  nickname: string
+  uname: string
+  image: string
   email: string
   age: number
   gender: string
-  access: string
+  follower_set: string[]
+  following_set: string[]
+  accessToken: string
 }
 
 function Kakao(): JSX.Element {
@@ -31,10 +35,25 @@ function Kakao(): JSX.Element {
       }
     )
 
-    const { name, nickname, email, age, gender, access } = response
-    login(name, nickname, email, age, gender, access)
+    const userinfo: UserState = {
+      name: response.name,
+      uname: response.uname,
+      email: response.email,
+      age: response.age,
+      gender: response.gender,
+      image: response.image,
+      follower_set: response.follower_set,
+      following_set: response.following_set,
+      accessToken: response.accessToken,
+    }
 
-    navigate('/home')
+    login(userinfo)
+
+    if (response.uname === '') {
+      navigate('/initial-setting')
+    } else {
+      navigate('/home')
+    }
   }
   const kakaoOnFailure = (error: any): void => {
     console.log(error)

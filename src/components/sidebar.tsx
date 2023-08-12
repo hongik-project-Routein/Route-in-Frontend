@@ -13,7 +13,7 @@ import {
 
 import theme from '../styles/Theme'
 import useTab from '../modules/hooks/useTab'
-import useUser from '../modules/hooks/useUser'
+import useUser from '../recoil/hooks/useUser'
 
 interface TapContent {
   icon: IconDefinition
@@ -49,7 +49,7 @@ export default function Sidebar(): JSX.Element {
   return (
     <SidebarContainer>
       <UserContainer
-        to={`/profile/${userinfo.nickname as string}`}
+        to={`/profile/${userinfo.uname as string}`}
         active={selectedTabIndex === -1}
         onClick={() => {
           handleTabClick(-1)
@@ -57,7 +57,7 @@ export default function Sidebar(): JSX.Element {
       >
         <Profile src="https://avatars.githubusercontent.com/u/81083461?v=4" />
         <NicknameContainer>
-          <Nickname>{userinfo.nickname}</Nickname>
+          <Nickname>{userinfo.uname}</Nickname>
           <Introduce>{userinfo.name}</Introduce>
         </NicknameContainer>
       </UserContainer>

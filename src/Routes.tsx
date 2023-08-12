@@ -12,6 +12,7 @@ import SelectRepresentativePicture from './pages/createPost/SelectRepresentative
 import HeaderAndSidebar from './components/headerAndSidebar'
 import Login from './pages/login'
 import Kakao from './components/callback/kakao'
+import InitialSetting from './pages/InitialSetting'
 
 function Router(): JSX.Element {
   return (
@@ -21,6 +22,7 @@ function Router(): JSX.Element {
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/auth/login" element={<Kakao />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/initial-setting" element={<InitialSetting />} />
           <Route path="/home" element={<Main />} />
           <Route path="/post/:postid" element={<PostDetail />} />
           <Route path="/post/create/" element={<CreatePost />} />

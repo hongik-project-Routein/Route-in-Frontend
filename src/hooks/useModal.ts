@@ -23,7 +23,7 @@ function useModal(modalRef: RefObject<HTMLDivElement>): boolean {
         setModalOpen(true)
       })
     }
-  }, [])
+  }, [modalRef])
 
   return modalOpen
 }

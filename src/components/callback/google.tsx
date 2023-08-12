@@ -2,9 +2,10 @@ import React from 'react'
 import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google'
 import { request } from '../../util/axios'
 import styled from 'styled-components'
-import useUser from '../../modules/hooks/useUser'
 import { useNavigate } from 'react-router-dom'
 import { type Auth } from './kakao'
+import { type UserState } from '../../recoil/atom/user'
+import useUser from '../../recoil/hooks/useUser'
 
 function GoogleLoginProvider(): JSX.Element {
   return (
@@ -19,8 +20,8 @@ function GoogleLoginProvider(): JSX.Element {
 export default GoogleLoginProvider
 
 function GoogleLoginButton(): JSX.Element {
-  const { login } = useUser()
   const navigate = useNavigate()
+  const { login } = useUser()
 
   const loginButtonClick = useGoogleLogin({
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -38,10 +39,25 @@ function GoogleLoginButton(): JSX.Element {
         }
       )
 
-      const { name, nickname, email, age, gender, access } = response
-      login(name, nickname, email, age, gender, access)
+      const userinfo: UserState = {
+        name: response.name,
+        uname: response.uname,
+        email: response.email,
+        age: response.age,
+        gender: response.gender,
+        image: response.image,
+        follower_set: response.follower_set,
+        following_set: response.following_set,
+        accessToken: response.accessToken,
+      }
 
-      navigate('/home')
+      login(userinfo)
+
+      if (response.uname === '') {
+        navigate('/initial-setting')
+      } else {
+        navigate('/home')
+      }
     },
     onError: (error) => {
       console.log(error)

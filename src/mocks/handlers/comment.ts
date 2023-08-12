@@ -2,13 +2,6 @@ import { rest } from 'msw'
 import { SERVER_BASE_URL } from '../../config'
 import { postDemo } from '../data/post'
 
-export interface LikeCommentResponse {
-  postid: number
-  commentid: number
-  like_count: number
-  like_status: boolean
-}
-
 export const CommentHandler = [
   // 댓글 등록
   rest.post(
@@ -23,18 +16,26 @@ export const CommentHandler = [
   ),
 
   // 댓글 좋아요
-  rest.post(
-    `${SERVER_BASE_URL as string}/api/comment/like`,
+  // rest.post(
+  //   `${SERVER_BASE_URL as string}/api/comment/like`,
+  //   async (req, res, ctx) => {
+  //     // eslint-disable-next-line @typescript-eslint/naming-convention
+  //     const { postid, commentid, like_count, like_status } = await req.json()
+  //     const response: LikeCommentResponse = {
+  //       postid,
+  //       commentid,
+  //       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+  //       like_count: like_status === true ? like_count - 1 : like_count + 1,
+  //       like_status,
+  //     }
+  //     return await res(ctx.json(response))
+  //   }
+  // ),
+
+  rest.delete(
+    `${SERVER_BASE_URL as string}/api/comment/delete/:id`,
     async (req, res, ctx) => {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      const { postid, commentid, like_count, like_status } = await req.json()
-      const response: LikeCommentResponse = {
-        postid,
-        commentid,
-        // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-        like_count: like_status === true ? like_count - 1 : like_count + 1,
-        like_status,
-      }
+      const response = true
       return await res(ctx.json(response))
     }
   ),

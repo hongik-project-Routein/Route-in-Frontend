@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import theme from '../styles/Theme'
 import { request } from '../util/axios'
 import { type UserData } from '../mocks/data/user'
-import useFollow from '../modules/hooks/useFollow'
+import useFollow from '../recoil/hooks/useFollow'
 
 interface FollowProps {
   followList: string[]
@@ -11,7 +11,7 @@ interface FollowProps {
 
 export default function FollowingModal(props: FollowProps): JSX.Element {
   const [followLists, setFollowLists] = useState<UserData[]>([])
-  const { deleteFollowing } = useFollow()
+  const { followingList, deleteFollowing } = useFollow()
 
   const getFollowList = async (): Promise<UserData[]> => {
     const followUserList: UserData[] = []
@@ -35,7 +35,7 @@ export default function FollowingModal(props: FollowProps): JSX.Element {
     loadFollowList().catch((error) => {
       console.log(error)
     })
-  }, [])
+  }, [followingList])
 
   const handleDeleteFollowing = async (nickname: string): Promise<void> => {
     try {

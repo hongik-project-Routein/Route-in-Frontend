@@ -10,7 +10,8 @@ import { request } from '../util/axios'
 
 import { type BookMarkType } from '../types/postTypes'
 import { type LoadPost } from './../types/postTypes'
-import useUser from '../modules/hooks/useUser'
+import useUser from '../recoil/hooks/useUser'
+import useFollow from '../recoil/hooks/useFollow'
 
 interface PostCardProps {
   loadPost: LoadPost
@@ -19,8 +20,11 @@ interface PostCardProps {
 export default function PostCard(props: PostCardProps): JSX.Element {
   const [likeCount, setLikeCount] = useState<number>(0)
   const [likeStatus, setLikeStatus] = useState(props.loadPost.post.is_liked)
-  const [bookmarkActive, setbookmarkActive] = useState(false)
-  const { accessToken } = useUser()
+  const [bookmarkActive, setbookmarkActive] = useState(
+    props.loadPost.post.is_bookmarked
+  )
+  const { loadUserInfo } = useUser()
+  const accessToken = loadUserInfo().accessToken
 
   const likeButtonClick = async (): Promise<void> => {
     try {
@@ -28,16 +32,9 @@ export default function PostCard(props: PostCardProps): JSX.Element {
         'post',
         `/api/post/${props.loadPost.post.id}/like/`,
         {
-          postid: props.loadPost.post.id,
-          like_count: likeCount,
-          like_status: likeStatus,
-        },
-        {
           Authorization: `Bearer ${accessToken as string}`,
         }
       )
-
-      console.log(response)
 
       setLikeCount(
         response === '좋아요 성공' ? (prev) => prev + 1 : (prev) => prev - 1
@@ -48,14 +45,38 @@ export default function PostCard(props: PostCardProps): JSX.Element {
     }
   }
 
+  const { addFollowing, following } = useFollow()
+
+  const handleAddFollowing = async (uname: string): Promise<void> => {
+    try {
+      const response = await request(
+        'post',
+        `/api/user/2/follow/`,
+        { uname },
+        {
+          Authorization: `Bearer ${accessToken as string}`,
+        }
+      )
+      console.log(response)
+
+      addFollowing(uname)
+    } catch (error) {
+      console.log(error)
+      throw error
+    }
+  }
+
+  useEffect(() => {
+    console.log(following)
+  }, [following])
+
   const handleBookmarkButton = async (): Promise<void> => {
     try {
       const response = await request<BookMarkType>(
         'post',
-        '/api/post/bookmark',
+        `/api/post/${props.loadPost.post.id}/bookmark/`,
         {
-          postid: props.loadPost.post.id,
-          bookmark: bookmarkActive,
+          Authorization: `Bearer ${accessToken as string}`,
         }
       )
       console.log(response)
@@ -76,10 +97,17 @@ export default function PostCard(props: PostCardProps): JSX.Element {
           <ProfileLink to={`/profile/${props.loadPost.post.writer}`}>
             <Profile src={props.loadPost.user.image} />
           </ProfileLink>
-          <Nickname to={`/profile/${props.loadPost.post.writer}`}>
+          <Uname to={`/profile/${props.loadPost.post.writer}`}>
             {props.loadPost.post.writer}
-          </Nickname>
+          </Uname>
           <DistanceFromMe>나와의 거리: {100}km</DistanceFromMe>
+          <FollowButton
+            onClick={async () => {
+              await handleAddFollowing(props.loadPost.post.writer)
+            }}
+          >
+            팔로우
+          </FollowButton>
         </UserContent>
         <RestContent>
           <Icons>
@@ -212,7 +240,7 @@ const Profile = styled.img`
   }
 `
 
-const Nickname = styled(Link)`
+const Uname = styled(Link)`
   margin-right: 20px;
   font-size: 20px;
 `
@@ -289,4 +317,15 @@ const PostComment = styled.p`
   font-size: 16px;
   line-height: 30px;
   white-space: pre-line;
+`
+
+const FollowButton = styled.button`
+  width: 80px;
+  height: 30px;
+  background-color: transparent;
+  border: none;
+
+  &:hover {
+    cursor: pointer;
+  }
 `

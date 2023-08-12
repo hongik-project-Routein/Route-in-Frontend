@@ -26,4 +26,13 @@ export const UserHandler = [
       return await res(ctx.json(response))
     }
   ),
+
+  rest.get(
+    `${SERVER_BASE_URL as string}/api/user/uname/:uname`,
+    async (req, res, ctx) => {
+      const { uname } = req.params
+      console.log(uname)
+      return await res(ctx.json(true))
+    }
+  ),
 ]

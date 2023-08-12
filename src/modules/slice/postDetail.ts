@@ -17,6 +17,7 @@ const initialState: DetailState = {
     pin_count: 0,
     like_count: 0,
     is_liked: false,
+    is_bookmarked: false,
     like_users: [],
     bookmark_users: [],
     comment_count: 0,
@@ -63,7 +64,7 @@ const postDetailSlice = createSlice({
           return {
             ...comment,
             like_count: action.payload.comment.like_count,
-            like_status: action.payload.comment.like_status,
+            like_status: action.payload.comment.is_liked,
           }
         } else {
           return comment

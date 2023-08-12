@@ -7,7 +7,7 @@ import { faBell } from '@fortawesome/free-regular-svg-icons'
 import NoticeModal from './noticeModal'
 import useModal from '../hooks/useModal'
 import { useNavigate } from 'react-router-dom'
-import useUser from '../modules/hooks/useUser'
+import useUser from '../recoil/hooks/useUser'
 
 export default function Header(): JSX.Element {
   const noticeRef = useRef<HTMLDivElement>(null)

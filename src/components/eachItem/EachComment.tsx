@@ -1,13 +1,14 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHeart, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faHeart, faPen, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 import { type LoadComment } from '../../types/postTypes'
-import { type LikeCommentResponse } from '../../mocks/handlers/comment'
 import { request } from '../../util/axios'
-import useUser from '../../modules/hooks/useUser'
+import useModal from '../../hooks/useModal'
+import UpdateComment from '../updateComment'
+import useUser from '../../recoil/hooks/useUser'
 
 interface EachCommentProps {
   comment: LoadComment
@@ -15,21 +16,22 @@ interface EachCommentProps {
 
 function EachComment(props: EachCommentProps): JSX.Element {
   const [likes, setLikes] = useState<number>(props.comment.like_count)
-  const [liked, setLiked] = useState<boolean>(props.comment.like_status)
+  const [liked, setLiked] = useState<boolean>(props.comment.is_liked)
+  const { accessToken } = useUser()
 
   const likeButtonClick = async (): Promise<void> => {
     try {
-      const response = await request<LikeCommentResponse>(
+      const response = await request<string>(
         'post',
-        `/api/comment/like`,
+        `/api/comment/${props.comment.id}/like/`,
+        undefined,
         {
-          commentid: props.comment.id,
-          postid: props.comment.post,
-          like_count: likes,
-          like_status: liked,
+          Authorization: `Bearer ${accessToken as string}`,
         }
       )
-      setLikes(response.like_count)
+      setLikes(
+        response === '좋아요 성공' ? (prev) => prev + 1 : (prev) => prev - 1
+      )
       setLiked((prev) => !prev)
     } catch (error) {
       console.log(error)
@@ -37,12 +39,19 @@ function EachComment(props: EachCommentProps): JSX.Element {
   }
 
   const { loadUserInfo } = useUser()
-  const isMyComment = props.comment.writer === loadUserInfo().nickname
+  const isMyComment = props.comment.writer === loadUserInfo().uname
 
-  const deleteComment = async (): Promise<void> => {
+  const updateCommentRef = useRef(null)
+  const updateCommentOpen = useModal(updateCommentRef)
+
+  const deleteComment = async (id: number): Promise<void> => {
     try {
-      const response = await request<boolean>('delete', '/api/comment/delete')
+      const response = await request<boolean>(
+        'delete',
+        `/api/comment/delete/${id}`
+      )
       console.log(response)
+      window.location.reload()
     } catch (error) {
       console.log(error)
     }
@@ -52,7 +61,7 @@ function EachComment(props: EachCommentProps): JSX.Element {
 
   return (
     <Row>
-      <CommentProfile src={props.comment.writer} />
+      <CommentProfile src={props.comment.writer_image} />
       <CommentMain>
         <Maintext>
           <CommentNickname to="/profile/jinokim98">
@@ -69,7 +78,16 @@ function EachComment(props: EachCommentProps): JSX.Element {
       <HeartButton active={liked} onClick={likeButtonClick}>
         <FontAwesomeIcon icon={faHeart} />
       </HeartButton>
-      <DeleteButton active={isMyComment} onClick={deleteComment}>
+      <UpdateButton active={isMyComment} ref={updateCommentRef}>
+        <FontAwesomeIcon icon={faPen} />
+        {updateCommentOpen ? <UpdateComment comment={props.comment} /> : null}
+      </UpdateButton>
+      <DeleteButton
+        active={isMyComment}
+        onClick={async () => {
+          await deleteComment(props.comment.id)
+        }}
+      >
         <FontAwesomeIcon icon={faTrash} />
       </DeleteButton>
     </Row>
@@ -121,11 +139,27 @@ const HeartCount = styled.div`
 const HeartButton = styled.button<{ active: boolean }>`
   position: absolute;
   top: 15px;
-  right: 40px;
+  right: 60px;
   color: ${(props) =>
     props.active ? theme.colors.primaryColor : theme.colors.disable};
 `
 const ViewReply = styled.button``
+
+const UpdateButton = styled.div<{ active: boolean }>`
+  display: ${(props) => (props.active ? 'block' : 'none')};
+  position: absolute;
+  top: 14px;
+  right: 40px;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  color: ${theme.colors.black};
+  font-size: 15px;
+
+  &:hover {
+    cursor: pointer;
+  }
+`
 
 const DeleteButton = styled.div<{ active: boolean }>`
   display: ${(props) => (props.active ? 'block' : 'none')};

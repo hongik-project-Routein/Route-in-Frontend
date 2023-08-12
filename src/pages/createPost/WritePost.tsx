@@ -49,7 +49,6 @@ export default function WritePost(): JSX.Element {
       line.split(' ').forEach((word) => {
         if (word.startsWith('#')) {
           newHashtags.push(word)
-          console.log(word)
         }
       })
     })
