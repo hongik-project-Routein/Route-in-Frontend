@@ -2,7 +2,6 @@ import { rest } from 'msw'
 import { SERVER_BASE_URL } from '../../config'
 import { postDemo } from '../data/post'
 import { updatedPost } from '../data/updatePost'
-import { type BookMarkType } from '../../types/postTypes'
 
 export interface LikeResponse {
   postid: number
@@ -31,14 +30,7 @@ export const PostHandler = [
   rest.post(
     `${SERVER_BASE_URL as string}/api/post/:postid/like/`,
     async (req, res, ctx) => {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      const { postid, like_count, like_status } = await req.json()
-      const response: LikeResponse = {
-        postid,
-        // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-        like_count: like_status === true ? like_count - 1 : like_count + 1,
-        like_status,
-      }
+      const response = '좋아요 성공'
       return await res(ctx.json(response))
     }
   ),
@@ -47,11 +39,7 @@ export const PostHandler = [
   rest.post(
     `${SERVER_BASE_URL as string}/api/post/bookmark`,
     async (req, res, ctx) => {
-      const { postid, bookmark } = await req.json()
-      const response: BookMarkType = {
-        postid,
-        bookmark,
-      }
+      const response = '북마크 성공'
       return await res(ctx.json(response))
     }
   ),

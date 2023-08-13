@@ -56,6 +56,10 @@ const Td = styled.td<{ active: boolean }>`
   width: 30px;
   padding: 0 30px;
   color: ${(props) => (props.active ? theme.colors.primaryColor : '#667085')};
+
+  &:hover {
+    cursor: pointer;
+  }
 `
 
 const Indicator = styled.div<{ active: boolean }>`

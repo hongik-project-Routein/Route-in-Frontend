@@ -1,14 +1,15 @@
 import React from 'react'
-import { type UserInfo } from '../likeList'
 import styled from 'styled-components'
+import { type UserData } from './../../types/userType'
+import FollowButton from '../follow/followButton'
 
 interface EachLikeUsersProps {
-  eachUser: UserInfo
+  eachUser: UserData
 }
 
 function EachLikeUsers(props: EachLikeUsersProps): JSX.Element {
   const { eachUser } = props
-  // 팔로우 버튼할 때 user 정보에서 followlist 가져와서 있는지 비교하면 될 듯
+
   return (
     <Row>
       <ProfileImage src={eachUser.image} />
@@ -16,7 +17,7 @@ function EachLikeUsers(props: EachLikeUsersProps): JSX.Element {
         <Nickname>{eachUser.uname}</Nickname>
         <Name>{eachUser.name}</Name>
       </NicknameAndName>
-      <FollowButton>팔로우</FollowButton>
+      <FollowButton uname={eachUser.uname} />
     </Row>
   )
 }
@@ -40,16 +41,18 @@ const ProfileImage = styled.img`
   height: 50px;
   border-radius: 50%;
 `
-const NicknameAndName = styled.div``
-const Nickname = styled.div``
+const NicknameAndName = styled.div`
+  width: 100px;
+  height: 30px;
+`
+
+const Nickname = styled.div`
+  font-size: 16px;
+  text-align: left;
+`
+
 const Name = styled.div`
   padding-top: 5px;
   font-size: 13px;
-`
-
-const FollowButton = styled.button`
-  width: 80px;
-  height: 35px;
-  background-color: #d9d9d9;
-  border-radius: 25px;
+  text-align: left;
 `

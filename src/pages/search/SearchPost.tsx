@@ -5,9 +5,9 @@ import PostSmall from '../../components/postSmall'
 import PageMoveBtn from '../../components/pageMoveBtn'
 import SearchWindow from '../../components/searchWindow'
 import { postDemo } from '../../dummy/post'
-import useSearch from '../../modules/hooks/useSearch'
 import SearchTab from '../../components/searchTab'
 import { type LoadPost } from '../../types/postTypes'
+import useSearch from './../../recoil/hooks/useSearch'
 
 interface SearchPostArticleProps {
   handleTabfunc: (index: number) => void

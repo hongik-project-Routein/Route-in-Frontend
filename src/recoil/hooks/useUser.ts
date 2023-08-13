@@ -2,7 +2,13 @@ import { useRecoilState, useResetRecoilState } from 'recoil'
 import user, { type UserState } from '../atom/user'
 import { useCallback } from 'react'
 
-function useUser(): any {
+interface UserFunctions {
+  loadUserInfo: () => UserState
+  login: (userinfo: UserState) => void
+  logout: () => void
+}
+
+function useUser(): UserFunctions {
   const [userinfo, setUserinfo] = useRecoilState<UserState>(user)
   const resetUserinfo = useResetRecoilState(user)
 

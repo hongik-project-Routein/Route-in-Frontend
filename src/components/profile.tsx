@@ -6,9 +6,9 @@ import FollowingModal from './followingModal'
 import { useParams } from 'react-router-dom'
 import useModal from '../hooks/useModal'
 import { request } from '../util/axios'
-import { type UserData } from './../mocks/data/user'
 import useUser from '../recoil/hooks/useUser'
 import useFollow from '../recoil/hooks/useFollow'
+import { type UserData } from './../types/userType'
 
 export default function Profile(): JSX.Element {
   const [introductionText, setIntroductionText] = useState<string>('')
@@ -79,10 +79,10 @@ export default function Profile(): JSX.Element {
   return (
     <>
       <ProfileHeader>
-        <ProfileImage src={userInfo?.profile} />
+        <ProfileImage src={userInfo?.image} />
         <ProfileDesc>
           <NameAndEditBtn>
-            <Nickname>{userInfo?.nickname}</Nickname>
+            <Nickname>{userInfo?.uname}</Nickname>
             <EditButton isMyProfile={isMyProfile} onClick={handleIntroduction}>
               {activeIntroductionModify ? '프로필 편집' : '저장'}
             </EditButton>

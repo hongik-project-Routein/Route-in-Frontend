@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useRef } from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
 import { request } from '../../util/axios'
-import { type LikeResponse } from '../../mocks/handlers/post'
 import useUser from '../../recoil/hooks/useUser'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -11,7 +10,7 @@ import {
   faPen,
   faTrash,
 } from '@fortawesome/free-solid-svg-icons'
-import { type BookMarkType, type LoadPin } from '../../types/postTypes'
+import { type LoadPin } from '../../types/postTypes'
 import KakaoMapPost from '../KakaoMapPost'
 import Comment from '../comment/Comment'
 import Hashtag from '../hashtag'
@@ -19,69 +18,59 @@ import { useSetRecoilState } from 'recoil'
 import { isUpdatePost } from '../../recoil/atom/updatePost'
 import { useNavigate } from 'react-router-dom'
 import usePostDetail from './../../recoil/hooks/usePostdetail'
+import useModal from '../../hooks/useModal'
+import LikeList from '../likeList'
 
 function PostDetailInner(): JSX.Element {
-  const [likeCount, setLikeCount] = useState<number>(0)
-  const [likeStatus, setLikeStatus] = useState(false)
-  const [bookmarkActive, setbookmarkActive] = useState(false)
   const isSetUpdatePost = useSetRecoilState(isUpdatePost)
 
   const navigate = useNavigate()
   const { loadUserInfo } = useUser()
   const accessToken = loadUserInfo().accessToken
 
-  const { postDetail } = usePostDetail()
+  const { postDetail, setLike, setBookmark } = usePostDetail()
   const isMyPost = postDetail.post.writer === loadUserInfo().uname
 
   const activeUpdate = (): void => {
     isSetUpdatePost(true)
   }
 
+  const likePeopleRef = useRef(null)
+  const likePeopleOpen = useModal(likePeopleRef)
+
+  // 좋아요
   const likeButtonClick = async (): Promise<void> => {
     try {
-      const response = await request<LikeResponse>(
+      const response = await request<string>(
         'post',
-        `/api/post/${postDetail.post.id as string}/like/`,
+        `/api/post/${String(postDetail.post.id)}/like/`,
+        null,
         {
-          postid: postDetail.post.id,
-          like_count: likeCount,
-          like_status: likeStatus,
-        },
-        {
-          Authorization: `Bearer ${accessToken as string}`,
+          Authorization: `Bearer ${accessToken}`,
         }
       )
-
-      setLikeCount(response.like_count)
-      setLikeStatus((prev) => !prev)
+      setLike(response)
     } catch (error) {
       console.log(error)
     }
   }
 
+  // 북마크
   const handleBookmarkButton = async (): Promise<void> => {
     try {
-      const response = await request<BookMarkType>(
+      const response = await request<string>(
         'post',
         '/api/post/bookmark',
+        null,
         {
-          postid: postDetail.post.id,
-          bookmark: bookmarkActive,
+          Authorization: `Bearer ${accessToken}`,
         }
       )
-      console.log(response)
-
-      setbookmarkActive((prev) => !prev)
+      setBookmark(response)
     } catch (error) {
       console.log(error)
     }
   }
-
-  useEffect(() => {
-    setLikeCount(postDetail.post.like_count)
-    setLikeStatus(postDetail.post.is_liked)
-    setbookmarkActive(postDetail.post.is_bookmarked)
-  }, [postDetail])
 
   // 게시글 삭제
   const deletePost = async (): Promise<void> => {
@@ -89,10 +78,10 @@ function PostDetailInner(): JSX.Element {
       try {
         const response = await request<string>(
           'delete',
-          `/api/post/${postDetail.post.id as string}`,
+          `/api/post/${String(postDetail.post.id)}`,
           null,
           {
-            Authorization: `Bearer ${accessToken as string}`,
+            Authorization: `Bearer ${accessToken}`,
           }
         )
         alert(response)
@@ -115,12 +104,23 @@ function PostDetailInner(): JSX.Element {
         <RestContent>
           <Icons>
             <HeartAndNumber>
-              <HeartButtonPost active={likeStatus} onClick={likeButtonClick}>
+              <HeartButtonPost
+                active={postDetail.post.is_liked}
+                onClick={likeButtonClick}
+              >
                 <FontAwesomeIcon icon={faHeart} />
               </HeartButtonPost>
-              <NumOfHeart>{likeCount}</NumOfHeart>
+              <NumOfHeart ref={likePeopleRef}>
+                {postDetail.post.like_count}
+                {likePeopleOpen ? (
+                  <LikeList like_users={postDetail.post.like_users} />
+                ) : null}
+              </NumOfHeart>
             </HeartAndNumber>
-            <Bookmark active={bookmarkActive} onClick={handleBookmarkButton}>
+            <Bookmark
+              active={postDetail.post.is_bookmarked}
+              onClick={handleBookmarkButton}
+            >
               <FontAwesomeIcon icon={faBookmark} />
             </Bookmark>
             <UpdateButton active={isMyPost} onClick={activeUpdate}>
@@ -151,7 +151,7 @@ function PostDetailInner(): JSX.Element {
         </PostImageContainer>
         <PostText>{<Hashtag postText={postDetail.post.content} />}</PostText>
       </PostContainer>
-      <Comment postId={postDetail.post.id} comments={postDetail.comment} />
+      <Comment postId={postDetail.post.id} />
     </>
   )
 }
@@ -226,6 +226,10 @@ const HeartButtonPost = styled.button<{ active: boolean }>`
 const NumOfHeart = styled.div`
   font-size: 16px;
   margin-top: 5px;
+
+  &:hover {
+    cursor: pointer;
+  }
 `
 
 const Bookmark = styled.div<{ active: boolean }>`

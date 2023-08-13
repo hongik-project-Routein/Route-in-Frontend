@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFaceSmile } from '@fortawesome/free-regular-svg-icons'
 import EmojiPicker, { type EmojiClickData } from 'emoji-picker-react'
 import { request } from '../util/axios'
+import useUser from '../recoil/hooks/useUser'
 
 interface UpdateCommentProps {
   comment: LoadComment
@@ -14,6 +15,9 @@ interface UpdateCommentProps {
 function UpdateComment(props: UpdateCommentProps): JSX.Element {
   const [text, setText] = useState<string>(props.comment.content)
   const [emojiClick, setEmojiClick] = useState(false)
+
+  const { loadUserInfo } = useUser()
+  const accessToken = loadUserInfo().accessToken
 
   const EmojiButtonClick = (): void => {
     setEmojiClick((cur) => !cur)
@@ -31,16 +35,23 @@ function UpdateComment(props: UpdateCommentProps): JSX.Element {
     setText(value)
   }
 
-  // 수정을 저장하는 함수 완료하면 페이지 리로드
+  // 수정을 저장하는 함수
   const onSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault()
     if (text === '') return
 
     try {
-      const response = await request('put', `/api/comment/${props.comment.id}/`)
+      const response = await request(
+        'put',
+        `/api/comment/${props.comment.id}/`,
+        { content: text },
+        {
+          Authorization: `Bearer ${accessToken as string}`,
+        }
+      )
       console.log(response)
+      window.location.reload() // 일단은 새로고침해서 반영하기
       setText('')
-      window.location.reload()
     } catch (error) {
       console.log(error)
     }
@@ -93,6 +104,7 @@ const WriteCommentContainer = styled.form`
   width: 750px;
   height: 50px;
   margin-bottom: 30px;
+  background-color: ${theme.colors.white};
   border: 1px solid #d9d9d9;
   border-radius: 8px;
 `

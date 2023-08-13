@@ -8,19 +8,19 @@ export const UserHandler = [
     async (req, res, ctx) => {
       const { username } = req.params
       const wholeUser = userDemo
-      const currentUser = wholeUser.find((user) => user.nickname === username)
+      const currentUser = wholeUser.find((user) => user.uname === username)
       return await res(ctx.json(currentUser))
     }
   ),
 
   rest.get(
-    `${SERVER_BASE_URL as string}/api/user/recommend/:nickname`,
+    `${SERVER_BASE_URL as string}/api/user/recommend/:uname`,
     async (req, res, ctx) => {
-      const { nickname } = req.params
+      const { uname } = req.params
       const wholeUser = userDemo
 
       const response = wholeUser.filter(
-        (user) => user.nickname !== nickname && user.nickname !== 'Isabella'
+        (user) => user.uname !== uname && user.uname !== 'Isabella'
       )
 
       return await res(ctx.json(response))

@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import theme from '../styles/Theme'
 import { request } from '../util/axios'
-import { type UserData } from '../mocks/data/user'
 import useFollow from '../recoil/hooks/useFollow'
+import { type UserData } from './../types/userType'
 
 interface FollowerProps {
   followerList: string[]
@@ -37,10 +37,10 @@ export default function FollowerModal(props: FollowerProps): JSX.Element {
     })
   }, [followerList])
 
-  const handleDeleteFollower = async (nickname: string): Promise<void> => {
+  const handleDeleteFollower = async (uname: string): Promise<void> => {
     try {
-      await request('delete', `/api/user/follower/${nickname}`)
-      deleteFollower(nickname)
+      await request('delete', `/api/user/follower/${uname}`)
+      deleteFollower(uname)
     } catch (error) {
       console.log(error)
       throw error
@@ -53,14 +53,14 @@ export default function FollowerModal(props: FollowerProps): JSX.Element {
       <ModalInner>
         {followerLists?.map((user, idx) => (
           <Row key={idx}>
-            <ProfileImage src={user.profile} />
+            <ProfileImage src={user.image} />
             <NicknameAndName>
-              <Nickname>{user.nickname}</Nickname>
+              <Nickname>{user.uname}</Nickname>
               <Name>{user.name}</Name>
             </NicknameAndName>
             <FollowButton
               onClick={async () => {
-                await handleDeleteFollower(user.nickname)
+                await handleDeleteFollower(user.uname)
               }}
             >
               삭제

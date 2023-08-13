@@ -3,7 +3,16 @@ import follower from '../selector/follower'
 import following from '../selector/following'
 import { useCallback } from 'react'
 
-function useFollow(): any {
+interface FollowFunctions {
+  followerList: string[]
+  followingList: string[]
+  addFollower: (follower: string) => void
+  deleteFollower: (follower: string) => void
+  addFollowing: (following: string) => void
+  deleteFollowing: (following: string) => void
+}
+
+function useFollow(): FollowFunctions {
   const [followerList, setFollowerList] = useRecoilState<string[]>(follower)
   const [followingList, setFollowingList] = useRecoilState<string[]>(following)
 

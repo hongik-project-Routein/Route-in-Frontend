@@ -1,9 +1,4 @@
-import React, {
-  type FormEvent,
-  useEffect,
-  useState,
-  type KeyboardEvent,
-} from 'react'
+import React, { type FormEvent, useState, type KeyboardEvent } from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -13,22 +8,19 @@ import { type LoadComment } from '../../types/postTypes'
 import EachComment from '../eachItem/EachComment'
 import { request } from '../../util/axios'
 import useUser from '../../recoil/hooks/useUser'
+import usePostDetail from '../../recoil/hooks/usePostdetail'
 
 interface CommentProps {
   postId: number
-  comments: LoadComment[] | undefined
 }
 
 function Comment(props: CommentProps): JSX.Element {
   const [text, setText] = useState<string>('')
-  const [comments, setComments] = useState<LoadComment[] | []>([])
   const [emojiClick, setEmojiClick] = useState(false)
   const { loadUserInfo } = useUser()
   const accessToken = loadUserInfo().accessToken
 
-  useEffect(() => {
-    props.comments !== undefined ? setComments(props.comments) : setComments([])
-  }, [])
+  const { postComment, enrollComment } = usePostDetail()
 
   const EmojiButtonClick = (): void => {
     setEmojiClick((cur) => !cur)
@@ -48,9 +40,6 @@ function Comment(props: CommentProps): JSX.Element {
     event.preventDefault()
 
     if (text === '') return
-
-    setText('')
-
     try {
       const response = await request<LoadComment>(
         'post',
@@ -62,10 +51,9 @@ function Comment(props: CommentProps): JSX.Element {
       )
 
       if (response !== undefined) {
-        const comments = [...(props.comments ?? [])]
-        comments.push(response)
-        setComments(comments)
+        enrollComment(response)
       }
+      setText('')
     } catch (error) {
       console.log(error)
     }
@@ -78,8 +66,8 @@ function Comment(props: CommentProps): JSX.Element {
   return (
     <>
       <CommentContainer>
-        {comments.length > 0 &&
-          comments.map((comment, idx) => (
+        {postComment.length > 0 &&
+          postComment.map((comment: LoadComment, idx: number) => (
             <EachComment key={idx} comment={comment} />
           ))}
       </CommentContainer>

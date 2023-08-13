@@ -30,7 +30,6 @@ function useModalList<T, S, R>(
 
   useEffect(() => {
     setData(initialData)
-    setDataList(data)
 
     return () => {
       resetData()

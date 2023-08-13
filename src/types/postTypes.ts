@@ -95,6 +95,7 @@ export interface LoadComment {
   updated_at: string
   post: number
   like_count: number
+  like_users: string[]
   is_liked: boolean
 }
 

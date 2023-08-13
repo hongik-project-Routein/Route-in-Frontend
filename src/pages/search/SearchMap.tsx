@@ -3,8 +3,8 @@ import styled from 'styled-components'
 import theme from '../../styles/Theme'
 import PageMoveBtn from '../../components/pageMoveBtn'
 import SearchWindow from '../../components/searchWindow'
-import useSearch from '../../modules/hooks/useSearch'
 import SearchTab from '../../components/searchTab'
+import useSearch from './../../recoil/hooks/useSearch'
 
 interface SearchMapArticleProps {
   handleTabfunc: (index: number) => void

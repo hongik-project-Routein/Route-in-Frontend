@@ -24,10 +24,7 @@ function GoogleLoginButton(): JSX.Element {
   const { login } = useUser()
 
   const loginButtonClick = useGoogleLogin({
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     onSuccess: async (res): Promise<void> => {
-      console.log(res)
-
       const token = res.access_token
 
       const response = await request<Auth>(

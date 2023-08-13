@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart, faBookmark } from '@fortawesome/free-solid-svg-icons'
@@ -11,7 +11,10 @@ import { request } from '../util/axios'
 import { type BookMarkType } from '../types/postTypes'
 import { type LoadPost } from './../types/postTypes'
 import useUser from '../recoil/hooks/useUser'
-import useFollow from '../recoil/hooks/useFollow'
+import uuid from 'react-uuid'
+import useModal from '../hooks/useModal'
+import LikeList from './likeList'
+import FollowButton from './follow/followButton'
 
 interface PostCardProps {
   loadPost: LoadPost
@@ -26,13 +29,17 @@ export default function PostCard(props: PostCardProps): JSX.Element {
   const { loadUserInfo } = useUser()
   const accessToken = loadUserInfo().accessToken
 
+  const likePeopleRef = useRef(null)
+  const likePeopleOpen = useModal(likePeopleRef)
+
   const likeButtonClick = async (): Promise<void> => {
     try {
       const response = await request<string>(
         'post',
         `/api/post/${props.loadPost.post.id}/like/`,
+        null,
         {
-          Authorization: `Bearer ${accessToken as string}`,
+          Authorization: `Bearer ${accessToken}`,
         }
       )
 
@@ -45,38 +52,13 @@ export default function PostCard(props: PostCardProps): JSX.Element {
     }
   }
 
-  const { addFollowing, following } = useFollow()
-
-  const handleAddFollowing = async (uname: string): Promise<void> => {
-    try {
-      const response = await request(
-        'post',
-        `/api/user/2/follow/`,
-        { uname },
-        {
-          Authorization: `Bearer ${accessToken as string}`,
-        }
-      )
-      console.log(response)
-
-      addFollowing(uname)
-    } catch (error) {
-      console.log(error)
-      throw error
-    }
-  }
-
-  useEffect(() => {
-    console.log(following)
-  }, [following])
-
   const handleBookmarkButton = async (): Promise<void> => {
     try {
       const response = await request<BookMarkType>(
         'post',
         `/api/post/${props.loadPost.post.id}/bookmark/`,
         {
-          Authorization: `Bearer ${accessToken as string}`,
+          Authorization: `Bearer ${accessToken}`,
         }
       )
       console.log(response)
@@ -101,13 +83,7 @@ export default function PostCard(props: PostCardProps): JSX.Element {
             {props.loadPost.post.writer}
           </Uname>
           <DistanceFromMe>나와의 거리: {100}km</DistanceFromMe>
-          <FollowButton
-            onClick={async () => {
-              await handleAddFollowing(props.loadPost.post.writer)
-            }}
-          >
-            팔로우
-          </FollowButton>
+          <FollowButton uname={props.loadPost.post.writer} />
         </UserContent>
         <RestContent>
           <Icons>
@@ -115,7 +91,12 @@ export default function PostCard(props: PostCardProps): JSX.Element {
               <Like active={likeStatus} onClick={likeButtonClick}>
                 <FontAwesomeIcon icon={faHeart} />
               </Like>
-              <NumOfLike>{likeCount}</NumOfLike>
+              <NumOfLike ref={likePeopleRef}>
+                {likeCount}
+                {likePeopleOpen ? (
+                  <LikeList like_users={props.loadPost.post.like_users} />
+                ) : null}
+              </NumOfLike>
             </LikeAndNumber>
             <Bookmark active={bookmarkActive} onClick={handleBookmarkButton}>
               <FontAwesomeIcon icon={faBookmark} />
@@ -165,7 +146,7 @@ function PostText(props: PostTextProps): JSX.Element {
       const words = line.split(' ')
 
       limitedText.push(
-        <p key={`p-${i}`}>
+        <div key={`p-${uuid()}`}>
           {words.map((word: string) => {
             if (word.startsWith('#')) {
               if (lengthCount + word.length + 3 > limit) {
@@ -184,10 +165,10 @@ function PostText(props: PostTextProps): JSX.Element {
               )
             } else {
               lengthCount += word.length + 1
-              return <span key={word}>{word} </span>
+              return <span key={uuid()}>{word} </span>
             }
           })}
-        </p>
+        </div>
       )
 
       if (isShowMore) {
@@ -251,8 +232,9 @@ const RestContent = styled.div`
   align-items: center;
 `
 
-const DistanceFromMe = styled.span`
+const DistanceFromMe = styled.div`
   font-size: 16px;
+  margin-right: 20px;
 `
 
 const Icons = styled.div`
@@ -280,6 +262,10 @@ const Like = styled.div<{ active: boolean }>`
 const NumOfLike = styled.div`
   font-size: 16px;
   margin-top: 5px;
+
+  &:hover {
+    cursor: pointer;
+  }
 `
 
 const Bookmark = styled.div<{ active: boolean }>`
@@ -317,15 +303,4 @@ const PostComment = styled.p`
   font-size: 16px;
   line-height: 30px;
   white-space: pre-line;
-`
-
-const FollowButton = styled.button`
-  width: 80px;
-  height: 30px;
-  background-color: transparent;
-  border: none;
-
-  &:hover {
-    cursor: pointer;
-  }
 `

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useRef } from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -9,15 +9,18 @@ import { request } from '../../util/axios'
 import useModal from '../../hooks/useModal'
 import UpdateComment from '../updateComment'
 import useUser from '../../recoil/hooks/useUser'
+import usePostDetail from '../../recoil/hooks/usePostdetail'
+import LikeList from '../likeList'
 
 interface EachCommentProps {
   comment: LoadComment
 }
 
 function EachComment(props: EachCommentProps): JSX.Element {
-  const [likes, setLikes] = useState<number>(props.comment.like_count)
-  const [liked, setLiked] = useState<boolean>(props.comment.is_liked)
-  const { accessToken } = useUser()
+  const { loadUserInfo } = useUser()
+  const accessToken = loadUserInfo().accessToken
+
+  const { deleteComment, setCommentLike } = usePostDetail()
 
   const likeButtonClick = async (): Promise<void> => {
     try {
@@ -26,38 +29,36 @@ function EachComment(props: EachCommentProps): JSX.Element {
         `/api/comment/${props.comment.id}/like/`,
         undefined,
         {
-          Authorization: `Bearer ${accessToken as string}`,
+          Authorization: `Bearer ${accessToken}`,
         }
       )
-      setLikes(
-        response === '좋아요 성공' ? (prev) => prev + 1 : (prev) => prev - 1
-      )
-      setLiked((prev) => !prev)
+      setCommentLike(response, props.comment.id)
     } catch (error) {
       console.log(error)
     }
   }
 
-  const { loadUserInfo } = useUser()
   const isMyComment = props.comment.writer === loadUserInfo().uname
 
   const updateCommentRef = useRef(null)
   const updateCommentOpen = useModal(updateCommentRef)
 
-  const deleteComment = async (id: number): Promise<void> => {
+  const likePeopleRef = useRef(null)
+  const likePeopleOpen = useModal(likePeopleRef)
+
+  const deleteCommentReq = async (id: number): Promise<void> => {
     try {
       const response = await request<boolean>(
         'delete',
-        `/api/comment/delete/${id}`
+        `/api/comment/${id}/delete/`
       )
       console.log(response)
-      window.location.reload()
+
+      deleteComment(id)
     } catch (error) {
       console.log(error)
     }
   }
-
-  // comment 객체 안에 작성자 프로필은 어떻게...?
 
   return (
     <Row>
@@ -71,11 +72,15 @@ function EachComment(props: EachCommentProps): JSX.Element {
         </Maintext>
         <Rest>
           <Time>{`${props.comment.updated_at}분전`}</Time>
-          <HeartCount>{`좋아요 ${likes}개`}</HeartCount>
+          <HeartCount ref={likePeopleRef}>
+            {`좋아요 ${props.comment.like_count}개`}
+            {likePeopleOpen ? (
+              <LikeList like_users={props.comment.like_users} />
+            ) : null}
+          </HeartCount>
         </Rest>
-        <ViewReply></ViewReply>
       </CommentMain>
-      <HeartButton active={liked} onClick={likeButtonClick}>
+      <HeartButton active={props.comment.is_liked} onClick={likeButtonClick}>
         <FontAwesomeIcon icon={faHeart} />
       </HeartButton>
       <UpdateButton active={isMyComment} ref={updateCommentRef}>
@@ -85,7 +90,7 @@ function EachComment(props: EachCommentProps): JSX.Element {
       <DeleteButton
         active={isMyComment}
         onClick={async () => {
-          await deleteComment(props.comment.id)
+          await deleteCommentReq(props.comment.id)
         }}
       >
         <FontAwesomeIcon icon={faTrash} />
@@ -134,6 +139,10 @@ const HeartCount = styled.div`
   padding-top: 3px;
   margin-right: 10px;
   font-size: 12px;
+
+  &:hover {
+    cursor: pointer;
+  }
 `
 
 const HeartButton = styled.button<{ active: boolean }>`
@@ -143,7 +152,6 @@ const HeartButton = styled.button<{ active: boolean }>`
   color: ${(props) =>
     props.active ? theme.colors.primaryColor : theme.colors.disable};
 `
-const ViewReply = styled.button``
 
 const UpdateButton = styled.div<{ active: boolean }>`
   display: ${(props) => (props.active ? 'block' : 'none')};
