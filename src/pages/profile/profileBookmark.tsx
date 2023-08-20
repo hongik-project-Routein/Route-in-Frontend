@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import Profile from '../../components/profile'
-import Tab from '../../components/tab'
-import PostSmall from '../../components/postSmall'
-import PageMoveBtn from '../../components/pageMoveBtn'
+import Profile from '../../components/etc/profile'
+import Tab from '../../components/util/tab'
+import PostSmall from '../../components/post/postSmall'
 import { useParams } from 'react-router-dom'
 import { type LoadPost } from '../../types/postTypes'
 import { request } from '../../util/axios'
@@ -67,7 +66,6 @@ export default function ProfileBookmarkArticle(
           ? posts.map((post, idx) => <PostSmall key={idx} loadPost={post} />)
           : null}
       </TabArticle>
-      <PageMoveBtn />
     </>
   )
 }

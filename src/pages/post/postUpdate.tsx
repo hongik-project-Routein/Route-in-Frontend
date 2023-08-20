@@ -1,7 +1,7 @@
 import React, { type ChangeEvent, useEffect } from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
-import Carousel from '../../components/carousel'
+import Carousel from '../../components/util/carousel'
 import {
   type HashtagAutoAndText,
   type UpdatePin,

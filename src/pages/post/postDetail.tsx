@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import HeaderAndSidebar from '../../components/headerAndSidebar'
+import HeaderAndSidebar from '../../components/common/headerAndSidebar'
 
 import { type LoadPost } from '../../types/postTypes'
 import { request } from '../../util/axios'

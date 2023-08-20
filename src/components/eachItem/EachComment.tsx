@@ -7,10 +7,10 @@ import { Link } from 'react-router-dom'
 import { type LoadComment } from '../../types/postTypes'
 import { request } from '../../util/axios'
 import useModal from '../../hooks/useModal'
-import UpdateComment from '../updateComment'
+import UpdateComment from '../comment/updateComment'
 import useUser from '../../recoil/hooks/useUser'
 import usePostDetail from '../../recoil/hooks/usePostdetail'
-import LikeList from '../likeList'
+import LikeList from '../post/likeList'
 
 interface EachCommentProps {
   comment: LoadComment

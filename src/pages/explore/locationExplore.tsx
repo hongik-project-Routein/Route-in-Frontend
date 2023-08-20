@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons'
-import PostSmall from '../../components/postSmall'
-import PageMoveBtn from '../../components/pageMoveBtn'
-import Tab from '../../components/tab'
+import PostSmall from '../../components/post/postSmall'
+import Tab from '../../components/util/tab'
 import { postDemo } from '../../dummy/post'
 import { type LoadPost } from '../../types/postTypes'
 
@@ -56,7 +55,6 @@ export default function LocationExploreArticle(
           ? posts.map((post, idx) => <PostSmall key={idx} loadPost={post} />)
           : null}
       </RecommandationResultGrid>
-      <PageMoveBtn />
     </>
   )
 }

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
-import SearchWindow from '../../components/searchWindow'
-import SearchTab from '../../components/searchTab'
+import SearchWindow from '../../components/util/searchWindow'
+import SearchTab from '../../components/util/searchTab'
 import useSearch from './../../recoil/hooks/useSearch'
-import ProfileMapContent from '../../components/profileMap'
+import ProfileMapContent from '../../components/etc/profileMap'
 import { type LoadPost } from '../../types/postTypes'
 import useSSPagination from '../../hooks/useSSPagination'
 

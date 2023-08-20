@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
-import PageMoveBtn from '../../components/pageMoveBtn'
-import SearchWindow from '../../components/searchWindow'
-import SearchTab from '../../components/searchTab'
+import SearchWindow from '../../components/util/searchWindow'
+import SearchTab from '../../components/util/searchTab'
 import useSearch from './../../recoil/hooks/useSearch'
 import { type SearchUserType } from '../../types/postTypes'
 import useSSPagination from '../../hooks/useSSPagination'
@@ -50,7 +49,6 @@ export default function SearchUserArticle(
           : null}
       </SearchResultGrid>
       {renderSSPagination()}
-      <PageMoveBtn />
     </>
   )
 }

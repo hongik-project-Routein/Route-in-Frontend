@@ -2,24 +2,19 @@ import React, { useState, useEffect, useRef, type ChangeEvent } from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
 import { Link } from 'react-router-dom'
-import CarouselSelectPicture from './../../components/carouselSelectPicture'
+import CarouselSelectPicture from '../../components/util/carouselSelectPicture'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faImage } from '@fortawesome/free-solid-svg-icons'
 import { gps } from 'exifr'
 import { type Pin } from '../../types/postTypes'
-import ImageEditor from '../../components/imageEditor'
+import ImageEditor from '../../components/util/imageEditor'
 import { Map, MapMarker } from 'react-kakao-maps-sdk'
-import usePost from '../../modules/hooks/usePost'
+import usePost from '../../recoil/hooks/usePost'
 
 interface GPSInfo {
   latitude: number
   longitude: number
   placeId: number
-}
-
-interface SelectPictureProps {
-  mapApi: boolean
-  mapApiKey: string
 }
 
 interface PlaceInfo {
@@ -28,7 +23,7 @@ interface PlaceInfo {
   gpsInfo: GPSInfo
 }
 
-export default function SelectPicture(props: SelectPictureProps): JSX.Element {
+export default function SelectPicture(): JSX.Element {
   const { kakao } = window
   const [selectedFiles, setSelectedFiles] = useState<File[] | undefined>(
     undefined
@@ -61,12 +56,12 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
         newFiles.push(file)
         newUrls.push(newUrl)
 
-        // 위치정보가 없으면 위도 경도를 -1로 넣는다.
+        // 위치정보가 없으면 아무 위치나 보여준다. 그 위치는 내가 좋아하는 카페ㅋㅋ
         exifTags !== undefined
           ? newGPSInfo.push(exifTags)
           : newGPSInfo.push({
-              latitude: NaN,
-              longitude: NaN,
+              latitude: 37.5484216771677,
+              longitude: 126.921772870235,
               placeId: NaN,
             })
       }
@@ -238,7 +233,6 @@ export default function SelectPicture(props: SelectPictureProps): JSX.Element {
       }
     })
 
-    // dispatch(ChangePlace(newPost, imageUrls))
     changePlace(newPost, imageUrls)
   }
 

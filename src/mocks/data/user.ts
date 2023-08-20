@@ -13,7 +13,7 @@ export const userDemo: UserData[] = [
     image: 'https://avatars.githubusercontent.com/u/81083461?v=4',
     follower_set: ['jane', 'soomineom'],
     following_set: ['Isabella'],
-    posts: [],
+    post_set: [],
   },
   {
     uname: 'jane',
@@ -25,7 +25,7 @@ export const userDemo: UserData[] = [
     age: 20,
     image:
       'https://cdn.pixabay.com/photo/2021/06/25/13/22/girl-6363743_1280.jpg',
-    posts: [],
+    post_set: [],
     follower_set: ['jinokim98, chris'],
     following_set: [],
   },
@@ -40,7 +40,7 @@ export const userDemo: UserData[] = [
     image:
       'https://cdn.pixabay.com/photo/2016/11/29/11/24/woman-1869158_1280.jpg',
 
-    posts: [],
+    post_set: [],
     follower_set: ['jinokim98'],
     following_set: [],
   },
@@ -54,7 +54,7 @@ export const userDemo: UserData[] = [
     age: 25,
     image:
       'https://cdn.pixabay.com/photo/2016/03/24/09/10/man-1276384_1280.jpg',
-    posts: [],
+    post_set: [],
     follower_set: ['soomineom', 'jane'],
     following_set: ['jinokim98'],
   },
@@ -68,7 +68,7 @@ export const userDemo: UserData[] = [
       'https://cdn.pixabay.com/photo/2016/03/24/09/10/man-1276384_1280.jpg',
     name: '엄수민',
     age: 25,
-    posts: [],
+    post_set: [],
     follower_set: ['jinokim98', 'jane', 'chris'],
     following_set: ['jinokim98', 'Isabella'],
   },

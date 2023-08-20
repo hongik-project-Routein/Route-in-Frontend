@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import HeaderAndSidebar from '../../components/headerAndSidebar'
+import HeaderAndSidebar from '../../components/common/headerAndSidebar'
 import ProfileMapArticle from './profileMap'
 import ProfilePostArticle from './profilePost'
 import ProfileBookmarkArticle from './profileBookmark'
-import useTab from '../../modules/hooks/useTab'
 import { useSetRecoilState } from 'recoil'
 import profileStore from '../../recoil/atom/profile'
 import { useParams } from 'react-router-dom'
 import { request } from '../../util/axios'
 import { type UserData } from '../../types/userType'
+import useTab from '../../recoil/hooks/useTab'
 
 export default function MyProfile(): JSX.Element {
   const { profile, changeProfileTabIndex } = useTab()

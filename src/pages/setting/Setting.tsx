@@ -1,7 +1,7 @@
 import React, { useState, useEffect, type ChangeEvent } from 'react'
 import styled from 'styled-components'
-import Profile from '../../components/profile'
-import HeaderAndSidebar from '../../components/headerAndSidebar'
+import Profile from '../../components/etc/profile'
+import HeaderAndSidebar from '../../components/common/headerAndSidebar'
 import theme from '../../styles/Theme'
 
 export default function Setting(): JSX.Element {

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import HeaderAndSidebar from '../../components/headerAndSidebar'
+import HeaderAndSidebar from '../../components/common/headerAndSidebar'
 import SearchPostArticle from './SearchPost'
 import SearchPinArticle from './SearchPin'
 import SearchMapArticle from './SearchMap'
 import SearchUserArticle from './SearchUser'
-import useTab from '../../modules/hooks/useTab'
-import { searchTabContents } from '../../components/searchTab'
+import { searchTabContents } from '../../components/util/searchTab'
 import useSearch from './../../recoil/hooks/useSearch'
+import useTab from '../../recoil/hooks/useTab'
 
 export default function Search(): JSX.Element {
   const { search, changeSearchTabIndex } = useTab()

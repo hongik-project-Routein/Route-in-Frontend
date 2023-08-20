@@ -1,7 +1,7 @@
 import React, { useState, useEffect, type ChangeEvent } from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
-import Carousel from '../../components/carousel'
+import Carousel from '../../components/util/carousel'
 import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMinus } from '@fortawesome/free-solid-svg-icons'
@@ -10,7 +10,7 @@ import {
   type HashtagAutoAndText,
   type Pin,
 } from '../../types/postTypes'
-import usePost from '../../modules/hooks/usePost'
+import usePost from '../../recoil/hooks/usePost'
 
 export default function WritePost(): JSX.Element {
   const [hashtagAutoTextList, setHashtagAutoTextList] = useState<

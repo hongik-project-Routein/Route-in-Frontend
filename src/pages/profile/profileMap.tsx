@@ -1,8 +1,8 @@
 import React from 'react'
-import Profile from '../../components/profile'
-import Tab from '../../components/tab'
+import Profile from '../../components/etc/profile'
+import Tab from '../../components/util/tab'
 import { useParams } from 'react-router-dom'
-import ProfileMapContent from '../../components/profileMap'
+import ProfileMapContent from '../../components/etc/profileMap'
 import { useRecoilValue } from 'recoil'
 import profileStore from '../../recoil/atom/profile'
 
