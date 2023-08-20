@@ -3,7 +3,7 @@ import { SERVER_BASE_URL } from '../../config'
 
 export const searchHandler = [
   rest.get(
-    `${SERVER_BASE_URL as string}/search/:category/:keyword`,
+    `${SERVER_BASE_URL as string}/search/:keyword/:category`,
     async (req, res, ctx) => {
       const { category, keyword } = req.params
 

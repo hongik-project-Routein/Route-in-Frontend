@@ -5,6 +5,7 @@ import { ThemeProvider } from './styles/theme-components'
 import theme from './styles/Theme'
 import GlobalStyle from './styles/GlobalStyle'
 import { Provider } from 'react-redux'
+import { RecoilRoot } from 'recoil'
 import store from './modules/store'
 import { CookiesProvider } from 'react-cookie'
 
@@ -21,9 +22,11 @@ root.render(
     <GlobalStyle />
     <ThemeProvider theme={theme}>
       <CookiesProvider>
-        <Provider store={store}>
-          <Router />
-        </Provider>
+        <RecoilRoot>
+          <Provider store={store}>
+            <Router />
+          </Provider>
+        </RecoilRoot>
       </CookiesProvider>
     </ThemeProvider>
   </>

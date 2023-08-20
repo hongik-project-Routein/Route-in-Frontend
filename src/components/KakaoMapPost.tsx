@@ -14,6 +14,7 @@ export default function KakaoMapPost(props: KakaomapPostProps): JSX.Element {
   const [map, setMap] = useState<kakao.maps.Map>()
   const [index, setIndex] = useState<number>(-1)
   const [points, setPoints] = useState<kakao.maps.LatLng[]>([])
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [carouselOpen, setCarouselOpen] = useState<boolean[]>(
     Array(props.pinCount).fill(false)
   )
@@ -54,11 +55,6 @@ export default function KakaoMapPost(props: KakaomapPostProps): JSX.Element {
     if (map === undefined) return
     calculateCenter(map)
   }, [map])
-
-  useEffect(() => {
-    console.log(index)
-    console.log(carouselOpen)
-  }, [index])
 
   return (
     <LayerGroup size={props.size}>

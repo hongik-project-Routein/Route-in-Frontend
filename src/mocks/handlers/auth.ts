@@ -9,10 +9,13 @@ export const authHandler = [
     async (req, res, ctx) => {
       const jwt: Auth = {
         name: '김진호',
-        nickname: 'jinokim98',
+        uname: 'jinokim98',
+        image: 'https://avatars.githubusercontent.com/u/81083461?v=4',
         email: 'jinokim98@gmail.com',
         age: 26,
         gender: 'M',
+        follower_set: ['jane', 'soomineom'],
+        following_set: ['Isabella'],
         access: 'auth',
       }
       return await res(ctx.json(jwt))
@@ -25,10 +28,13 @@ export const authHandler = [
     async (req, res, ctx) => {
       const jwt: Auth = {
         name: '김진호',
-        nickname: 'jinokim98',
+        uname: 'jinokim98',
+        image: 'https://avatars.githubusercontent.com/u/81083461?v=4',
         email: 'jinokim98@gmail.com',
         age: 26,
         gender: 'M',
+        follower_set: ['jane', 'soomineom'],
+        following_set: ['Isabella'],
         access: 'auth',
       }
       return await res(ctx.json(jwt))

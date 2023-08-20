@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
-import PageMoveBtn from '../../components/pageMoveBtn'
 import SearchWindow from '../../components/searchWindow'
-import useSearch from '../../modules/hooks/useSearch'
 import SearchTab from '../../components/searchTab'
+import useSearch from './../../recoil/hooks/useSearch'
+import ProfileMapContent from '../../components/profileMap'
+import { type LoadPost } from '../../types/postTypes'
+import useSSPagination from '../../hooks/useSSPagination'
 
 interface SearchMapArticleProps {
   handleTabfunc: (index: number) => void
@@ -14,7 +16,18 @@ interface SearchMapArticleProps {
 export default function SearchMapArticle(
   props: SearchMapArticleProps
 ): JSX.Element {
-  const { keyword } = useSearch()
+  const { keyword, category } = useSearch()
+  const [searchResult, setSearchResult] = useState<LoadPost[] | undefined>([])
+
+  const { curPageItem, renderSSPagination } = useSSPagination<LoadPost>(
+    `/search/${keyword.toLocaleLowerCase()}/${category.toLocaleLowerCase()}`,
+    6
+  )
+
+  useEffect(() => {
+    setSearchResult(curPageItem)
+  }, [curPageItem])
+
   return (
     <>
       <SearchWindow />
@@ -28,8 +41,12 @@ export default function SearchMapArticle(
           ? `검색어를 입력하세요`
           : `와 관련된 경로를 추천합니다.`}
       </SearchResultTitle>
-      <SearchResultGrid></SearchResultGrid>
-      <PageMoveBtn />
+      <SearchResultContainer>
+        {searchResult !== undefined ? (
+          <ProfileMapContent size="450px" posts={searchResult} />
+        ) : null}
+      </SearchResultContainer>
+      {renderSSPagination()}
     </>
   )
 }
@@ -43,10 +60,6 @@ const SearchResultKeyword = styled.span`
   color: ${theme.colors.primaryColor};
 `
 
-const SearchResultGrid = styled.div`
-  display: grid;
-  grid-template-rows: repeat(2, 1fr);
-  grid-template-columns: repeat(3, 1fr);
-  grid-gap: 46px;
+const SearchResultContainer = styled.div`
   width: 900px;
 `

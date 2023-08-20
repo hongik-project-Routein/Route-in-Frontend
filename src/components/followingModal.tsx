@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import theme from '../styles/Theme'
 import { request } from '../util/axios'
-import { type UserData } from '../mocks/data/user'
-import useFollow from '../modules/hooks/useFollow'
+import useFollow from '../recoil/hooks/useFollow'
+import { type UserData } from './../types/userType'
 
 interface FollowProps {
   followList: string[]
@@ -11,7 +11,7 @@ interface FollowProps {
 
 export default function FollowingModal(props: FollowProps): JSX.Element {
   const [followLists, setFollowLists] = useState<UserData[]>([])
-  const { deleteFollowing } = useFollow()
+  const { followingList, deleteFollowing } = useFollow()
 
   const getFollowList = async (): Promise<UserData[]> => {
     const followUserList: UserData[] = []
@@ -35,12 +35,12 @@ export default function FollowingModal(props: FollowProps): JSX.Element {
     loadFollowList().catch((error) => {
       console.log(error)
     })
-  }, [])
+  }, [followingList])
 
-  const handleDeleteFollowing = async (nickname: string): Promise<void> => {
+  const handleDeleteFollowing = async (uname: string): Promise<void> => {
     try {
-      await request('delete', `/api/user/following/${nickname}`)
-      deleteFollowing(nickname)
+      await request('delete', `/api/user/following/${uname}`)
+      deleteFollowing(uname)
     } catch (error) {
       console.log(error)
       throw error
@@ -53,14 +53,14 @@ export default function FollowingModal(props: FollowProps): JSX.Element {
       <ModalInner>
         {followLists?.map((user, idx) => (
           <Row key={idx}>
-            <ProfileImage src={user.profile} />
+            <ProfileImage src={user.image} />
             <NicknameAndName>
-              <Nickname>{user.nickname}</Nickname>
+              <Nickname>{user.uname}</Nickname>
               <Name>{user.name}</Name>
             </NicknameAndName>
             <FollowButton
               onClick={async () => {
-                await handleDeleteFollowing(user.nickname)
+                await handleDeleteFollowing(user.uname)
               }}
             >
               팔로잉

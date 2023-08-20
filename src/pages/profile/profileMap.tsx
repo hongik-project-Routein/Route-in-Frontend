@@ -3,7 +3,8 @@ import Profile from '../../components/profile'
 import Tab from '../../components/tab'
 import { useParams } from 'react-router-dom'
 import ProfileMapContent from '../../components/profileMap'
-import { postDemo } from '../../dummy/post'
+import { useRecoilValue } from 'recoil'
+import profileStore from '../../recoil/atom/profile'
 
 interface TabContent {
   tabName: string
@@ -25,6 +26,9 @@ export default function ProfileMapArticle(
     { tabName: '북마크', link: `/profile/${username ?? ''}/bookmark` },
   ]
 
+  const userProfile = useRecoilValue(profileStore)
+  console.log(userProfile)
+
   return (
     <>
       <Profile />
@@ -33,7 +37,9 @@ export default function ProfileMapArticle(
         tabIndex={props.tabIndex}
         handleTabfunc={props.handleTabfunc}
       />
-      <ProfileMapContent size="450px" posts={postDemo} />
+      {userProfile.post_set.length > 0 ? (
+        <ProfileMapContent size="450px" posts={userProfile.post_set} />
+      ) : null}
     </>
   )
 }

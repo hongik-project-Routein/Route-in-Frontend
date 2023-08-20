@@ -59,12 +59,12 @@ const postSlice = createSlice({
   extraReducers: (builder) => {
     // 전송에 성공했으면 상태 초기화
     builder.addCase(SavePost.fulfilled, (state: PostState) => {
-      // state.pins = []
-      // state.hashtagAndText = {
-      //   hashtag: [],
-      //   text: '',
-      // }
-      // state.imgUrls = []
+      state.pins = []
+      state.hashtagAndText = {
+        hashtag: [],
+        text: '',
+      }
+      state.imgUrls = []
     })
   },
 })

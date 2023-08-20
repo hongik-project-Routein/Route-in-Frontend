@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { request } from '../util/axios'
-import { type UserData } from '../mocks/data/user'
 import EachRecommendUser from './eachItem/EachRecommendUser'
+import { type UserData } from './../types/userType'
 
 export default function UserRecommend(): JSX.Element {
   const [userRecommend, setUserRecommend] = useState<UserData[]>([])

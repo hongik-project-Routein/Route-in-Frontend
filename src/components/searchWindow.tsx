@@ -1,43 +1,41 @@
-import React, { type FormEvent, useState } from 'react'
+import React, { type FormEvent } from 'react'
 import styled from 'styled-components'
 import theme from '../styles/Theme'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { useNavigate } from 'react-router-dom'
-import useSearch from '../modules/hooks/useSearch'
+import useSearch from './../recoil/hooks/useSearch'
+import useInput from '../hooks/useInput'
 
 export default function SearchWindow(): JSX.Element {
-  const [keyword, setKeyword] = useState<string>('')
-  const { changeKeyword, category, searchKeyword } = useSearch()
+  const { keyword, category, changeKeyword, onSearch } = useSearch()
+  const [inputKeyword, setInputKeyword] = useInput<string, HTMLInputElement>(
+    keyword
+  )
+
   const navigate = useNavigate()
+
   const onSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault()
-
-    if (keyword.trim() === '') return
+    if (inputKeyword.trim() === '') return
 
     const params = new URLSearchParams()
-    params.append('query', keyword)
+    params.append('q', inputKeyword)
 
-    changeKeyword(keyword)
+    changeKeyword(inputKeyword)
 
     // 실제로 검색 실행
-    const response = await searchKeyword()
+    const response = await onSearch(inputKeyword, category)
     console.log(response)
 
-    navigate(`/search/${category as string}?${params.toString()}`)
+    navigate(`/search?${params.toString()}`)
   }
-  const onChange = (event: FormEvent<HTMLInputElement>): void => {
-    const {
-      currentTarget: { value },
-    } = event
-    setKeyword(value)
-  }
+
   return (
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     <SearchWindowContainer onSubmit={onSubmit}>
       <InputKeyword
-        value={keyword}
-        onChange={onChange}
+        value={inputKeyword}
+        onChange={setInputKeyword}
         placeholder="해시태그로 검색"
       />
       <SearchButton type="submit">

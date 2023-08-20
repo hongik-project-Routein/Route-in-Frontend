@@ -1,49 +1,26 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import styled from 'styled-components'
-import theme from '../../styles/Theme'
-import { type UserData } from '../../mocks/data/user'
 import { Link } from 'react-router-dom'
-import useFollow from '../../modules/hooks/useFollow'
-import { request } from '../../util/axios'
+import { type UserData } from './../../types/userType'
+import FollowButton from '../follow/followButton'
 
 interface EachRecommendUserProps {
   eachUser: UserData
 }
 
 function EachRecommendUser(props: EachRecommendUserProps): JSX.Element {
-  const { addFollowing, following } = useFollow()
-
-  const handleAddFollowing = async (nickname: string): Promise<void> => {
-    try {
-      await request('post', `/api/user/following/`, { nickname })
-      addFollowing(nickname)
-    } catch (error) {
-      console.log(error)
-      throw error
-    }
-  }
-
-  useEffect(() => {
-    console.log(following)
-  }, [following])
   return (
     <RecommendRow>
-      <Link to={`/profile/${props.eachUser.nickname}`}>
-        <Profile src={props.eachUser.profile} />
+      <Link to={`/profile/${props.eachUser.uname}`}>
+        <Profile src={props.eachUser.image} />
       </Link>
       <TextContainer>
-        <Link to={`/profile/${props.eachUser.nickname}`}>
-          <Nickname>{props.eachUser.nickname}</Nickname>
+        <Link to={`/profile/${props.eachUser.uname}`}>
+          <Nickname>{props.eachUser.uname}</Nickname>
         </Link>
         <FollowRecommend>{`soomineom님 외 5명이 팔로우합니다.`}</FollowRecommend>
       </TextContainer>
-      <FollowButton
-        onClick={async () => {
-          await handleAddFollowing(props.eachUser.nickname)
-        }}
-      >
-        팔로우
-      </FollowButton>
+      <FollowButton uname={props.eachUser.uname} />
     </RecommendRow>
   )
 }
@@ -86,10 +63,10 @@ const FollowRecommend = styled.span`
   font-size: 12px;
 `
 
-const FollowButton = styled.button`
-  position: absolute;
-  right: 30px;
-  bottom: 9px;
-  color: ${theme.colors.primaryColor};
-  font-size: 12px;
-`
+// const FollowButton = styled.button`
+//   position: absolute;
+//   right: 30px;
+//   bottom: 9px;
+//   color: ${theme.colors.primaryColor};
+//   font-size: 12px;
+// `

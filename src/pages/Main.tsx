@@ -5,21 +5,27 @@ import PostCard from '../components/postCard'
 import styled from 'styled-components'
 import UserRecommend from '../components/userRecommend'
 import theme from '../styles/Theme'
-import { type LoadPost } from '../types/postTypes'
+import { type LoadPostPagination, type LoadPost } from '../types/postTypes'
 import { request } from '../util/axios'
-import useUser from '../modules/hooks/useUser'
+import useUser from '../recoil/hooks/useUser'
 
 function Main(): JSX.Element {
   const [posts, setPosts] = useState<LoadPost[]>([])
-  const { accessToken } = useUser()
+  const { loadUserInfo } = useUser()
+  const accessToken = loadUserInfo().accessToken
 
   const loadPost = async (): Promise<void> => {
     try {
-      const loadPost = await request<LoadPost[]>('get', `/api/post`, null, {
-        Authorization: `Bearer ${accessToken as string}`,
-      })
+      const loadPost = await request<LoadPostPagination>(
+        'get',
+        `/api/post`,
+        null,
+        {
+          Authorization: `Bearer ${accessToken}`,
+        }
+      )
 
-      setPosts(loadPost)
+      setPosts(loadPost.results)
     } catch (err) {
       console.log(err)
     }
@@ -38,9 +44,8 @@ function Main(): JSX.Element {
         <Sidebar />
       </SidebarGrid>
       <PostGrid>
-        {posts.map((post, idx) => (
-          <PostCard key={idx} loadPost={post} />
-        ))}
+        {posts.length > 0 &&
+          posts.map((post, idx) => <PostCard key={idx} loadPost={post} />)}
       </PostGrid>
       <RecommendGrid>
         <UserRecommend />

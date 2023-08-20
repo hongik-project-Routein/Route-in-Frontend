@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
-import PageMoveBtn from '../../components/pageMoveBtn'
 import SearchWindow from '../../components/searchWindow'
-import useSearch from '../../modules/hooks/useSearch'
 import SearchTab from '../../components/searchTab'
+import useSearch from './../../recoil/hooks/useSearch'
+import { type SearchPinType } from '../../types/postTypes'
+import useSSPagination from '../../hooks/useSSPagination'
+import EachSearchPin from '../../components/eachItem/EachSearchPin'
 
 interface SearchPinArticleProps {
   handleTabfunc: (index: number) => void
@@ -14,7 +16,20 @@ interface SearchPinArticleProps {
 export default function SearchPinArticle(
   props: SearchPinArticleProps
 ): JSX.Element {
-  const { keyword } = useSearch()
+  const { keyword, category } = useSearch()
+  const [searchResult, setSearchResult] = useState<SearchPinType[] | undefined>(
+    []
+  )
+
+  const { curPageItem, renderSSPagination } = useSSPagination<SearchPinType>(
+    `/search/${keyword.toLocaleLowerCase()}/${category.toLocaleLowerCase()}`,
+    6
+  )
+
+  useEffect(() => {
+    setSearchResult(curPageItem)
+  }, [curPageItem])
+
   return (
     <>
       <SearchWindow />
@@ -26,8 +41,14 @@ export default function SearchPinArticle(
         <SearchResultKeyword>{keyword}</SearchResultKeyword>
         {keyword === '' ? `검색어를 입력하세요` : `와 관련된 핀을 추천합니다.`}
       </SearchResultTitle>
-      <SearchResultGrid></SearchResultGrid>
-      <PageMoveBtn />
+      <SearchResultGrid>
+        {searchResult !== undefined
+          ? searchResult.map((pin, idx) => (
+              <EachSearchPin key={idx} loadPin={pin} />
+            ))
+          : null}
+      </SearchResultGrid>
+      {renderSSPagination()}
     </>
   )
 }

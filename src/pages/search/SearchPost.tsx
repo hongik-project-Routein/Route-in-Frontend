@@ -4,10 +4,10 @@ import theme from '../../styles/Theme'
 import PostSmall from '../../components/postSmall'
 import PageMoveBtn from '../../components/pageMoveBtn'
 import SearchWindow from '../../components/searchWindow'
-import { postDemo } from '../../dummy/post'
-import useSearch from '../../modules/hooks/useSearch'
 import SearchTab from '../../components/searchTab'
 import { type LoadPost } from '../../types/postTypes'
+import useSearch from './../../recoil/hooks/useSearch'
+import useSSPagination from '../../hooks/useSSPagination'
 
 interface SearchPostArticleProps {
   handleTabfunc: (index: number) => void
@@ -17,17 +17,18 @@ interface SearchPostArticleProps {
 export default function SearchPostArticle(
   props: SearchPostArticleProps
 ): JSX.Element {
-  const { keyword } = useSearch()
+  const { keyword, category } = useSearch()
+  const [searchResult, setSearchResult] = useState<LoadPost[] | undefined>([])
 
-  // 더미 데이터 용
-  const [posts, setPosts] = useState<LoadPost[]>([])
-  const loadPost = (): void => {
-    const post: LoadPost[] = postDemo
-    setPosts(post)
-  }
+  const { curPageItem, renderSSPagination } = useSSPagination<LoadPost>(
+    `/search/${keyword.toLocaleLowerCase()}/${category.toLocaleLowerCase()}`,
+    6
+  )
+
   useEffect(() => {
-    loadPost()
-  }, [posts])
+    setSearchResult(curPageItem)
+  }, [curPageItem])
+
   return (
     <>
       <SearchWindow />
@@ -42,11 +43,13 @@ export default function SearchPostArticle(
           : `와 관련된 게시글을 추천합니다.`}
       </SearchResultTitle>
       <SearchResultGrid>
-        {posts !== undefined
-          ? posts.map((post, idx) => <PostSmall key={idx} loadPost={post} />)
+        {searchResult !== undefined
+          ? searchResult.map((post, idx) => (
+              <PostSmall key={idx} loadPost={post} />
+            ))
           : null}
       </SearchResultGrid>
-      <PageMoveBtn />
+      {renderSSPagination()}
     </>
   )
 }

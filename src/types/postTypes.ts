@@ -31,6 +31,21 @@ export interface SendPostCoordinate {
   pins: SendPinCoordinate[]
 }
 
+// 게시글 수정 시
+export interface UpdatePost {
+  content: string
+  pins: UpdatePin[]
+}
+
+// 핀 수정 시
+export interface UpdatePin {
+  image: string
+  pin_hashtag: string
+  content: string
+  latitude: number
+  longitude: number
+}
+
 export interface SendPinCoordinate {
   image: File
   pin_hashtag: string
@@ -38,6 +53,13 @@ export interface SendPinCoordinate {
   latitude: number
   longitude: number
   mapID: string
+}
+
+export interface LoadPostPagination {
+  count: number
+  next?: string
+  previous?: string
+  results: LoadPost[]
 }
 
 // 위까지는 게시글 작성이며 아래는 작성 후
@@ -53,6 +75,7 @@ export interface LoadPost {
     pin_count: number
     like_count: number
     like_users: string[]
+    is_bookmarked: boolean
     bookmark_users: string[]
     comment_count: number
   }
@@ -73,12 +96,15 @@ export interface LoadPin {
 // 댓글 불러오기
 export interface LoadComment {
   id: number
-  updated_at: string
-  post: number
+  writer_image: string
   writer: string
   content: string
+  tagged_users?: string[] | undefined
+  updated_at: string
+  post: number
   like_count: number
-  like_status: boolean
+  like_users: string[]
+  is_liked: boolean
 }
 
 // 댓글 작성
@@ -134,7 +160,7 @@ export interface SearchPostType {
 export interface SearchPinType {
   profile: string
   writer: string
-  pin: Pin
+  pin: LoadPin
   postId: string
   like_users: string
   like_status: boolean
@@ -153,6 +179,6 @@ export interface SearchMapType {
 // 프로필, 닉네임, 이름
 export interface SearchUserType {
   profile: string
-  nickname: string
+  uname: string
   name: string
 }

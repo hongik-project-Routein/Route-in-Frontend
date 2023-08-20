@@ -1,75 +1,102 @@
-import React, { useState } from 'react'
+import React, { useRef } from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHeart, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faHeart, faPen, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 import { type LoadComment } from '../../types/postTypes'
-import { type LikeCommentResponse } from '../../mocks/handlers/comment'
 import { request } from '../../util/axios'
-import useUser from '../../modules/hooks/useUser'
+import useModal from '../../hooks/useModal'
+import UpdateComment from '../updateComment'
+import useUser from '../../recoil/hooks/useUser'
+import usePostDetail from '../../recoil/hooks/usePostdetail'
+import LikeList from '../likeList'
 
 interface EachCommentProps {
   comment: LoadComment
 }
 
 function EachComment(props: EachCommentProps): JSX.Element {
-  const [likes, setLikes] = useState<number>(props.comment.like_count)
-  const [liked, setLiked] = useState<boolean>(props.comment.like_status)
+  const { loadUserInfo } = useUser()
+  const accessToken = loadUserInfo().accessToken
+
+  const { deleteComment, setCommentLike } = usePostDetail()
 
   const likeButtonClick = async (): Promise<void> => {
     try {
-      const response = await request<LikeCommentResponse>(
+      const response = await request<string>(
         'post',
-        `/api/comment/like`,
+        `/api/comment/${props.comment.id}/like/`,
+        undefined,
         {
-          commentid: props.comment.id,
-          postid: props.comment.post,
-          like_count: likes,
-          like_status: liked,
+          Authorization: `Bearer ${accessToken}`,
         }
       )
-      setLikes(response.like_count)
-      setLiked((prev) => !prev)
+      setCommentLike(response, props.comment.id)
     } catch (error) {
       console.log(error)
     }
   }
 
-  const { loadUserInfo } = useUser()
-  const isMyComment = props.comment.writer === loadUserInfo().nickname
+  const isMyComment = props.comment.writer === loadUserInfo().uname
 
-  const deleteComment = async (): Promise<void> => {
+  const updateCommentRef = useRef(null)
+  const updateCommentOpen = useModal(updateCommentRef)
+
+  const likePeopleRef = useRef(null)
+  const likePeopleOpen = useModal(likePeopleRef)
+
+  const deleteCommentReq = async (id: number): Promise<void> => {
     try {
-      const response = await request<boolean>('delete', '/api/comment/delete')
+      const response = await request<boolean>(
+        'delete',
+        `/api/comment/${id}/`,
+        undefined,
+        {
+          Authorization: `Bearer ${accessToken}`,
+        }
+      )
       console.log(response)
+
+      deleteComment(id)
     } catch (error) {
       console.log(error)
     }
   }
-
-  // comment 객체 안에 작성자 프로필은 어떻게...?
 
   return (
     <Row>
-      <CommentProfile src={props.comment.writer} />
+      <CommentProfile src={props.comment.writer_image} />
       <CommentMain>
         <Maintext>
-          <CommentNickname to="/profile/jinokim98">
+          <CommentNickname to={`/profile/${props.comment.writer}`}>
             {props.comment.writer}
           </CommentNickname>
           <CommentDesc>{props.comment.content}</CommentDesc>
         </Maintext>
         <Rest>
           <Time>{`${props.comment.updated_at}분전`}</Time>
-          <HeartCount>{`좋아요 ${likes}개`}</HeartCount>
+          <HeartCount ref={likePeopleRef}>
+            {`좋아요 ${props.comment.like_count}개`}
+            {likePeopleOpen ? (
+              <LikeList like_users={props.comment.like_users} />
+            ) : null}
+          </HeartCount>
         </Rest>
-        <ViewReply></ViewReply>
       </CommentMain>
-      <HeartButton active={liked} onClick={likeButtonClick}>
+      <HeartButton active={props.comment.is_liked} onClick={likeButtonClick}>
         <FontAwesomeIcon icon={faHeart} />
       </HeartButton>
-      <DeleteButton active={isMyComment} onClick={deleteComment}>
+      <UpdateButton active={isMyComment} ref={updateCommentRef}>
+        <FontAwesomeIcon icon={faPen} />
+        {updateCommentOpen ? <UpdateComment comment={props.comment} /> : null}
+      </UpdateButton>
+      <DeleteButton
+        active={isMyComment}
+        onClick={async () => {
+          await deleteCommentReq(props.comment.id)
+        }}
+      >
         <FontAwesomeIcon icon={faTrash} />
       </DeleteButton>
     </Row>
@@ -116,16 +143,35 @@ const HeartCount = styled.div`
   padding-top: 3px;
   margin-right: 10px;
   font-size: 12px;
+
+  &:hover {
+    cursor: pointer;
+  }
 `
 
 const HeartButton = styled.button<{ active: boolean }>`
   position: absolute;
   top: 15px;
-  right: 40px;
+  right: 60px;
   color: ${(props) =>
     props.active ? theme.colors.primaryColor : theme.colors.disable};
 `
-const ViewReply = styled.button``
+
+const UpdateButton = styled.div<{ active: boolean }>`
+  display: ${(props) => (props.active ? 'block' : 'none')};
+  position: absolute;
+  top: 14px;
+  right: 40px;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  color: ${theme.colors.black};
+  font-size: 15px;
+
+  &:hover {
+    cursor: pointer;
+  }
+`
 
 const DeleteButton = styled.div<{ active: boolean }>`
   display: ${(props) => (props.active ? 'block' : 'none')};
