@@ -12,6 +12,7 @@ import EachHashtagAuto from '../../components/eachItem/EachHashtagAuto'
 import { useRecoilState, useResetRecoilState } from 'recoil'
 import updatePost, { isUpdatePost } from '../../recoil/atom/updatePost'
 import useInput from '../../hooks/useInput'
+import useUser from '../../recoil/hooks/useUser'
 
 interface PostUpdateProps {
   postid: string
@@ -23,6 +24,7 @@ export default function PostUpdate(props: PostUpdateProps): JSX.Element {
   const [text, setText, directChange] = useInput<string, HTMLTextAreaElement>(
     ''
   )
+  const { loadUserInfo } = useUser()
 
   const resetIsUpdatePost = useResetRecoilState(isUpdatePost)
   const resetUpdatePost = useResetRecoilState(updatePost)
@@ -31,13 +33,19 @@ export default function PostUpdate(props: PostUpdateProps): JSX.Element {
     try {
       const response = await request<UpdatePost>(
         'get',
-        `/api/post/${props.postid}/update`
+        `/api/post/${props.postid}/update`,
+        null,
+        {
+          Authorization: `Bearer ${loadUserInfo().accessToken}`,
+        }
       )
+      console.log(response)
+
       setPost(response)
       directChange(
         deleteDuplicateText(
           response.content,
-          response.pins.map((pin) => pin.hashtagAuto)
+          response.pins.map((pin) => pin.pin_hashtag)
         )
       )
     } catch (error) {
@@ -50,10 +58,7 @@ export default function PostUpdate(props: PostUpdateProps): JSX.Element {
     setPost({ ...post, content: event.target.value })
   }
 
-  const deleteDuplicateText = (
-    text: string,
-    auto: HashtagAutoAndText[]
-  ): string => {
+  const deleteDuplicateText = (text: string, auto: string[]): string => {
     const lines = text.split('\n')
     return lines
       .slice(auto.length * 3)
@@ -84,7 +89,12 @@ export default function PostUpdate(props: PostUpdateProps): JSX.Element {
   const updatePostRequest = async (): Promise<void> => {
     const newContent = concatContent(
       post.content,
-      post.pins.map((pin) => pin.hashtagAuto)
+      post.pins.map((pin) => {
+        return {
+          hashtagAuto: pin.pin_hashtag,
+          text: pin.content,
+        }
+      })
     )
 
     const newPost = { ...post, content: newContent }
@@ -92,9 +102,12 @@ export default function PostUpdate(props: PostUpdateProps): JSX.Element {
 
     try {
       const response = await request(
-        'post',
-        `/api/post/${props.postid}/update`,
-        newPost
+        'put',
+        `/api/post/${props.postid}/update/`,
+        newPost,
+        {
+          Authorization: `Bearer ${loadUserInfo().accessToken}`,
+        }
       )
       console.log(response)
       resetIsUpdatePost()
@@ -120,7 +133,7 @@ export default function PostUpdate(props: PostUpdateProps): JSX.Element {
       <Paragraph>{`게시글을 수정할 수 있습니다.`}</Paragraph>
       <GroupContainer>
         <PictureGroup>
-          {post !== undefined && (
+          {post.pins.length > 0 && (
             <Carousel
               items={post.pins.map((item: UpdatePin, idx: number) => (
                 <CarouselImage key={idx} src={item.image} />
@@ -130,14 +143,20 @@ export default function PostUpdate(props: PostUpdateProps): JSX.Element {
         </PictureGroup>
         <LocationGroup>
           <HashtagAutoTextContainer>
-            {post?.pins.map((pin: UpdatePin, idx: number) => (
-              <EachHashtagAuto
-                key={`each_hashtag${idx}`}
-                eachHashtag={pin.hashtagAuto}
-              />
-            ))}
+            {post.pins.length > 0 &&
+              post.pins.map((pin: UpdatePin, idx: number) => (
+                <EachHashtagAuto
+                  key={`each_hashtag${idx}`}
+                  eachHashtag={{
+                    hashtagAuto: pin.pin_hashtag,
+                    text: pin.content,
+                  }}
+                />
+              ))}
           </HashtagAutoTextContainer>
-          <WriteSpace value={text} onChange={onContentChange} />
+          {post.pins.length > 0 && (
+            <WriteSpace value={text} onChange={onContentChange} />
+          )}
         </LocationGroup>
       </GroupContainer>
       <ButtonContainer>

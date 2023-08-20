@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import Profile from '../../components/profile'
 import Tab from '../../components/tab'
 import PostSmall from '../../components/postSmall'
 import PageMoveBtn from '../../components/pageMoveBtn'
 import { useParams } from 'react-router-dom'
-import { type LoadPost } from '../../types/postTypes'
-import { request } from '../../util/axios'
+import { useRecoilValue } from 'recoil'
+import profileStore from '../../recoil/atom/profile'
 
 interface TabContent {
   tabName: string
@@ -28,31 +28,7 @@ export default function ProfilePostArticle(
     { tabName: '북마크', link: `/profile/${username ?? ''}/bookmark` },
   ]
   // 더미 데이터 용
-  const [posts, setPosts] = useState<LoadPost[]>([])
-
-  const fetchData = async (): Promise<LoadPost[]> => {
-    try {
-      const response = await request<LoadPost[]>(
-        'get',
-        `/api/user/profilepost/${username as string}`
-      )
-      return response
-    } catch (error) {
-      console.log(error)
-      throw error
-    }
-  }
-
-  useEffect(() => {
-    const loadPost = async (): Promise<void> => {
-      const result = await fetchData()
-      setPosts(result)
-    }
-
-    loadPost().catch((error) => {
-      console.log(error)
-    })
-  }, [])
+  const myPosts = useRecoilValue(profileStore)
 
   return (
     <>
@@ -63,8 +39,10 @@ export default function ProfilePostArticle(
         handleTabfunc={props.handleTabfunc}
       />
       <TabArticle>
-        {posts !== undefined
-          ? posts.map((post, idx) => <PostSmall key={idx} loadPost={post} />)
+        {myPosts.post_set.length > 0
+          ? myPosts.post_set.map((post, idx) => (
+              <PostSmall key={idx} loadPost={post} />
+            ))
           : null}
       </TabArticle>
       <PageMoveBtn />

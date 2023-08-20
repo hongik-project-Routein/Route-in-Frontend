@@ -40,9 +40,10 @@ export interface UpdatePost {
 // 핀 수정 시
 export interface UpdatePin {
   image: string
-  hashtagAuto: HashtagAutoAndText
-  LatLng: { lat: number; lng: number }
-  placeId: number
+  pin_hashtag: string
+  content: string
+  latitude: number
+  longitude: number
 }
 
 export interface SendPinCoordinate {
@@ -52,6 +53,13 @@ export interface SendPinCoordinate {
   latitude: number
   longitude: number
   mapID: string
+}
+
+export interface LoadPostPagination {
+  count: number
+  next?: string
+  previous?: string
+  results: LoadPost[]
 }
 
 // 위까지는 게시글 작성이며 아래는 작성 후

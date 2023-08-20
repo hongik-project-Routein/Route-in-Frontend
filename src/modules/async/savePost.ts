@@ -6,10 +6,15 @@ import {
 } from '../../types/postTypes'
 import axios, { type AxiosError } from 'axios'
 import { SERVER_BASE_URL } from '../../config'
+import useUser from '../../recoil/hooks/useUser'
 
 export const SavePost = createAsyncThunk(
   'savepost',
   async (diff: PostSendToBackend) => {
+    console.log('here')
+
+    const { loadUserInfo } = useUser()
+    const accessToken = loadUserInfo().accessToken
     try {
       const sendData: SendPostCoordinate = coordinatePostSendType(diff)
       const formData = new FormData()

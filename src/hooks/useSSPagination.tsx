@@ -6,8 +6,8 @@ import useUser from '../recoil/hooks/useUser'
 import SSPagination from './../components/pagination/SSPagination'
 
 interface FetchResult {
-  data: any
-  length: number
+  results: any
+  count: number
 }
 
 /**
@@ -50,8 +50,8 @@ function useSSPagination<T>(
           Authorization: `Bearer ${loadUserInfo().accessToken}`,
         }
       )
-      setLength(response.length)
-      return response.data
+      setLength(response.count)
+      return response.results
     } catch (error) {
       setError(error)
     } finally {
@@ -61,7 +61,7 @@ function useSSPagination<T>(
 
   useEffect(() => {
     const loadData = async (): Promise<void> => {
-      const result = await fetchData(currentPage) // 페이지 넘버는 협의 후 결정
+      const result = await fetchData(currentPage + 1) // 페이지 넘버는 협의 후 결정
       setCurPageItem(result)
     }
     loadData().catch((error) => {
@@ -76,7 +76,7 @@ function useSSPagination<T>(
   const renderSSPagination = (): JSX.Element => {
     return (
       <SSPagination
-        page={currentPage}
+        page={currentPage + 1}
         pageSize={pageSize}
         count={length}
         setPage={onSetPage}

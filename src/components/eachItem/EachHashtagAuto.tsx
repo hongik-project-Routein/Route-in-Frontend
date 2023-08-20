@@ -22,10 +22,10 @@ function EachHashtagAuto(props: EachHashtagAutoProps): JSX.Element {
   const onChangeText = (event: ChangeEvent<HTMLInputElement>): void => {
     setText(event)
     const newPins = post.pins.map((pin) =>
-      pin.hashtagAuto.hashtagAuto === props.eachHashtag.hashtagAuto
+      pin.pin_hashtag === props.eachHashtag.hashtagAuto
         ? {
             ...pin,
-            hashtagAuto: { ...pin.hashtagAuto, text: event.target.value },
+            content: event.target.value,
           }
         : pin
     )
@@ -39,7 +39,7 @@ function EachHashtagAuto(props: EachHashtagAutoProps): JSX.Element {
     }
 
     const newPins = post.pins.filter(
-      (pin) => pin.hashtagAuto.hashtagAuto !== props.eachHashtag.hashtagAuto
+      (pin) => pin.pin_hashtag !== props.eachHashtag.hashtagAuto
     )
     setPost({ ...post, pins: newPins })
   }

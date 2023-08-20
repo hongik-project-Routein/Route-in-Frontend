@@ -27,7 +27,7 @@ export default function ProfileMapArticle(
   ]
 
   const userProfile = useRecoilValue(profileStore)
-  console.log(userProfile.posts.length)
+  console.log(userProfile)
 
   return (
     <>
@@ -37,8 +37,8 @@ export default function ProfileMapArticle(
         tabIndex={props.tabIndex}
         handleTabfunc={props.handleTabfunc}
       />
-      {userProfile.posts.length > 0 ? (
-        <ProfileMapContent size="450px" posts={userProfile.posts} />
+      {userProfile.post_set.length > 0 ? (
+        <ProfileMapContent size="450px" posts={userProfile.post_set} />
       ) : null}
     </>
   )

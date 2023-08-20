@@ -40,10 +40,17 @@ export default function Profile(): JSX.Element {
   const handleIntroduction = async (): Promise<void> => {
     if (!activeIntroductionModify) {
       try {
-        const response = await request<string>('post', '/api/user/profile', {
-          introduction: introductionText,
-        })
-        setIntroductionText(response)
+        await request<string>(
+          'put',
+          `/api/user/${myUname}/`,
+          {
+            introduction: introductionText,
+          },
+          {
+            Authorization: `Bearer ${loadUserInfo().accessToken}`,
+          }
+        )
+        setIntroductionText(introductionText)
         setActiveIntroductionModify(true)
       } catch (error) {
         console.log(error)
@@ -66,7 +73,7 @@ export default function Profile(): JSX.Element {
             </EditButton>
           </NameAndEditBtn>
           <Statistics>
-            <NumOfPosts>게시글 {userProfile?.posts.length}</NumOfPosts>
+            <NumOfPosts>게시글 {userProfile?.post_set.length}</NumOfPosts>
             <FollowerContainer ref={followerRef}>
               <Follower>팔로워 {userProfile?.follower_set.length}</Follower>
               {followModalOpen && userProfile !== undefined ? (

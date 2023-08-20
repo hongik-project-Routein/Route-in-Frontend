@@ -14,7 +14,7 @@ const profileStore = atom<UserData>({
     image: '',
     following_set: [],
     follower_set: [],
-    posts: [],
+    post_set: [],
   },
 })
 

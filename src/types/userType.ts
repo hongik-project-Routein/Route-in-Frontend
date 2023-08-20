@@ -11,5 +11,5 @@ export interface UserData {
   image: string
   following_set: string[]
   follower_set: string[]
-  posts: LoadPost[]
+  post_set: LoadPost[]
 }

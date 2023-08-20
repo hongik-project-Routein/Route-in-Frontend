@@ -49,13 +49,13 @@ export default function Sidebar(): JSX.Element {
   return (
     <SidebarContainer>
       <UserContainer
-        to={`/profile/${userinfo.uname as string}`}
+        to={`/profile/${userinfo.uname}`}
         active={selectedTabIndex === -1}
         onClick={() => {
           handleTabClick(-1)
         }}
       >
-        <Profile src="https://avatars.githubusercontent.com/u/81083461?v=4" />
+        <Profile src={userinfo.image} />
         <NicknameContainer>
           <Nickname>{userinfo.uname}</Nickname>
           <Introduce>{userinfo.name}</Introduce>
