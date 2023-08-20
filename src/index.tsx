@@ -4,9 +4,7 @@ import Router from './Routes'
 import { ThemeProvider } from './styles/theme-components'
 import theme from './styles/Theme'
 import GlobalStyle from './styles/GlobalStyle'
-import { Provider } from 'react-redux'
 import { RecoilRoot } from 'recoil'
-import store from './modules/store'
 import { CookiesProvider } from 'react-cookie'
 
 // import { worker } from './mocks/browser'
@@ -23,9 +21,7 @@ root.render(
     <ThemeProvider theme={theme}>
       <CookiesProvider>
         <RecoilRoot>
-          <Provider store={store}>
-            <Router />
-          </Provider>
+          <Router />
         </RecoilRoot>
       </CookiesProvider>
     </ThemeProvider>

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import image from '../img/background-image.jpg'
 import { useForm } from 'react-hook-form'
 import { type FieldValues } from 'react-hook-form/dist/types'
 import InputInfo from '../components/input/inputInfo'
@@ -78,7 +77,7 @@ export default function InitialSetting(): JSX.Element {
 
   return (
     <InitialSettingContainer>
-      <BackgroundImage src={image} />
+      <BackgroundImage src="/background-image.jpg" />
       <Container>
         <InputContainer>
           <Title>Route in</Title>

@@ -1,6 +1,5 @@
 import React from 'react'
 import styled from 'styled-components'
-import image from '../img/background-image.jpg'
 import Kakao from '../components/callback/kakao'
 import GoogleLoginProvider from '../components/callback/google'
 
@@ -10,7 +9,7 @@ export default function Login(): JSX.Element {
 
   return (
     <LoginPageContainer>
-      <BackgroundImage src={image} />
+      <BackgroundImage src="/background-image.jpg" />
       <LoginArticle>
         <LoginContainer>
           <Title>Route in</Title>

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import HeaderAndSidebar from '../../components/headerAndSidebar'
+import HeaderAndSidebar from '../../components/common/headerAndSidebar'
 import UserRecommendExploreArticle from './userRecommendExplore'
 import LocationExploreArticle from './locationExplore'
-import useTab from '../../modules/hooks/useTab'
+import useTab from '../../recoil/hooks/useTab'
 
 export default function Explore(): JSX.Element {
   const { explore, changeExploreTabIndex } = useTab()

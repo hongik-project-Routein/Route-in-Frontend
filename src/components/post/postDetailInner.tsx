@@ -11,15 +11,15 @@ import {
   faTrash,
 } from '@fortawesome/free-solid-svg-icons'
 import { type LoadPin } from '../../types/postTypes'
-import KakaoMapPost from '../KakaoMapPost'
+import KakaoMapPost from './KakaoMapPost'
 import Comment from '../comment/Comment'
-import Hashtag from '../hashtag'
+import Hashtag from '../util/hashtag'
 import { useSetRecoilState } from 'recoil'
 import { isUpdatePost } from '../../recoil/atom/updatePost'
 import { useNavigate } from 'react-router-dom'
 import usePostDetail from './../../recoil/hooks/usePostdetail'
 import useModal from '../../hooks/useModal'
-import LikeList from '../likeList'
+import LikeList from './likeList'
 
 function PostDetailInner(): JSX.Element {
   const isSetUpdatePost = useSetRecoilState(isUpdatePost)

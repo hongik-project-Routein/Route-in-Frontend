@@ -15,6 +15,14 @@ export const PostHandler = [
     return await res(ctx.json(postDemo))
   }),
 
+  rest.post(
+    `${SERVER_BASE_URL as string}/api/post/create/`,
+    async (req, res, ctx) => {
+      console.log(req)
+      return await res(ctx.json(true))
+    }
+  ),
+
   // load post detail
   rest.get(
     `${SERVER_BASE_URL as string}/api/post/:postid`,

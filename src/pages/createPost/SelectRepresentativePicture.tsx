@@ -2,9 +2,10 @@ import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
 import { Map, MapMarker } from 'react-kakao-maps-sdk'
-import PostModal from '../../components/PostModal'
+import PostModal from '../../components/popup/PostModal'
 import { type Pin, type HashtagAutoAndText } from '../../types/postTypes'
-import usePost from '../../modules/hooks/usePost'
+import usePost from '../../recoil/hooks/usePost'
+import { useNavigate } from 'react-router-dom'
 
 export default function SelectRepresentativePicture(): JSX.Element {
   const [hashtagAutoText, setHashtagAutoText] = useState<
@@ -23,6 +24,9 @@ export default function SelectRepresentativePicture(): JSX.Element {
   const [carouselOpen, setCarouselOpen] = useState<boolean[]>(
     Array(pins.length).fill(false)
   )
+
+  const navigate = useNavigate()
+
   const loadText = (): void => {
     // 자동 해시태그
     setHashtagAutoText(
@@ -53,8 +57,13 @@ export default function SelectRepresentativePicture(): JSX.Element {
     loadText()
   }, [])
 
-  const sendPost = (): void => {
-    savePost({ pins, content: holeText })
+  const sendPost = async (): Promise<void> => {
+    const result = await savePost({ pins, content: holeText })
+
+    if (result) {
+      navigate('/home')
+      window.location.reload()
+    }
   }
 
   const calculateCenter = (map: kakao.maps.Map): void => {
