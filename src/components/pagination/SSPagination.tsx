@@ -12,6 +12,7 @@ interface SSPaginationProps {
 // Server Side Pagination
 function SSPagination(props: SSPaginationProps): JSX.Element {
   const { page, pageSize, count, setPage } = props
+
   return (
     <Pagination
       activePage={page}

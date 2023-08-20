@@ -36,6 +36,8 @@ function GoogleLoginButton(): JSX.Element {
         }
       )
 
+      console.log(response)
+
       const userinfo: UserState = {
         name: response.name,
         uname: response.uname,
@@ -45,12 +47,12 @@ function GoogleLoginButton(): JSX.Element {
         image: response.image,
         follower_set: response.follower_set,
         following_set: response.following_set,
-        accessToken: response.accessToken,
+        accessToken: response.access,
       }
 
       login(userinfo)
 
-      if (response.uname === '') {
+      if (response.uname === null) {
         navigate('/initial-setting')
       } else {
         navigate('/home')

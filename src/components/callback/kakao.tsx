@@ -15,7 +15,7 @@ export interface Auth {
   gender: string
   follower_set: string[]
   following_set: string[]
-  accessToken: string
+  access: string
 }
 
 function Kakao(): JSX.Element {
@@ -25,6 +25,8 @@ function Kakao(): JSX.Element {
 
   const kakaoOnSuccess = async (data: any): Promise<void> => {
     const token = data.response.access_token
+
+    console.log(token)
 
     const response = await request<Auth>(
       'post',
@@ -44,12 +46,12 @@ function Kakao(): JSX.Element {
       image: response.image,
       follower_set: response.follower_set,
       following_set: response.following_set,
-      accessToken: response.accessToken,
+      accessToken: response.access,
     }
 
     login(userinfo)
 
-    if (response.uname === '') {
+    if (response.uname === null) {
       navigate('/initial-setting')
     } else {
       navigate('/home')

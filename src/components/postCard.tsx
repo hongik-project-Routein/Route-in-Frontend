@@ -26,6 +26,7 @@ export default function PostCard(props: PostCardProps): JSX.Element {
   const [bookmarkActive, setbookmarkActive] = useState(
     props.loadPost.post.is_bookmarked
   )
+
   const { loadUserInfo } = useUser()
   const accessToken = loadUserInfo().accessToken
 
@@ -57,6 +58,7 @@ export default function PostCard(props: PostCardProps): JSX.Element {
       const response = await request<BookMarkType>(
         'post',
         `/api/post/${props.loadPost.post.id}/bookmark/`,
+        null,
         {
           Authorization: `Bearer ${accessToken}`,
         }

@@ -3,60 +3,38 @@ import styled from 'styled-components'
 import theme from '../styles/Theme'
 import FollowerModal from './followerModal'
 import FollowingModal from './followingModal'
-import { useParams } from 'react-router-dom'
 import useModal from '../hooks/useModal'
 import { request } from '../util/axios'
 import useUser from '../recoil/hooks/useUser'
-import useFollow from '../recoil/hooks/useFollow'
-import { type UserData } from './../types/userType'
+import { useRecoilValue } from 'recoil'
+import profileStore from '../recoil/atom/profile'
 
 export default function Profile(): JSX.Element {
   const [introductionText, setIntroductionText] = useState<string>('')
   const [activeIntroductionModify, setActiveIntroductionModify] =
     useState(false)
 
-  const { loadUserInfo } = useUser()
-  const { followerList, followingList } = useFollow()
+  const userProfile = useRecoilValue(profileStore)
 
+  const { loadUserInfo } = useUser()
   const myUname = loadUserInfo().uname
 
+  // 팔로워 모달
   const followerRef = useRef<HTMLDivElement>(null)
   const followingRef = useRef<HTMLDivElement>(null)
 
+  // 팔로잉 모달
   const followModalOpen = useModal(followerRef)
   const followingModalOpen = useModal(followingRef)
 
   const [isMyProfile, setIsMyProfile] = useState<boolean>(false)
-  const { username } = useParams()
-
-  const [userInfo, setUserInfo] = useState<UserData>()
-
-  const fetchData = async (): Promise<UserData> => {
-    try {
-      const response = await request<UserData>(
-        'get',
-        `/api/user/${username as string}`
-      )
-      return response
-    } catch (error) {
-      console.log(error)
-      throw error
-    }
-  }
 
   useEffect(() => {
-    const loadUserInfo = async (): Promise<void> => {
-      const result = await fetchData()
-      setUserInfo(result)
-
-      setIsMyProfile(username === myUname)
-      setIntroductionText(result.introduction)
+    if (userProfile.uname === myUname) {
+      setIsMyProfile(true)
       setActiveIntroductionModify(true)
     }
-
-    loadUserInfo().catch((error) => {
-      console.log(error)
-    })
+    setIntroductionText(userProfile.introduction)
   }, [])
 
   const handleIntroduction = async (): Promise<void> => {
@@ -79,26 +57,26 @@ export default function Profile(): JSX.Element {
   return (
     <>
       <ProfileHeader>
-        <ProfileImage src={userInfo?.image} />
+        <ProfileImage src={userProfile?.image} />
         <ProfileDesc>
           <NameAndEditBtn>
-            <Nickname>{userInfo?.uname}</Nickname>
+            <Nickname>{userProfile?.uname}</Nickname>
             <EditButton isMyProfile={isMyProfile} onClick={handleIntroduction}>
               {activeIntroductionModify ? '프로필 편집' : '저장'}
             </EditButton>
           </NameAndEditBtn>
           <Statistics>
-            <NumOfPosts>게시글 {userInfo?.postNum}</NumOfPosts>
+            <NumOfPosts>게시글 {userProfile?.posts.length}</NumOfPosts>
             <FollowerContainer ref={followerRef}>
-              <Follower>팔로워 {followerList.length}</Follower>
-              {followModalOpen && userInfo !== undefined ? (
-                <FollowerModal followerList={followerList} />
+              <Follower>팔로워 {userProfile?.follower_set.length}</Follower>
+              {followModalOpen && userProfile !== undefined ? (
+                <FollowerModal followerList={userProfile?.follower_set} />
               ) : null}
             </FollowerContainer>
             <FollowContainer ref={followingRef}>
-              <Follow>팔로잉 {followingList.length}</Follow>
-              {followingModalOpen && userInfo !== undefined ? (
-                <FollowingModal followList={followingList} />
+              <Follow>팔로잉 {userProfile?.following_set.length}</Follow>
+              {followingModalOpen && userProfile !== undefined ? (
+                <FollowingModal followList={userProfile?.following_set} />
               ) : null}
             </FollowContainer>
           </Statistics>

@@ -44,9 +44,9 @@ function UpdateComment(props: UpdateCommentProps): JSX.Element {
       const response = await request(
         'put',
         `/api/comment/${props.comment.id}/`,
-        { content: text },
+        { content: text, tagged_users: [], post: props.comment.post },
         {
-          Authorization: `Bearer ${accessToken as string}`,
+          Authorization: `Bearer ${accessToken}`,
         }
       )
       console.log(response)

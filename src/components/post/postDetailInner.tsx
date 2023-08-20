@@ -49,6 +49,8 @@ function PostDetailInner(): JSX.Element {
           Authorization: `Bearer ${accessToken}`,
         }
       )
+      console.log(response)
+
       setLike(response)
     } catch (error) {
       console.log(error)
@@ -60,7 +62,7 @@ function PostDetailInner(): JSX.Element {
     try {
       const response = await request<string>(
         'post',
-        '/api/post/bookmark',
+        `/api/post/${postDetail.post.id}/bookmark/`,
         null,
         {
           Authorization: `Bearer ${accessToken}`,
@@ -84,8 +86,9 @@ function PostDetailInner(): JSX.Element {
             Authorization: `Bearer ${accessToken}`,
           }
         )
-        alert(response)
-        window.location.reload()
+        console.log(response)
+
+        alert(`삭제되었습니다.${response}`)
         navigate('/home')
       } catch (error) {
         console.log(error)

@@ -95,6 +95,8 @@ function usePostDetail(): usePostDetailFunction {
   // 북마크 클릭
   const setBookmark = useCallback(
     (response: string) => {
+      console.log(response)
+
       const bookmarkStatus = !postDetail.post.is_bookmarked
       const newPost = {
         ...postDetail,
@@ -114,6 +116,7 @@ function usePostDetail(): usePostDetailFunction {
       const newPost = {
         ...postDetail,
         post: { ...postDetail.post, comment_count: plusCount },
+        comment: newComment,
       }
       setPostDetail(newPost)
       setPostComment(newComment)
@@ -130,7 +133,9 @@ function usePostDetail(): usePostDetailFunction {
       const newPost = {
         ...postDetail,
         post: { ...postDetail.post, comment_count: minusCount },
+        comment: newComment,
       }
+
       setPostDetail(newPost)
       setPostComment(newComment)
     },

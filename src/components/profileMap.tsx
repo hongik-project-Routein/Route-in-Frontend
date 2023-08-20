@@ -76,6 +76,8 @@ export default function ProfileMapContent(props: ProfileMapProps): JSX.Element {
     calculateCenter(map)
   }, [map])
 
+  console.log(props.posts)
+
   return (
     <KakaoMapPostContainer size={props.size}>
       {props.posts.length > 0 && (

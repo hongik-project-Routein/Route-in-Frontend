@@ -44,11 +44,13 @@ function Comment(props: CommentProps): JSX.Element {
       const response = await request<LoadComment>(
         'post',
         `/api/post/${props.postId}/comment/`,
-        { content: text, tagged_users: [], post: props.postId },
+        { content: text, tagged_users: [], post: props.postId, like_users: [] },
         {
-          Authorization: `Bearer ${accessToken as string}`,
+          Authorization: `Bearer ${accessToken}`,
         }
       )
+
+      console.log(response)
 
       if (response !== undefined) {
         enrollComment(response)

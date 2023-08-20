@@ -152,7 +152,7 @@ export interface SearchPostType {
 export interface SearchPinType {
   profile: string
   writer: string
-  pin: Pin
+  pin: LoadPin
   postId: string
   like_users: string
   like_status: boolean
@@ -171,6 +171,6 @@ export interface SearchMapType {
 // 프로필, 닉네임, 이름
 export interface SearchUserType {
   profile: string
-  nickname: string
+  uname: string
   name: string
 }

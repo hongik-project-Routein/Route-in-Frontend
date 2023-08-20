@@ -16,7 +16,7 @@ export const authHandler = [
         gender: 'M',
         follower_set: ['jane', 'soomineom'],
         following_set: ['Isabella'],
-        accessToken: 'auth',
+        access: 'auth',
       }
       return await res(ctx.json(jwt))
     }
@@ -35,7 +35,7 @@ export const authHandler = [
         gender: 'M',
         follower_set: ['jane', 'soomineom'],
         following_set: ['Isabella'],
-        accessToken: 'auth',
+        access: 'auth',
       }
       return await res(ctx.json(jwt))
     }

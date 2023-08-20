@@ -50,7 +50,11 @@ function EachComment(props: EachCommentProps): JSX.Element {
     try {
       const response = await request<boolean>(
         'delete',
-        `/api/comment/${id}/delete/`
+        `/api/comment/${id}/`,
+        undefined,
+        {
+          Authorization: `Bearer ${accessToken}`,
+        }
       )
       console.log(response)
 
@@ -65,7 +69,7 @@ function EachComment(props: EachCommentProps): JSX.Element {
       <CommentProfile src={props.comment.writer_image} />
       <CommentMain>
         <Maintext>
-          <CommentNickname to="/profile/jinokim98">
+          <CommentNickname to={`/profile/${props.comment.writer}`}>
             {props.comment.writer}
           </CommentNickname>
           <CommentDesc>{props.comment.content}</CommentDesc>

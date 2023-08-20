@@ -9,7 +9,7 @@ interface UseSearchFunction {
   category: Category
   changeKeyword: (keyword: string) => void
   changeCategory: (category: Category) => void
-  onSearch: <T>(keyword: string, category: Category) => Promise<T | undefined>
+  onSearch: <T>(keyword: string, category: Category) => Promise<T[] | undefined>
 }
 
 function useSearch(): UseSearchFunction {
@@ -30,7 +30,7 @@ function useSearch(): UseSearchFunction {
   const onSearch = useCallback(
     async <T>(keyword: string, category: Category) => {
       try {
-        const response = await request<T>(
+        const response = await request<T[]>(
           'get',
           `/search/${keyword.toLocaleLowerCase()}/${category.toLocaleLowerCase()}`,
           null,

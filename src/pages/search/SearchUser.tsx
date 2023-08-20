@@ -1,10 +1,13 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
 import PageMoveBtn from '../../components/pageMoveBtn'
 import SearchWindow from '../../components/searchWindow'
 import SearchTab from '../../components/searchTab'
 import useSearch from './../../recoil/hooks/useSearch'
+import { type SearchUserType } from '../../types/postTypes'
+import useSSPagination from '../../hooks/useSSPagination'
+import EachSearchUser from '../../components/eachItem/EachSearchUser'
 
 interface SearchUserArticleProps {
   handleTabfunc: (index: number) => void
@@ -14,7 +17,19 @@ interface SearchUserArticleProps {
 export default function SearchUserArticle(
   props: SearchUserArticleProps
 ): JSX.Element {
-  const { keyword } = useSearch()
+  const { keyword, category } = useSearch()
+  const [searchResult, setSearchResult] = useState<
+    SearchUserType[] | undefined
+  >([])
+
+  const { curPageItem, renderSSPagination } = useSSPagination<SearchUserType>(
+    `/search/${keyword.toLocaleLowerCase()}/${category.toLocaleLowerCase()}`,
+    6
+  )
+
+  useEffect(() => {
+    setSearchResult(curPageItem)
+  }, [curPageItem])
 
   return (
     <>
@@ -27,7 +42,14 @@ export default function SearchUserArticle(
         <SearchResultKeyword>{keyword}</SearchResultKeyword>
         {keyword === '' ? `검색어를 입력하세요` : `유저를 검색합니다.`}
       </SearchResultTitle>
-      <SearchResultGrid></SearchResultGrid>
+      <SearchResultGrid>
+        {searchResult !== undefined
+          ? searchResult.map((user, idx) => (
+              <EachSearchUser key={idx} loadUser={user} />
+            ))
+          : null}
+      </SearchResultGrid>
+      {renderSSPagination()}
       <PageMoveBtn />
     </>
   )

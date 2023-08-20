@@ -43,7 +43,7 @@ function PostDetailArticle({ postid }: PostDetailArticleProps): JSX.Element {
           `/api/post/${postid}`,
           undefined,
           {
-            Authorization: `Bearer ${accessToken as string}`,
+            Authorization: `Bearer ${accessToken}`,
           }
         )
 

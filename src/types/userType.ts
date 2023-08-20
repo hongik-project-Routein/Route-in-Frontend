@@ -1,9 +1,15 @@
+import { type LoadPost } from './postTypes'
+
 export interface UserData {
-  name: string
   uname: string
+  id: number
+  last_login: string
+  email: string
+  name: string
   introduction: string
+  age: number
   image: string
-  postNum: number
-  followerList: string[]
-  followList: string[]
+  following_set: string[]
+  follower_set: string[]
+  posts: LoadPost[]
 }

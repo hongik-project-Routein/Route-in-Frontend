@@ -7,11 +7,14 @@ import InputInfo from '../components/input/inputInfo'
 import { Regex } from '../constants/Regex'
 import theme from '../styles/Theme'
 import { request } from '../util/axios'
+import useUser from '../recoil/hooks/useUser'
 import { useNavigate } from 'react-router-dom'
 
 export default function InitialSetting(): JSX.Element {
   const [isUnameChecked, setIsUnameChecked] = useState<boolean>(false)
   const navigate = useNavigate()
+
+  const { loadUserInfo, logout } = useUser()
 
   const Message = `시작을 위해 몇 가지 설정이 필요합니다.`
 
@@ -22,14 +25,29 @@ export default function InitialSetting(): JSX.Element {
     watch,
   } = useForm()
 
-  const onSubmit = (data: FieldValues): void => {
+  const onSubmit = async (data: FieldValues): Promise<void> => {
     if (!isUnameChecked) {
       alert('중복체크를 해주세요')
       return
     }
 
-    console.log(data)
-    navigate('/home')
+    try {
+      const response = await request<string>(
+        'post',
+        `/api/user/initial_setting/`,
+        data,
+        {
+          Authorization: `Bearer ${loadUserInfo().accessToken}`,
+        }
+      )
+
+      if (response === '초기 설정 완료.') {
+        logout()
+        navigate('/')
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const inputUname = watch('uname')
@@ -38,15 +56,19 @@ export default function InitialSetting(): JSX.Element {
   const checkDuplicate = async (): Promise<void> => {
     try {
       const response = await request<boolean>(
-        'get',
-        `/api/user/uname/${inputUname as string}`
+        'post',
+        `/api/user/uname_check/${inputUname as string}/`,
+        null,
+        {
+          Authorization: `Bearer ${loadUserInfo().accessToken}`,
+        }
       )
       if (response) {
         alert('중복 확인 체크완료')
         setIsUnameChecked(true)
       }
     } catch (error) {
-      alert('중복체크 확인이 필요합니다.')
+      alert('이미 사용 중인 계정이름입니다.')
     }
   }
 

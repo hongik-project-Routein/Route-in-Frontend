@@ -4,6 +4,7 @@ import theme from '../styles/Theme'
 import { request } from '../util/axios'
 import EachLikeUsers from './eachItem/EachLikeUsers'
 import { type UserData } from './../types/userType'
+import useUser from '../recoil/hooks/useUser'
 
 interface LikeListProps {
   like_users: string[]
@@ -12,13 +13,22 @@ interface LikeListProps {
 function LikeList(props: LikeListProps): JSX.Element {
   const [userInfo, setUserInfo] = useState<UserData[]>([])
 
-  const loadUserInfo = async (): Promise<void> => {
+  const { loadUserInfo } = useUser()
+
+  const loadLikeUser = async (): Promise<void> => {
     const likeUserList: UserData[] = []
     try {
       if (props.like_users.length <= 0) return
 
       for (const user of props.like_users) {
-        const response = await request<UserData>('get', `/api/user/${user}`)
+        const response = await request<UserData>(
+          'get',
+          `/api/user/${user}`,
+          undefined,
+          {
+            Authorization: `Bearer ${loadUserInfo().accessToken}`,
+          }
+        )
         likeUserList.push(response)
       }
       setUserInfo(likeUserList)
@@ -28,7 +38,7 @@ function LikeList(props: LikeListProps): JSX.Element {
   }
 
   useEffect(() => {
-    loadUserInfo().catch((error) => {
+    loadLikeUser().catch((error) => {
       console.log(error)
     })
   }, [])
