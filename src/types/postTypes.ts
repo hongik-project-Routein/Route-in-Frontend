@@ -161,8 +161,8 @@ export interface SearchPinType {
   profile: string
   writer: string
   pin: LoadPin
-  postId: string
-  like_users: string
+  postId: number
+  like_users: string[]
   like_status: boolean
   bookmark: boolean
 }
@@ -178,7 +178,7 @@ export interface SearchMapType {
 // 유저 검색
 // 프로필, 닉네임, 이름
 export interface SearchUserType {
-  profile: string
+  image: string
   uname: string
   name: string
 }

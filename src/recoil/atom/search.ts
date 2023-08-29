@@ -15,7 +15,7 @@ interface SearchState {
 const search = atom<SearchState>({
   key: 'search',
   default: {
-    keyword: '',
+    keyword: ' ',
     category: Category.POST,
   },
 })

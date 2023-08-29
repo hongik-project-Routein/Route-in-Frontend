@@ -17,10 +17,18 @@ export default function SearchPostArticle(
   props: SearchPostArticleProps
 ): JSX.Element {
   const { keyword, category } = useSearch()
+
   const [searchResult, setSearchResult] = useState<LoadPost[] | undefined>([])
 
+  const searchParams = new URLSearchParams(window.location.search)
+  const urlkeyword = searchParams.get('q')
+
+  const searchKeyword = keyword === ' ' ? urlkeyword : keyword
+
   const { curPageItem, renderSSPagination } = useSSPagination<LoadPost>(
-    `/search/${keyword.toLocaleLowerCase()}/${category.toLocaleLowerCase()}`,
+    `/search/${(
+      searchKeyword as string
+    ).toLocaleLowerCase()}/${category.toLocaleLowerCase()}`,
     6
   )
 

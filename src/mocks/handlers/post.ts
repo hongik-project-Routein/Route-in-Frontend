@@ -2,6 +2,7 @@ import { rest } from 'msw'
 import { SERVER_BASE_URL } from '../../config'
 import { postDemo } from '../data/post'
 import { updatedPost } from '../data/updatePost'
+import { type LoadPostPagination } from '../../types/postTypes'
 
 export interface LikeResponse {
   postid: number
@@ -12,7 +13,11 @@ export interface LikeResponse {
 export const PostHandler = [
   // load post
   rest.get(`${SERVER_BASE_URL as string}/api/post`, async (req, res, ctx) => {
-    return await res(ctx.json(postDemo))
+    const response: LoadPostPagination = {
+      count: postDemo.length,
+      results: postDemo,
+    }
+    return await res(ctx.json(response))
   }),
 
   rest.post(

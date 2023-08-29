@@ -11,7 +11,7 @@ import useTab from '../../recoil/hooks/useTab'
 export default function Search(): JSX.Element {
   const { search, changeSearchTabIndex } = useTab()
 
-  const { changeCategory } = useSearch()
+  const { changeKeyword, changeCategory } = useSearch()
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(search)
 
   const handleTabClick = async (index: number): Promise<void> => {
@@ -20,6 +20,12 @@ export default function Search(): JSX.Element {
     const newCategory = searchTabContents[index].category
     changeCategory(newCategory)
   }
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search)
+    const keyword = searchParams.get('q')
+    changeKeyword(keyword ?? '')
+  }, [])
 
   useEffect(() => {
     setSelectedTabIndex(search)
