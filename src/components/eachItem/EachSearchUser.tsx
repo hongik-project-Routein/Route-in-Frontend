@@ -10,7 +10,7 @@ interface EachSearchUserProps {
 function EachSearchUser(props: EachSearchUserProps): JSX.Element {
   return (
     <EachSearchUserContainer>
-      <Profile src={props.loadUser.profile} />
+      <Profile src={props.loadUser.image} />
       <Rest>
         <Uname>{props.loadUser.uname}</Uname>
         <Name>{props.loadUser.name}</Name>
@@ -23,6 +23,11 @@ export default EachSearchUser
 
 const EachSearchUserContainer = styled.div`
   display: flex;
+  height: 100px;
+
+  &:hover {
+    cursor: pointer;
+  }
 `
 
 const Profile = styled.img`
@@ -30,19 +35,19 @@ const Profile = styled.img`
   height: 56px;
   margin-right: 20px;
   border-radius: 50%;
-  object-fit: contain;
+  object-fit: cover;
 `
 
 const Rest = styled.div``
 
 const Uname = styled.div`
   color: ${theme.colors.primaryColor};
-  font-size: 24px;
+  font-size: 20px;
   line-height: 150%;
 `
 
 const Name = styled.div`
   color: #d9d9d9;
-  font-size: 20px;
+  font-size: 16px;
   line-height: 150%;
 `

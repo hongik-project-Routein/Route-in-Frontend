@@ -12,7 +12,7 @@ interface EachSearchPinProps {
 
 function EachSearchPin(props: EachSearchPinProps): JSX.Element {
   return (
-    <>
+    <div>
       <PersonalInfoContainer>
         <UserContent to={`/profile/${props.loadPin.writer}`}>
           <Profile src={props.loadPin.profile} />
@@ -36,7 +36,7 @@ function EachSearchPin(props: EachSearchPinProps): JSX.Element {
       <PostDetailLink to={`/post/${props.loadPin.postId}`}>
         상세 게시물로
       </PostDetailLink>
-    </>
+    </div>
   )
 }
 
@@ -109,4 +109,5 @@ const PostDetailLink = styled(Link)`
 const PinImage = styled.img`
   width: 100%;
   height: 100%;
+  object-fit: cover;
 `

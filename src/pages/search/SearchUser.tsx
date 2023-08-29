@@ -54,7 +54,7 @@ export default function SearchUserArticle(
 }
 
 const SearchResultTitle = styled.h2`
-  margin-bottom: 30px;
+  margin-bottom: 50px;
   font-size: 25px;
 `
 
