@@ -11,6 +11,7 @@ import UpdateComment from '../comment/updateComment'
 import useUser from '../../recoil/hooks/useUser'
 import usePostDetail from '../../recoil/hooks/usePostdetail'
 import LikeList from '../post/likeList'
+import calculateDate from '../../constants/calculateDate'
 
 interface EachCommentProps {
   comment: LoadComment
@@ -75,7 +76,7 @@ function EachComment(props: EachCommentProps): JSX.Element {
           <CommentDesc>{props.comment.content}</CommentDesc>
         </Maintext>
         <Rest>
-          <Time>{`${props.comment.updated_at}분전`}</Time>
+          <Time>{`${calculateDate(props.comment.updated_at)}`}</Time>
           <HeartCount ref={likePeopleRef}>
             {`좋아요 ${props.comment.like_count}개`}
             {likePeopleOpen ? (

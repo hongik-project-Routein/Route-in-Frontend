@@ -11,8 +11,9 @@ import WritePost from './pages/createPost/WritePost'
 import SelectRepresentativePicture from './pages/createPost/SelectRepresentativePicture'
 import HeaderAndSidebar from './components/common/headerAndSidebar'
 import Login from './pages/login'
-import Kakao from './components/callback/kakao'
 import InitialSetting from './pages/InitialSetting'
+import CommonLogin from './pages/commonLogin'
+import CommonSignupPage from './pages/commonSignup'
 
 function Router(): JSX.Element {
   return (
@@ -20,8 +21,9 @@ function Router(): JSX.Element {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Navigate to="/login" />} />
-          <Route path="/auth/login" element={<Kakao />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/common-login" element={<CommonLogin />} />
+          <Route path="/common-signup" element={<CommonSignupPage />} />
           <Route path="/initial-setting" element={<InitialSetting />} />
           <Route path="/home" element={<Main />} />
           <Route path="/post/:postid" element={<PostDetail />} />

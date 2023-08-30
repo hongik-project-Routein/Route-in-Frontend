@@ -1,7 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
-import Kakao from '../components/callback/kakao'
-import GoogleLoginProvider from '../components/callback/google'
+import Kakao from '../components/auth/kakao'
+import GoogleLoginProvider from '../components/auth/google'
+import theme from '../styles/Theme'
+import { Link } from 'react-router-dom'
 
 export default function Login(): JSX.Element {
   const sloganText = `장소와 장소를 이어줌으로써
@@ -19,6 +21,9 @@ export default function Login(): JSX.Element {
           </SocialLoginContainer>
           <SocialLoginContainer>
             <Kakao />
+          </SocialLoginContainer>
+          <SocialLoginContainer>
+            <GoCommonLogin to="/common-login">일반 로그인</GoCommonLogin>
           </SocialLoginContainer>
         </LoginContainer>
       </LoginArticle>
@@ -70,4 +75,19 @@ const SocialLoginContainer = styled.div`
   justify-content: center;
   width: 100%;
   margin-bottom: 30px;
+`
+
+const GoCommonLogin = styled(Link)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 184px;
+  height: 47px;
+  margin: 0 auto;
+  background-color: ${theme.colors.primaryColor};
+  border-radius: 5px;
+
+  &:hover {
+    cursor: pointer;
+  }
 `
