@@ -39,6 +39,7 @@ export interface UpdatePost {
 
 // 핀 수정 시
 export interface UpdatePin {
+  id: number
   image: string
   pin_hashtag: string
   content: string

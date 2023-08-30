@@ -4,6 +4,8 @@ import theme from '../../styles/Theme'
 import { request } from '../../util/axios'
 import useFollow from '../../recoil/hooks/useFollow'
 import { type UserData } from '../../types/userType'
+import useUser from '../../recoil/hooks/useUser'
+import FollowButton from '../follow/followButton'
 
 interface FollowProps {
   followList: string[]
@@ -11,13 +13,22 @@ interface FollowProps {
 
 export default function FollowingModal(props: FollowProps): JSX.Element {
   const [followLists, setFollowLists] = useState<UserData[]>([])
-  const { followingList, deleteFollowing } = useFollow()
+  const { followingList } = useFollow()
+
+  const { loadUserInfo } = useUser()
 
   const getFollowList = async (): Promise<UserData[]> => {
     const followUserList: UserData[] = []
     try {
       for (const user of props.followList) {
-        const response = await request<UserData>('get', `/api/user/${user}`)
+        const response = await request<UserData>(
+          'get',
+          `/api/user/${user}`,
+          undefined,
+          {
+            Authorization: `Bearer ${loadUserInfo().accessToken}`,
+          }
+        )
         followUserList.push(response)
       }
       return followUserList
@@ -37,19 +48,9 @@ export default function FollowingModal(props: FollowProps): JSX.Element {
     })
   }, [followingList])
 
-  const handleDeleteFollowing = async (uname: string): Promise<void> => {
-    try {
-      await request('delete', `/api/user/following/${uname}`)
-      deleteFollowing(uname)
-    } catch (error) {
-      console.log(error)
-      throw error
-    }
-  }
-
   return (
     <ModalContainer>
-      <ModalTitle>팔로워</ModalTitle>
+      <ModalTitle>팔로잉</ModalTitle>
       <ModalInner>
         {followLists?.map((user, idx) => (
           <Row key={idx}>
@@ -58,13 +59,7 @@ export default function FollowingModal(props: FollowProps): JSX.Element {
               <Nickname>{user.uname}</Nickname>
               <Name>{user.name}</Name>
             </NicknameAndName>
-            <FollowButton
-              onClick={async () => {
-                await handleDeleteFollowing(user.uname)
-              }}
-            >
-              팔로잉
-            </FollowButton>
+            <FollowButton uname={user.uname} />
           </Row>
         ))}
       </ModalInner>
@@ -119,11 +114,4 @@ const Nickname = styled.div``
 const Name = styled.div`
   padding-top: 5px;
   font-size: 13px;
-`
-
-const FollowButton = styled.button`
-  width: 80px;
-  height: 35px;
-  background-color: #d9d9d9;
-  border-radius: 25px;
 `

@@ -96,7 +96,16 @@ export default function PostCard(props: PostCardProps): JSX.Element {
               <NumOfLike ref={likePeopleRef}>
                 {likeCount}
                 {likePeopleOpen ? (
-                  <LikeList like_users={props.loadPost.post.like_users} />
+                  <LikeList
+                    like_users={
+                      likeStatus
+                        ? [
+                            ...props.loadPost.post.like_users,
+                            loadUserInfo().uname,
+                          ]
+                        : props.loadPost.post.like_users
+                    }
+                  />
                 ) : null}
               </NumOfLike>
             </LikeAndNumber>

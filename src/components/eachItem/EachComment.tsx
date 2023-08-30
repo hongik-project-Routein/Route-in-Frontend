@@ -79,7 +79,13 @@ function EachComment(props: EachCommentProps): JSX.Element {
           <HeartCount ref={likePeopleRef}>
             {`좋아요 ${props.comment.like_count}개`}
             {likePeopleOpen ? (
-              <LikeList like_users={props.comment.like_users} />
+              <LikeList
+                like_users={
+                  props.comment.is_liked
+                    ? [...props.comment.like_users, loadUserInfo().uname]
+                    : props.comment.like_users
+                }
+              />
             ) : null}
           </HeartCount>
         </Rest>

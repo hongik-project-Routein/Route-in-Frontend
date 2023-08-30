@@ -7,9 +7,12 @@ import { type UpdatePost, type HashtagAutoAndText } from '../../types/postTypes'
 import useInput from '../../hooks/useInput'
 import { useRecoilState } from 'recoil'
 import updatePost from '../../recoil/atom/updatePost'
+import { request } from '../../util/axios'
+import useUser from '../../recoil/hooks/useUser'
 
 interface EachHashtagAutoProps {
   eachHashtag: HashtagAutoAndText
+  id: number
 }
 
 function EachHashtagAuto(props: EachHashtagAutoProps): JSX.Element {
@@ -17,6 +20,8 @@ function EachHashtagAuto(props: EachHashtagAutoProps): JSX.Element {
     props.eachHashtag.text
   )
   const [post, setPost] = useRecoilState<UpdatePost>(updatePost)
+
+  const { loadUserInfo } = useUser()
 
   // 글 수정 시 내용이 변함
   const onChangeText = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -32,9 +37,23 @@ function EachHashtagAuto(props: EachHashtagAutoProps): JSX.Element {
     setPost({ ...post, pins: newPins })
   }
 
-  const deletePin = (): void => {
-    if (post.pins.length <= 1) {
-      alert('최소 한 개는 있어야합니다')
+  // 즉각적으로 삭제되도록 변경, 그 대신 확인 창을 만들어 사용자에게 경고를 준다.
+  const deletePin = async (id: number): Promise<void> => {
+    if (window.confirm('정말 삭제하시겠습니까?\n삭제는 즉각 반영이 됩니다.')) {
+      if (post.pins.length <= 1) {
+        alert('최소 한 개는 있어야합니다')
+        return
+      }
+
+      try {
+        await request('delete', `/api/pin/${id}/`, null, {
+          Authorization: `Bearer ${loadUserInfo().accessToken}`,
+        })
+      } catch (error) {
+        console.log(error)
+        return
+      }
+    } else {
       return
     }
 
@@ -47,7 +66,11 @@ function EachHashtagAuto(props: EachHashtagAutoProps): JSX.Element {
   return (
     <EachHashtagAutoContainer>
       <HashtagAuto>{props.eachHashtag.hashtagAuto}</HashtagAuto>
-      <DeleteBtn onClick={deletePin}>
+      <DeleteBtn
+        onClick={async () => {
+          await deletePin(props.id)
+        }}
+      >
         <FontAwesomeIcon icon={faMinus} />
       </DeleteBtn>
       <HashtagAutoTextInput value={text} onChange={onChangeText} />

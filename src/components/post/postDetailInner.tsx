@@ -49,8 +49,6 @@ function PostDetailInner(): JSX.Element {
           Authorization: `Bearer ${accessToken}`,
         }
       )
-      console.log(response)
-
       setLike(response)
     } catch (error) {
       console.log(error)
@@ -86,8 +84,6 @@ function PostDetailInner(): JSX.Element {
             Authorization: `Bearer ${accessToken}`,
           }
         )
-        console.log(response)
-
         alert(`삭제되었습니다.${response}`)
         navigate('/home')
       } catch (error) {
@@ -116,7 +112,13 @@ function PostDetailInner(): JSX.Element {
               <NumOfHeart ref={likePeopleRef}>
                 {postDetail.post.like_count}
                 {likePeopleOpen ? (
-                  <LikeList like_users={postDetail.post.like_users} />
+                  <LikeList
+                    like_users={
+                      postDetail.post.is_liked
+                        ? [...postDetail.post.like_users, loadUserInfo().uname]
+                        : postDetail.post.like_users
+                    }
+                  />
                 ) : null}
               </NumOfHeart>
             </HeartAndNumber>
