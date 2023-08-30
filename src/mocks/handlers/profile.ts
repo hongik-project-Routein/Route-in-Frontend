@@ -14,8 +14,8 @@ export const profileHandler = [
   ),
 
   // 팔로워 삭제
-  rest.delete(
-    `${SERVER_BASE_URL as string}/api/user/follower/:nickname`,
+  rest.post(
+    `${SERVER_BASE_URL as string}/api/user/:nickname/follow`,
     async (req, res, ctx) => {
       const { nickname } = req.params
       const response = nickname

@@ -4,6 +4,7 @@ import theme from '../../styles/Theme'
 import { request } from '../../util/axios'
 import useFollow from '../../recoil/hooks/useFollow'
 import { type UserData } from '../../types/userType'
+import useUser from '../../recoil/hooks/useUser'
 
 interface FollowProps {
   followList: string[]
@@ -12,12 +13,22 @@ interface FollowProps {
 export default function FollowingModal(props: FollowProps): JSX.Element {
   const [followLists, setFollowLists] = useState<UserData[]>([])
   const { followingList, deleteFollowing } = useFollow()
+  const [state, setState] = useState<string>('')
+
+  const { loadUserInfo } = useUser()
 
   const getFollowList = async (): Promise<UserData[]> => {
     const followUserList: UserData[] = []
     try {
       for (const user of props.followList) {
-        const response = await request<UserData>('get', `/api/user/${user}`)
+        const response = await request<UserData>(
+          'get',
+          `/api/user/${user}`,
+          undefined,
+          {
+            Authorization: `Bearer ${loadUserInfo().accessToken}`,
+          }
+        )
         followUserList.push(response)
       }
       return followUserList
@@ -35,11 +46,19 @@ export default function FollowingModal(props: FollowProps): JSX.Element {
     loadFollowList().catch((error) => {
       console.log(error)
     })
-  }, [followingList])
+  }, [followingList, state])
 
   const handleDeleteFollowing = async (uname: string): Promise<void> => {
     try {
-      await request('delete', `/api/user/following/${uname}`)
+      const response = await request<string>(
+        'post',
+        `/api/user/${uname}/follow/`,
+        undefined,
+        {
+          Authorization: `Bearer ${loadUserInfo().accessToken}`,
+        }
+      )
+      setState(response)
       deleteFollowing(uname)
     } catch (error) {
       console.log(error)
@@ -49,7 +68,7 @@ export default function FollowingModal(props: FollowProps): JSX.Element {
 
   return (
     <ModalContainer>
-      <ModalTitle>팔로워</ModalTitle>
+      <ModalTitle>팔로잉</ModalTitle>
       <ModalInner>
         {followLists?.map((user, idx) => (
           <Row key={idx}>

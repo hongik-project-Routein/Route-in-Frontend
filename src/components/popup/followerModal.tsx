@@ -4,6 +4,7 @@ import theme from '../../styles/Theme'
 import { request } from '../../util/axios'
 import useFollow from '../../recoil/hooks/useFollow'
 import { type UserData } from '../../types/userType'
+import useUser from '../../recoil/hooks/useUser'
 
 interface FollowerProps {
   followerList: string[]
@@ -13,11 +14,20 @@ export default function FollowerModal(props: FollowerProps): JSX.Element {
   const [followerLists, setFollowerLists] = useState<UserData[]>([])
   const { followerList, deleteFollower } = useFollow()
 
+  const { loadUserInfo } = useUser()
+
   const getFollowerList = async (): Promise<UserData[]> => {
     const followerUserList: UserData[] = []
     try {
       for (const user of props.followerList) {
-        const response = await request<UserData>('get', `/api/user/${user}`)
+        const response = await request<UserData>(
+          'get',
+          `/api/user/${user}`,
+          undefined,
+          {
+            Authorization: `Bearer ${loadUserInfo().accessToken}`,
+          }
+        )
         followerUserList.push(response)
       }
       return followerUserList
@@ -39,7 +49,9 @@ export default function FollowerModal(props: FollowerProps): JSX.Element {
 
   const handleDeleteFollower = async (uname: string): Promise<void> => {
     try {
-      await request('delete', `/api/user/follower/${uname}`)
+      await request('post', `/api/user/${uname}/follow/`, undefined, {
+        Authorization: `Bearer ${loadUserInfo().accessToken}`,
+      })
       deleteFollower(uname)
     } catch (error) {
       console.log(error)
@@ -49,7 +61,7 @@ export default function FollowerModal(props: FollowerProps): JSX.Element {
 
   return (
     <ModalContainer>
-      <ModalTitle>팔로잉</ModalTitle>
+      <ModalTitle>팔로워</ModalTitle>
       <ModalInner>
         {followerLists?.map((user, idx) => (
           <Row key={idx}>

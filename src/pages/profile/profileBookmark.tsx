@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import Profile from '../../components/etc/profile'
 import Tab from '../../components/util/tab'
 import PostSmall from '../../components/post/postSmall'
-import { useParams } from 'react-router-dom'
 import { type LoadPost } from '../../types/postTypes'
-import { request } from '../../util/axios'
+import useUser from '../../recoil/hooks/useUser'
+import useSSPagination from '../../hooks/useSSPagination'
 
 interface TabContent {
   tabName: string
@@ -20,38 +20,19 @@ interface ProfileBookmarkArticleProps {
 export default function ProfileBookmarkArticle(
   props: ProfileBookmarkArticleProps
 ): JSX.Element {
-  const { username } = useParams() // 실제는 db에서 username 가져올 것
+  const { loadUserInfo } = useUser()
+  const uname = loadUserInfo().uname
+
   const tabContents: TabContent[] = [
-    { tabName: '지도', link: `/profile/${username ?? ''}/map` },
-    { tabName: '게시글', link: `/profile/${username ?? ''}/post` },
-    { tabName: '북마크', link: `/profile/${username ?? ''}/bookmark` },
+    { tabName: '지도', link: `/profile/${uname ?? ''}/map` },
+    { tabName: '게시글', link: `/profile/${uname ?? ''}/post` },
+    { tabName: '북마크', link: `/profile/${uname ?? ''}/bookmark` },
   ]
-  // 더미 데이터 용
-  const [posts, setPosts] = useState<LoadPost[]>([])
 
-  const fetchData = async (): Promise<LoadPost[]> => {
-    try {
-      const response = await request<LoadPost[]>(
-        'get',
-        `/api/user/profilepost/${username as string}`
-      )
-      return response
-    } catch (error) {
-      console.log(error)
-      throw error
-    }
-  }
-
-  useEffect(() => {
-    const loadPost = async (): Promise<void> => {
-      const result = await fetchData()
-      setPosts(result)
-    }
-
-    loadPost().catch((error) => {
-      console.log(error)
-    })
-  }, [])
+  const { curPageItem, renderSSPagination } = useSSPagination<LoadPost>(
+    `/api/user/${uname}/bookmark`,
+    6
+  )
 
   return (
     <>
@@ -62,10 +43,13 @@ export default function ProfileBookmarkArticle(
         handleTabfunc={props.handleTabfunc}
       />
       <TabArticle>
-        {posts !== undefined
-          ? posts.map((post, idx) => <PostSmall key={idx} loadPost={post} />)
+        {curPageItem.length > 0
+          ? curPageItem.map((post, idx) => (
+              <PostSmall key={idx} loadPost={post} />
+            ))
           : null}
       </TabArticle>
+      {renderSSPagination()}
     </>
   )
 }

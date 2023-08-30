@@ -9,10 +9,12 @@ import { useParams } from 'react-router-dom'
 import { request } from '../../util/axios'
 import { type UserData } from '../../types/userType'
 import useTab from '../../recoil/hooks/useTab'
+import useUser from '../../recoil/hooks/useUser'
 
 export default function MyProfile(): JSX.Element {
   const { profile, changeProfileTabIndex } = useTab()
   const { username } = useParams()
+  const { loadUserInfo } = useUser()
 
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(profile)
   const setUserProfile = useSetRecoilState(profileStore)
@@ -21,7 +23,11 @@ export default function MyProfile(): JSX.Element {
     try {
       const response = await request<UserData>(
         'get',
-        `/api/user/${username as string}`
+        `/api/user/${username as string}`,
+        null,
+        {
+          Authorization: `Bearer ${loadUserInfo().accessToken}`,
+        }
       )
       return response
     } catch (error) {

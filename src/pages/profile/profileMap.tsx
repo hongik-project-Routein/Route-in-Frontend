@@ -27,7 +27,6 @@ export default function ProfileMapArticle(
   ]
 
   const userProfile = useRecoilValue(profileStore)
-  console.log(userProfile)
 
   return (
     <>

@@ -3,6 +3,9 @@ import styled from 'styled-components'
 import Profile from '../../components/etc/profile'
 import HeaderAndSidebar from '../../components/common/headerAndSidebar'
 import theme from '../../styles/Theme'
+import useUser from '../../recoil/hooks/useUser'
+import { request } from '../../util/axios'
+import { useNavigate } from 'react-router-dom'
 
 export default function Setting(): JSX.Element {
   return <HeaderAndSidebar article={<SettingArticle />} />
@@ -10,12 +13,38 @@ export default function Setting(): JSX.Element {
 
 function SettingArticle(): JSX.Element {
   const [nickname, setNickname] = useState<string>('')
+  const { loadUserInfo } = useUser()
+
   const onChange = (event: ChangeEvent<HTMLInputElement>): void => {
     setNickname(event.target.value)
   }
+
+  const navigate = useNavigate()
+
+  const { logout } = useUser()
+
+  const withdraw = async (): Promise<void> => {
+    if (
+      window.confirm(
+        '정말 탈퇴하시겠습니까?\n탈퇴하면 내 모든 게시글과 정보가 사라집니다.'
+      )
+    ) {
+      try {
+        await request('delete', `/api/user/${loadUserInfo().uname}`, null, {
+          Authorization: `Bearer ${loadUserInfo().accessToken}`,
+        })
+        logout()
+        navigate('/')
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  }
+
   useEffect(() => {
-    setNickname('jinokim98')
+    setNickname(loadUserInfo().uname)
   }, [])
+
   return (
     <>
       <Profile />
@@ -35,7 +64,9 @@ function SettingArticle(): JSX.Element {
             <DuplicateCheckBtn>중복체크</DuplicateCheckBtn>
           </NicknameEdit>
           <TerminateMembership>회원 탈퇴</TerminateMembership>
-          <TerminateMembershipBtn>회원 탈퇴하기</TerminateMembershipBtn>
+          <TerminateMembershipBtn onClick={withdraw}>
+            회원 탈퇴하기
+          </TerminateMembershipBtn>
         </UserStateSet>
       </TabArticle>
     </>

@@ -18,7 +18,6 @@ interface PostUpdateProps {
   postid: string
 }
 
-// 추후에 조금 더 수정 필요
 export default function PostUpdate(props: PostUpdateProps): JSX.Element {
   const [post, setPost] = useRecoilState<UpdatePost>(updatePost)
   const [text, setText, directChange] = useInput<string, HTMLTextAreaElement>(
@@ -39,7 +38,6 @@ export default function PostUpdate(props: PostUpdateProps): JSX.Element {
           Authorization: `Bearer ${loadUserInfo().accessToken}`,
         }
       )
-      console.log(response)
 
       setPost(response)
       directChange(
@@ -80,6 +78,7 @@ export default function PostUpdate(props: PostUpdateProps): JSX.Element {
     for (const autoText of auto) {
       text += autoText.hashtagAuto + '\n' + autoText.text + '\n\n'
     }
+
     text += content
 
     return text
@@ -88,7 +87,7 @@ export default function PostUpdate(props: PostUpdateProps): JSX.Element {
   // 수정한 후 서버에 전송하는 함수
   const updatePostRequest = async (): Promise<void> => {
     const newContent = concatContent(
-      post.content,
+      text,
       post.pins.map((pin) => {
         return {
           hashtagAuto: pin.pin_hashtag,
@@ -98,20 +97,14 @@ export default function PostUpdate(props: PostUpdateProps): JSX.Element {
     )
 
     const newPost = { ...post, content: newContent }
-    console.log(newPost)
 
     try {
-      const response = await request(
-        'put',
-        `/api/post/${props.postid}/update/`,
-        newPost,
-        {
-          Authorization: `Bearer ${loadUserInfo().accessToken}`,
-        }
-      )
-      console.log(response)
+      await request('put', `/api/post/${props.postid}/update/`, newPost, {
+        Authorization: `Bearer ${loadUserInfo().accessToken}`,
+      })
       resetIsUpdatePost()
       resetUpdatePost()
+      window.location.reload()
     } catch (error) {
       console.log(error)
     }
@@ -122,10 +115,6 @@ export default function PostUpdate(props: PostUpdateProps): JSX.Element {
       resetIsUpdatePost()
     }
   }, [])
-
-  useEffect(() => {
-    console.log(post)
-  }, [post])
 
   return (
     <>
@@ -151,6 +140,7 @@ export default function PostUpdate(props: PostUpdateProps): JSX.Element {
                     hashtagAuto: pin.pin_hashtag,
                     text: pin.content,
                   }}
+                  id={pin.id}
                 />
               ))}
           </HashtagAutoTextContainer>
