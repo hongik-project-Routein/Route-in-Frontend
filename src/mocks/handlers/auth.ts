@@ -1,6 +1,6 @@
 import { rest } from 'msw'
 import { SERVER_BASE_URL } from '../../config'
-import { type Auth } from '../../components/callback/kakao'
+import { type Auth } from '../../components/auth/kakao'
 
 export const authHandler = [
   // login (추후에 프로필 사진도 로드할 필요있음)

@@ -9,6 +9,7 @@ import EachComment from '../eachItem/EachComment'
 import { request } from '../../util/axios'
 import useUser from '../../recoil/hooks/useUser'
 import usePostDetail from '../../recoil/hooks/usePostdetail'
+import moment from 'moment'
 
 interface CommentProps {
   postId: number
@@ -65,13 +66,21 @@ function Comment(props: CommentProps): JSX.Element {
     if (event.key === 'Enter') event.preventDefault()
   }
 
+  const sortByCreatedAt = (a: LoadComment, b: LoadComment): number => {
+    if (moment(a.updated_at) < moment(b.updated_at)) return 1
+    if (moment(a.updated_at) > moment(b.updated_at)) return -1
+    return 0
+  }
+
   return (
     <>
       <CommentContainer>
         {postComment.length > 0 &&
-          postComment.map((comment: LoadComment, idx: number) => (
-            <EachComment key={idx} comment={comment} />
-          ))}
+          [...postComment]
+            .sort(sortByCreatedAt)
+            .map((comment: LoadComment, idx: number) => (
+              <EachComment key={idx} comment={comment} />
+            ))}
       </CommentContainer>
       <WriteCommentContainer onSubmit={onSubmit}>
         <Emoji onClick={EmojiButtonClick}>

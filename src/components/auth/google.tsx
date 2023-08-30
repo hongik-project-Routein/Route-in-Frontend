@@ -36,8 +36,6 @@ function GoogleLoginButton(): JSX.Element {
         }
       )
 
-      console.log(response)
-
       const userinfo: UserState = {
         name: response.name,
         uname: response.uname,
