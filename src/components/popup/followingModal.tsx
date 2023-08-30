@@ -5,6 +5,7 @@ import { request } from '../../util/axios'
 import useFollow from '../../recoil/hooks/useFollow'
 import { type UserData } from '../../types/userType'
 import useUser from '../../recoil/hooks/useUser'
+import FollowButton from '../follow/followButton'
 
 interface FollowProps {
   followList: string[]
@@ -12,8 +13,7 @@ interface FollowProps {
 
 export default function FollowingModal(props: FollowProps): JSX.Element {
   const [followLists, setFollowLists] = useState<UserData[]>([])
-  const { followingList, deleteFollowing } = useFollow()
-  const [state, setState] = useState<string>('')
+  const { followingList } = useFollow()
 
   const { loadUserInfo } = useUser()
 
@@ -46,25 +46,7 @@ export default function FollowingModal(props: FollowProps): JSX.Element {
     loadFollowList().catch((error) => {
       console.log(error)
     })
-  }, [followingList, state])
-
-  const handleDeleteFollowing = async (uname: string): Promise<void> => {
-    try {
-      const response = await request<string>(
-        'post',
-        `/api/user/${uname}/follow/`,
-        undefined,
-        {
-          Authorization: `Bearer ${loadUserInfo().accessToken}`,
-        }
-      )
-      setState(response)
-      deleteFollowing(uname)
-    } catch (error) {
-      console.log(error)
-      throw error
-    }
-  }
+  }, [followingList])
 
   return (
     <ModalContainer>
@@ -77,13 +59,7 @@ export default function FollowingModal(props: FollowProps): JSX.Element {
               <Nickname>{user.uname}</Nickname>
               <Name>{user.name}</Name>
             </NicknameAndName>
-            <FollowButton
-              onClick={async () => {
-                await handleDeleteFollowing(user.uname)
-              }}
-            >
-              팔로잉
-            </FollowButton>
+            <FollowButton uname={user.uname} />
           </Row>
         ))}
       </ModalInner>
@@ -138,11 +114,4 @@ const Nickname = styled.div``
 const Name = styled.div`
   padding-top: 5px;
   font-size: 13px;
-`
-
-const FollowButton = styled.button`
-  width: 80px;
-  height: 35px;
-  background-color: #d9d9d9;
-  border-radius: 25px;
 `

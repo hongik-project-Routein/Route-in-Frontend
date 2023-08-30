@@ -5,6 +5,7 @@ import { request } from '../../util/axios'
 import useFollow from '../../recoil/hooks/useFollow'
 import { type UserData } from '../../types/userType'
 import useUser from '../../recoil/hooks/useUser'
+import FollowButton from '../follow/followButton'
 
 interface FollowerProps {
   followerList: string[]
@@ -12,7 +13,7 @@ interface FollowerProps {
 
 export default function FollowerModal(props: FollowerProps): JSX.Element {
   const [followerLists, setFollowerLists] = useState<UserData[]>([])
-  const { followerList, deleteFollower } = useFollow()
+  const { followerList } = useFollow()
 
   const { loadUserInfo } = useUser()
 
@@ -47,18 +48,6 @@ export default function FollowerModal(props: FollowerProps): JSX.Element {
     })
   }, [followerList])
 
-  const handleDeleteFollower = async (uname: string): Promise<void> => {
-    try {
-      await request('post', `/api/user/${uname}/follow/`, undefined, {
-        Authorization: `Bearer ${loadUserInfo().accessToken}`,
-      })
-      deleteFollower(uname)
-    } catch (error) {
-      console.log(error)
-      throw error
-    }
-  }
-
   return (
     <ModalContainer>
       <ModalTitle>팔로워</ModalTitle>
@@ -70,13 +59,7 @@ export default function FollowerModal(props: FollowerProps): JSX.Element {
               <Nickname>{user.uname}</Nickname>
               <Name>{user.name}</Name>
             </NicknameAndName>
-            <FollowButton
-              onClick={async () => {
-                await handleDeleteFollower(user.uname)
-              }}
-            >
-              삭제
-            </FollowButton>
+            <FollowButton uname={user.uname} />
           </Row>
         ))}
       </ModalInner>
@@ -131,11 +114,4 @@ const Nickname = styled.div``
 const Name = styled.div`
   padding-top: 5px;
   font-size: 13px;
-`
-
-const FollowButton = styled.button`
-  width: 80px;
-  height: 35px;
-  background-color: #d9d9d9;
-  border-radius: 25px;
 `

@@ -10,11 +10,14 @@ import { request } from '../../util/axios'
 import { type UserData } from '../../types/userType'
 import useTab from '../../recoil/hooks/useTab'
 import useUser from '../../recoil/hooks/useUser'
+import useFollow from '../../recoil/hooks/useFollow'
 
 export default function MyProfile(): JSX.Element {
   const { profile, changeProfileTabIndex } = useTab()
   const { username } = useParams()
   const { loadUserInfo } = useUser()
+
+  const { followerList, followingList } = useFollow()
 
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(profile)
   const setUserProfile = useSetRecoilState(profileStore)
@@ -45,7 +48,7 @@ export default function MyProfile(): JSX.Element {
     loadUserInfo().catch((error) => {
       console.log(error)
     })
-  }, [])
+  }, [followerList, followingList])
 
   const handleTabClick = (index: number): void => {
     setSelectedTabIndex(index)
