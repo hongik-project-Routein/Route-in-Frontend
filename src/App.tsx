@@ -8,7 +8,7 @@ import InitialSetting from './pages/InitialSetting'
 import Main from './pages/Main'
 import PostDetail from './pages/post/postDetail'
 import WritePost from './pages/createPost/WritePost'
-import SelectRepresentativePicture from './pages/createPost/SelectRepresentativePicture'
+import CreatePostCheck from './pages/createPost/CreatePostCheck'
 import Search from './pages/search/Search'
 import Explore from './pages/explore/explore'
 import MyProfile from './pages/profile/profile'
@@ -58,10 +58,7 @@ function App(): JSX.Element {
         <Route
           path="/post/create/setimage"
           element={
-            <PrivateRoute
-              isLogin={isLogin}
-              component={<SelectRepresentativePicture />}
-            />
+            <PrivateRoute isLogin={isLogin} component={<CreatePostCheck />} />
           }
         />
         {/* 검색 */}
