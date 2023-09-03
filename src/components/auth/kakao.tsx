@@ -54,7 +54,7 @@ function Kakao(): JSX.Element {
     if (response.uname === null) {
       navigate('/initial-setting')
     } else {
-      navigate('/home')
+      navigate('/')
     }
   }
   const kakaoOnFailure = (error: any): void => {

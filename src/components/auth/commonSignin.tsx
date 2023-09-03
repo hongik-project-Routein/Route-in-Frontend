@@ -41,7 +41,7 @@ function CommonSignin(): JSX.Element {
       }
 
       login(userinfo)
-      navigate('/home')
+      navigate('/')
     } catch (error) {
       console.log(error)
     }

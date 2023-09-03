@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import HeaderAndSidebar from '../../components/common/headerAndSidebar'
 import UserRecommendExploreArticle from './userRecommendExplore'
 import LocationExploreArticle from './locationExplore'
 import useTab from '../../recoil/hooks/useTab'
@@ -19,22 +18,14 @@ export default function Explore(): JSX.Element {
   return (
     <>
       {selectedTabIndex === 0 ? (
-        <HeaderAndSidebar
-          article={
-            <UserRecommendExploreArticle
-              handleTabfunc={handleTabClick}
-              tabIndex={selectedTabIndex}
-            />
-          }
+        <UserRecommendExploreArticle
+          handleTabfunc={handleTabClick}
+          tabIndex={selectedTabIndex}
         />
       ) : selectedTabIndex === 1 ? (
-        <HeaderAndSidebar
-          article={
-            <LocationExploreArticle
-              handleTabfunc={handleTabClick}
-              tabIndex={selectedTabIndex}
-            />
-          }
+        <LocationExploreArticle
+          handleTabfunc={handleTabClick}
+          tabIndex={selectedTabIndex}
         />
       ) : (
         <div>잘못된 접근</div>

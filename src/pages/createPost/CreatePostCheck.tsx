@@ -7,7 +7,7 @@ import { type Pin, type HashtagAutoAndText } from '../../types/postTypes'
 import usePost from '../../recoil/hooks/usePost'
 import { useNavigate } from 'react-router-dom'
 
-export default function SelectRepresentativePicture(): JSX.Element {
+export default function CreatePostCheck(): JSX.Element {
   const [hashtagAutoText, setHashtagAutoText] = useState<
     HashtagAutoAndText[] | []
   >([])
