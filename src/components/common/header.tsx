@@ -37,11 +37,6 @@ export default function Header(): JSX.Element {
 
 const HeaderContainer = styled.div`
   display: flex;
-  position: sticky;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 5;
   justify-content: space-between;
   align-items: center;
   width: 100%;

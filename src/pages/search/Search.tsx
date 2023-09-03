@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import HeaderAndSidebar from '../../components/common/headerAndSidebar'
 import SearchPostArticle from './SearchPost'
 import SearchPinArticle from './SearchPin'
 import SearchMapArticle from './SearchMap'
@@ -34,40 +33,24 @@ export default function Search(): JSX.Element {
   return (
     <>
       {selectedTabIndex === 0 ? (
-        <HeaderAndSidebar
-          article={
-            <SearchPostArticle
-              handleTabfunc={handleTabClick}
-              tabIndex={selectedTabIndex}
-            />
-          }
+        <SearchPostArticle
+          handleTabfunc={handleTabClick}
+          tabIndex={selectedTabIndex}
         />
       ) : selectedTabIndex === 1 ? (
-        <HeaderAndSidebar
-          article={
-            <SearchPinArticle
-              handleTabfunc={handleTabClick}
-              tabIndex={selectedTabIndex}
-            />
-          }
+        <SearchPinArticle
+          handleTabfunc={handleTabClick}
+          tabIndex={selectedTabIndex}
         />
       ) : selectedTabIndex === 2 ? (
-        <HeaderAndSidebar
-          article={
-            <SearchMapArticle
-              handleTabfunc={handleTabClick}
-              tabIndex={selectedTabIndex}
-            />
-          }
+        <SearchMapArticle
+          handleTabfunc={handleTabClick}
+          tabIndex={selectedTabIndex}
         />
       ) : selectedTabIndex === 3 ? (
-        <HeaderAndSidebar
-          article={
-            <SearchUserArticle
-              handleTabfunc={handleTabClick}
-              tabIndex={selectedTabIndex}
-            />
-          }
+        <SearchUserArticle
+          handleTabfunc={handleTabClick}
+          tabIndex={selectedTabIndex}
         />
       ) : (
         <div>잘못된 접근</div>

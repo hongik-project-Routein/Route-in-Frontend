@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import HeaderAndSidebar from '../../components/common/headerAndSidebar'
 
 import { type LoadPost } from '../../types/postTypes'
 import { request } from '../../util/axios'
@@ -16,11 +15,9 @@ function PostDetail(): JSX.Element {
   const isUpdate = useRecoilValue(isUpdatePost)
 
   return !isUpdate ? (
-    <HeaderAndSidebar
-      article={<PostDetailArticle postid={postid as string} />}
-    />
+    <PostDetailArticle postid={postid as string} />
   ) : (
-    <HeaderAndSidebar article={<PostUpdate postid={postid as string} />} />
+    <PostUpdate postid={postid as string} />
   )
 }
 

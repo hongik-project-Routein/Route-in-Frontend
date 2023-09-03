@@ -1,17 +1,12 @@
 import React, { useState, useEffect, type ChangeEvent } from 'react'
 import styled from 'styled-components'
 import Profile from '../../components/etc/profile'
-import HeaderAndSidebar from '../../components/common/headerAndSidebar'
 import theme from '../../styles/Theme'
 import useUser from '../../recoil/hooks/useUser'
 import { request } from '../../util/axios'
 import { useNavigate } from 'react-router-dom'
 
-export default function Setting(): JSX.Element {
-  return <HeaderAndSidebar article={<SettingArticle />} />
-}
-
-function SettingArticle(): JSX.Element {
+function Setting(): JSX.Element {
   const [nickname, setNickname] = useState<string>('')
   const { loadUserInfo } = useUser()
 
@@ -72,6 +67,8 @@ function SettingArticle(): JSX.Element {
     </>
   )
 }
+
+export default Setting
 
 const TabArticle = styled.div`
   width: 900px;

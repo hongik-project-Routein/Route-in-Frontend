@@ -1,28 +1,28 @@
 import React from 'react'
 import styled from 'styled-components'
-import Header from './header'
-import Sidebar from './sidebar'
+import Header from '../common/header'
+import Sidebar from '../common/sidebar'
+import { Outlet } from 'react-router-dom'
 
-interface propsType {
-  article: JSX.Element
-}
-
-export default function HeaderAndSidebar(props: propsType): JSX.Element {
+function Layout(): JSX.Element {
   return (
-    <Grid>
+    <Container>
       <HeaderGrid>
         <Header />
       </HeaderGrid>
       <SidebarGrid>
         <Sidebar />
       </SidebarGrid>
-      {/* 변경되는 내용 */}
-      <ArticleGrid>{props.article}</ArticleGrid>
-    </Grid>
+      <ArticleGrid>
+        <Outlet />
+      </ArticleGrid>
+    </Container>
   )
 }
 
-const Grid = styled.div`
+export default Layout
+
+const Container = styled.div`
   display: grid;
   grid-template-columns: 3fr 5fr 4fr;
   grid-column-gap: 24px;
@@ -36,6 +36,9 @@ const HeaderGrid = styled.div`
   grid-area: header;
   position: sticky;
   top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
 `
 const SidebarGrid = styled.div`
   grid-area: sidebar;
