@@ -21,20 +21,21 @@ import PrivateRoute from './privateRoute'
 function App(): JSX.Element {
   const isLogin = useRecoilValue(user).accessToken.length !== 0
 
+  const loginCheck = (): JSX.Element => {
+    return isLogin ? (
+      <PrivateRoute isLogin={isLogin} component={<Main />} />
+    ) : (
+      <Navigate to={'/login'} />
+    )
+  }
+
   return (
     <Routes>
-      <Route
-        path="/"
-        element={<Navigate to={isLogin ? '/home' : '/login'} />}
-      />
+      <Route path="/" element={loginCheck()} />
       <Route path="/login" element={<Login />} />
       <Route path="/common-login" element={<CommonLogin />} />
       <Route path="/common-signup" element={<CommonSignupPage />} />
       <Route path="/initial-setting" element={<InitialSetting />} />
-      <Route
-        path="/home"
-        element={<PrivateRoute isLogin={isLogin} component={<Main />} />}
-      />
 
       <Route element={<Layout />}>
         {/* 게시글 생성 */}

@@ -53,7 +53,7 @@ function GoogleLoginButton(): JSX.Element {
       if (response.uname === null) {
         navigate('/initial-setting')
       } else {
-        navigate('/home')
+        navigate('/')
       }
     },
     onError: (error) => {
