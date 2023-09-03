@@ -14,31 +14,73 @@ import Explore from './pages/explore/explore'
 import MyProfile from './pages/profile/profile'
 import Setting from './pages/setting/Setting'
 import SelectPicture from './pages/createPost/SelectPicture'
+import { useRecoilValue } from 'recoil'
+import user from './recoil/atom/user'
+import PrivateRoute from './privateRoute'
 
 function App(): JSX.Element {
+  const isLogin = useRecoilValue(user).accessToken.length !== 0
+
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/login" />} />
+      <Route
+        path="/"
+        element={<Navigate to={isLogin ? '/home' : '/login'} />}
+      />
       <Route path="/login" element={<Login />} />
       <Route path="/common-login" element={<CommonLogin />} />
       <Route path="/common-signup" element={<CommonSignupPage />} />
       <Route path="/initial-setting" element={<InitialSetting />} />
-      <Route path="/home" element={<Main />} />
+      <Route
+        path="/home"
+        element={<PrivateRoute isLogin={isLogin} component={<Main />} />}
+      />
 
       <Route element={<Layout />}>
         {/* 게시글 생성 */}
-        <Route path="/post/:postid" element={<PostDetail />} />
-        <Route path="/post/create/" element={<SelectPicture />} />
-        <Route path="/post/create/text" element={<WritePost />} />
+        <Route
+          path="/post/:postid"
+          element={
+            <PrivateRoute isLogin={isLogin} component={<PostDetail />} />
+          }
+        />
+        <Route
+          path="/post/create/"
+          element={
+            <PrivateRoute isLogin={isLogin} component={<SelectPicture />} />
+          }
+        />
+        <Route
+          path="/post/create/text"
+          element={<PrivateRoute isLogin={isLogin} component={<WritePost />} />}
+        />
+
         <Route
           path="/post/create/setimage"
-          element={<SelectRepresentativePicture />}
+          element={
+            <PrivateRoute
+              isLogin={isLogin}
+              component={<SelectRepresentativePicture />}
+            />
+          }
         />
         {/* 검색 */}
-        <Route path="/search/*" element={<Search />} />
-        <Route path="/explore/*" element={<Explore />} />
-        <Route path="/profile/:username/*" element={<MyProfile />} />
-        <Route path="/setting" element={<Setting />} />
+        <Route
+          path="/search/*"
+          element={<PrivateRoute isLogin={isLogin} component={<Search />} />}
+        />
+        <Route
+          path="/explore/*"
+          element={<PrivateRoute isLogin={isLogin} component={<Explore />} />}
+        />
+        <Route
+          path="/profile/:username/*"
+          element={<PrivateRoute isLogin={isLogin} component={<MyProfile />} />}
+        />
+        <Route
+          path="/setting"
+          element={<PrivateRoute isLogin={isLogin} component={<Setting />} />}
+        />
       </Route>
     </Routes>
   )
