@@ -59,6 +59,7 @@ function CommonSignin(): JSX.Element {
             name="email"
             specificPlaceholder="이메일을 입력해주세요"
             checkDuplicate={false}
+            checkPassword={null}
             type="text"
             register={register}
             errors={errors.email}
@@ -72,10 +73,11 @@ function CommonSignin(): JSX.Element {
             name="password"
             specificPlaceholder="비밀번호를 입력해주세요"
             checkDuplicate={false}
+            checkPassword={null}
             type="password"
             register={register}
             errors={errors.password}
-            minLength={10}
+            minLength={8}
             maxLength={20}
             pattern={Regex.password.pattern}
           />

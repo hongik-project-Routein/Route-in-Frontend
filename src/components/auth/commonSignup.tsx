@@ -12,6 +12,7 @@ function CommonSignup(): JSX.Element {
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm()
 
@@ -52,6 +53,7 @@ function CommonSignup(): JSX.Element {
             name="email"
             specificPlaceholder="이메일을 입력해주세요"
             checkDuplicate={false}
+            checkPassword={null}
             type="text"
             register={register}
             errors={errors.email}
@@ -65,10 +67,11 @@ function CommonSignup(): JSX.Element {
             name="password"
             specificPlaceholder="비밀번호를 입력해주세요"
             checkDuplicate={false}
+            checkPassword={null}
             type="password"
             register={register}
             errors={errors.password}
-            minLength={10}
+            minLength={8}
             maxLength={20}
             pattern={Regex.password.pattern}
           />
@@ -78,10 +81,11 @@ function CommonSignup(): JSX.Element {
             name="checkpassword"
             specificPlaceholder="비밀번호 재확인"
             checkDuplicate={false}
+            checkPassword={() => getValues('password')}
             type="password"
             register={register}
             errors={errors.checkpassword}
-            minLength={10}
+            minLength={8}
             maxLength={20}
             pattern={Regex.password.pattern}
           />

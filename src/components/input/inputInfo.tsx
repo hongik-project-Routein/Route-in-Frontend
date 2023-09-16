@@ -15,6 +15,7 @@ interface InputInfoProps {
   name: string
   specificPlaceholder: string
   checkDuplicate: boolean | (() => Promise<void>)
+  checkPassword: null | (() => any)
   type: string
   register: UseFormRegister<FieldValues>
   errors: FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined
@@ -44,6 +45,14 @@ function InputInfo(props: InputInfoProps): JSX.Element {
             pattern: {
               value: props.pattern,
               message: '조건에 맞게 입력해주세요',
+            },
+            validate: {
+              check: (val) => {
+                if (props.checkPassword == null) return
+                if (props.checkPassword() !== val) {
+                  return '비밀번호가 일치하지 않습니다'
+                }
+              },
             },
           })}
         />
@@ -75,7 +84,7 @@ const InputRow = styled.div<{ width: number }>`
 
 const Label = styled.label`
   grid-area: Label;
-  width: 90px;
+  width: 120px;
   color: ${theme.colors.black};
   font-family: 'Pretendard';
   font-style: normal;
