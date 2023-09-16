@@ -1,10 +1,7 @@
 import React from 'react'
 import { MentionsInput, Mention } from 'react-mentions'
 import styled from 'styled-components'
-import { request } from '../../util/axios'
 import useUser from '../../recoil/hooks/useUser'
-import { type UserData } from '../../types/userType'
-import { userDemo } from '../../mocks/data/user'
 import theme from '../../styles/Theme'
 
 interface PostInputProps {
@@ -13,7 +10,7 @@ interface PostInputProps {
 }
 
 interface UserList {
-  id: number
+  id: string
   display: string
 }
 
@@ -28,30 +25,16 @@ function PostInput(props: PostInputProps): JSX.Element {
       return
     }
 
-    try {
-      const response = await request<UserData[]>(
-        'get',
-        '/api/user/mention/',
-        null,
-        {
-          Authorization: `Bearer ${loadUserInfo().accessToken}`,
-        }
-      )
-      console.log(response)
+    const temp = loadUserInfo().following_set
+    const userData = temp.map((user) => ({
+      id: user,
+      display: user,
+    }))
 
-      const temp = userDemo
-      const userData = temp.map((user) => ({
-        id: user.id,
-        display: user.uname,
-      }))
-
-      const filteredUsers = userData.filter((user) =>
-        user.display.toLowerCase().includes(query)
-      )
-      callback(filteredUsers)
-    } catch (error) {
-      console.log(error)
-    }
+    const filteredUsers = userData.filter((user) =>
+      user.display.toLowerCase().includes(query)
+    )
+    callback(filteredUsers)
   }
 
   return (
