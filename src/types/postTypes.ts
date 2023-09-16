@@ -101,6 +101,7 @@ export interface LoadComment {
   writer: string
   content: string
   tagged_users?: string[] | undefined
+  created_at: string
   updated_at: string
   post: number
   like_count: number

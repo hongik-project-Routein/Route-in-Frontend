@@ -64,8 +64,8 @@ function Comment(props: CommentProps): JSX.Element {
   }
 
   const sortByCreatedAt = (a: LoadComment, b: LoadComment): number => {
-    if (moment(a.updated_at) < moment(b.updated_at)) return 1
-    if (moment(a.updated_at) > moment(b.updated_at)) return -1
+    if (moment(a.created_at) < moment(b.created_at)) return 1
+    if (moment(a.created_at) > moment(b.created_at)) return -1
     return 0
   }
 
