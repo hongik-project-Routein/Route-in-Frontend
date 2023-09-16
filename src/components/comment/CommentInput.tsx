@@ -1,8 +1,5 @@
 import React from 'react'
 import useUser from '../../recoil/hooks/useUser'
-import { request } from '../../util/axios'
-import { type UserData } from '../../types/userType'
-import { userDemo } from '../../mocks/data/user'
 import { Mention, MentionsInput } from 'react-mentions'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
@@ -13,46 +10,33 @@ interface CommentInputProps {
 }
 
 interface UserList {
-  id: number
+  id: string
   display: string
 }
 
 function CommentInput(props: CommentInputProps): JSX.Element {
   const { loadUserInfo } = useUser()
 
-  const getUserData = async (
+  const getUserData = (
     query: string,
     callback: (users: UserList[]) => void
-  ): Promise<void> => {
+  ): void => {
     if (query === undefined) {
       return
     }
 
-    try {
-      const response = await request<UserData[]>(
-        'get',
-        '/api/user/mention/',
-        null,
-        {
-          Authorization: `Bearer ${loadUserInfo().accessToken}`,
-        }
-      )
-      console.log(response)
+    const temp = loadUserInfo().following_set
+    const userData = temp.map((user) => ({
+      id: user,
+      display: user,
+    }))
 
-      const temp = userDemo
-      const userData = temp.map((user) => ({
-        id: user.id,
-        display: user.uname,
-      }))
-
-      const filteredUsers = userData.filter((user) =>
-        user.display.toLowerCase().includes(query)
-      )
-      callback(filteredUsers)
-    } catch (error) {
-      console.log(error)
-    }
+    const filteredUsers = userData.filter((user) =>
+      user.display.toLowerCase().includes(query)
+    )
+    callback(filteredUsers)
   }
+
   return (
     <TextInput
       value={props.value}
