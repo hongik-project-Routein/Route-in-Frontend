@@ -22,11 +22,7 @@ function CommonSignin(): JSX.Element {
 
   const onSubmit = async (data: FieldValues): Promise<void> => {
     try {
-      const response = await request<Auth>(
-        'post',
-        `/api/user/initial_setting/`,
-        data
-      )
+      const response = await request<Auth>('post', `/api/accounts/login/`, data)
 
       const userinfo: UserState = {
         name: response.name,
@@ -41,7 +37,12 @@ function CommonSignin(): JSX.Element {
       }
 
       login(userinfo)
-      navigate('/')
+
+      if (response.uname === null) {
+        navigate('/initial-setting')
+      } else {
+        navigate('/')
+      }
     } catch (error) {
       console.log(error)
     }

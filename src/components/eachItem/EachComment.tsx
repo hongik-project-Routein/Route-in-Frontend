@@ -41,6 +41,8 @@ function EachComment(props: EachCommentProps): JSX.Element {
 
   const isMyComment = props.comment.writer === loadUserInfo().uname
 
+  const isUpdated = props.comment.created_at !== props.comment.updated_at
+
   const updateCommentRef = useRef(null)
   const updateCommentOpen = useModal(updateCommentRef)
 
@@ -76,7 +78,10 @@ function EachComment(props: EachCommentProps): JSX.Element {
           <CommentDesc>{props.comment.content}</CommentDesc>
         </Maintext>
         <Rest>
-          <Time>{`${calculateDate(props.comment.updated_at)}`}</Time>
+          <Time>
+            {`${calculateDate(props.comment.created_at)}`}
+            {isUpdated ? `  (수정됨)` : null}
+          </Time>
           <HeartCount ref={likePeopleRef}>
             {`좋아요 ${props.comment.like_count}개`}
             {likePeopleOpen ? (

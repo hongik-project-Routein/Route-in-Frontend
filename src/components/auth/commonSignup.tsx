@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import InputInfo from '../input/inputInfo'
 import { Regex } from '../../constants/Regex'
@@ -13,54 +13,33 @@ function CommonSignup(): JSX.Element {
     register,
     handleSubmit,
     formState: { errors },
-    watch,
   } = useForm()
-
-  const [isUnameChecked, setIsUnameChecked] = useState<boolean>(false)
 
   const { logout } = useUser()
   const navigate = useNavigate()
 
   const onSubmit = async (data: FieldValues): Promise<void> => {
-    if (!isUnameChecked) {
-      alert('중복체크를 해주세요')
-      return
+    const body = {
+      email: data.email,
+      password1: data.password,
+      password2: data.checkpassword,
     }
 
     try {
-      const response = await request<string>('post', `/api/user/signup/`, data)
+      const response = await request<string>(
+        'post',
+        `/api/accounts/registration/`,
+        body
+      )
 
       if (response === '회원가입 성공') {
         logout()
-        navigate('/commom-signin')
+        navigate('/common-login')
       }
     } catch (error) {
       console.log(error)
     }
   }
-
-  const inputUname = watch('uname')
-
-  // 중복 체크 함수 -> 일반 회원가입이라 엑세스 토큰이 없음
-  const checkDuplicate = async (): Promise<void> => {
-    try {
-      const response = await request<boolean>(
-        'post',
-        `/api/user/uname_check/${inputUname as string}/`,
-        null
-      )
-      if (response) {
-        alert('중복 확인 체크완료')
-        setIsUnameChecked(true)
-      }
-    } catch (error) {
-      alert('이미 사용 중인 계정이름입니다.')
-    }
-  }
-
-  useEffect(() => {
-    setIsUnameChecked(false)
-  }, [inputUname])
 
   return (
     <Container>
@@ -105,58 +84,6 @@ function CommonSignup(): JSX.Element {
             minLength={10}
             maxLength={20}
             pattern={Regex.password.pattern}
-          />
-          <InputInfo
-            width={300}
-            labelName="계정이름"
-            name="uname"
-            specificPlaceholder="계정이름을 입력해주세요"
-            checkDuplicate={checkDuplicate}
-            type="text"
-            register={register}
-            errors={errors.uname}
-            minLength={6}
-            maxLength={20}
-            pattern={Regex.uname.pattern}
-          />
-          <InputInfo
-            width={300}
-            labelName="이름"
-            name="name"
-            specificPlaceholder="이름을 입력해주세요"
-            checkDuplicate={false}
-            type="text"
-            register={register}
-            errors={errors.name}
-            minLength={2}
-            maxLength={20}
-            pattern={Regex.name.pattern}
-          />
-          <InputInfo
-            width={300}
-            labelName="나이"
-            name="age"
-            specificPlaceholder="나이를 입력해주세요"
-            checkDuplicate={false}
-            type="number"
-            register={register}
-            errors={errors.age}
-            minLength={1}
-            maxLength={3}
-            pattern={Regex.age.pattern}
-          />
-          <InputInfo
-            width={300}
-            labelName="성별"
-            name="gender"
-            specificPlaceholder="성별을 입력해주세요"
-            checkDuplicate={false}
-            type="text"
-            register={register}
-            errors={errors.gender}
-            minLength={1}
-            maxLength={1}
-            pattern={Regex.gender.pattern}
           />
           <SaveButton>회원가입</SaveButton>
         </InputForm>
