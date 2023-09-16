@@ -17,10 +17,10 @@ interface UserList {
 function PostInput(props: PostInputProps): JSX.Element {
   const { loadUserInfo } = useUser()
 
-  const getUserData = async (
+  const getUserData = (
     query: string,
     callback: (users: UserList[]) => void
-  ): Promise<void> => {
+  ): void => {
     if (query === undefined) {
       return
     }
