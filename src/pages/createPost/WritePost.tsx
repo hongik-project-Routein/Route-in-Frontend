@@ -1,4 +1,4 @@
-import React, { useState, useEffect, type ChangeEvent } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
 import Carousel from '../../components/util/carousel'
@@ -11,6 +11,8 @@ import {
   type Pin,
 } from '../../types/postTypes'
 import usePost from '../../recoil/hooks/usePost'
+import PostInput from '../../components/textarea/postInput'
+import { tagProcess } from '../../components/function/tag'
 
 export default function WritePost(): JSX.Element {
   const [hashtagAutoTextList, setHashtagAutoTextList] = useState<
@@ -30,10 +32,6 @@ export default function WritePost(): JSX.Element {
     })
     setHashtagAutoTextList(loadHashtagAuto)
   }, [])
-
-  const handleOnChange = (event: ChangeEvent<HTMLTextAreaElement>): void => {
-    setText(event.target.value)
-  }
 
   const deleteHashtagAutoInput = (idx: number): void => {
     const updateList = [...hashtagAutoTextList]
@@ -61,7 +59,7 @@ export default function WritePost(): JSX.Element {
 
     const payload: HashtagAndText = {
       hashtag: newHashtags,
-      text: `${text}`,
+      text: `${tagProcess(text)}`,
     }
 
     changeHashtagAndText(newPins, payload)
@@ -106,7 +104,7 @@ export default function WritePost(): JSX.Element {
               />
             </HashtagAutoTextContainer>
           ))}
-          <WriteSpace value={text} onChange={handleOnChange} />
+          <PostInput value={text} setValue={setText} />
         </LocationGroup>
       </GroupContainer>
       <ButtonContainer>
@@ -196,16 +194,6 @@ const HashtagAutoTextInput = styled.input`
   border: 1px solid #d9d9d9;
   border-radius: 8px;
   font-size: 15px;
-`
-
-const WriteSpace = styled.textarea`
-  width: 350px;
-  height: 350px;
-  padding: 8px;
-  resize: none;
-  outline: none;
-  border: 1px solid #d9d9d9;
-  border-radius: 8px;
 `
 
 const ButtonContainer = styled.div`

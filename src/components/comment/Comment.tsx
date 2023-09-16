@@ -1,4 +1,4 @@
-import React, { type FormEvent, useState, type KeyboardEvent } from 'react'
+import React, { type FormEvent, useState } from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -10,6 +10,8 @@ import { request } from '../../util/axios'
 import useUser from '../../recoil/hooks/useUser'
 import usePostDetail from '../../recoil/hooks/usePostdetail'
 import moment from 'moment'
+import CommentInput from './CommentInput'
+import { tagProcess } from '../function/tag'
 
 interface CommentProps {
   postId: number
@@ -30,12 +32,6 @@ function Comment(props: CommentProps): JSX.Element {
     setText((cur) => cur + emojiData.emoji)
     setEmojiClick(false)
   }
-  const onChange = (event: FormEvent<HTMLInputElement>): void => {
-    const {
-      currentTarget: { value },
-    } = event
-    setText(value)
-  }
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault()
@@ -45,7 +41,12 @@ function Comment(props: CommentProps): JSX.Element {
       const response = await request<LoadComment>(
         'post',
         `/api/post/${props.postId}/comment/`,
-        { content: text, tagged_users: [], post: props.postId, like_users: [] },
+        {
+          content: tagProcess(text),
+          tagged_users: [],
+          post: props.postId,
+          like_users: [],
+        },
         {
           Authorization: `Bearer ${accessToken}`,
         }
@@ -60,10 +61,6 @@ function Comment(props: CommentProps): JSX.Element {
     } catch (error) {
       console.log(error)
     }
-  }
-
-  const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>): void => {
-    if (event.key === 'Enter') event.preventDefault()
   }
 
   const sortByCreatedAt = (a: LoadComment, b: LoadComment): number => {
@@ -96,13 +93,7 @@ function Comment(props: CommentProps): JSX.Element {
             />
           </EmojiPickerContainer>
         )}
-        <CommentInput
-          type="text"
-          value={text}
-          placeholder="댓글 입력"
-          onChange={onChange}
-          onKeyPress={handleKeyPress}
-        />
+        <CommentInput value={text} setValue={setText} />
         <EnrollComment type="submit" disabled={text === ''}>
           게시
         </EnrollComment>
@@ -146,12 +137,6 @@ const EmojiPickerContainer = styled.div`
   top: 50px;
 `
 
-const CommentInput = styled.input`
-  width: 600px;
-  height: 30px;
-  margin-right: 40px;
-  padding: 8px;
-`
 const EnrollComment = styled.button<{ disabled: boolean }>`
   color: ${(props) => (props.disabled ? '#b1e2f1' : theme.colors.primaryColor)};
   font-weight: 700;
