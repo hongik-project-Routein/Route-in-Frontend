@@ -39,6 +39,8 @@ const colors = {
   black: '#000000',
   primaryColor: '#50bbdf',
   primaryColorVarient: '#0080B8',
+  primary100: '#b1e2f1',
+  primary50: '#e0f4f9',
   disable: '#d9d9d9',
 }
 

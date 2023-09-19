@@ -11,13 +11,13 @@ import ImageEditor from '../../components/util/imageEditor'
 import { Map, MapMarker } from 'react-kakao-maps-sdk'
 import usePost from '../../recoil/hooks/usePost'
 
-interface GPSInfo {
+export interface GPSInfo {
   latitude: number
   longitude: number
   placeId: number
 }
 
-interface PlaceInfo {
+export interface PlaceInfo {
   placeName: string
   address: string
   gpsInfo: GPSInfo
@@ -407,6 +407,7 @@ function SearchPlaceModal(props: SearchPlaceModalProps): JSX.Element {
   const setPlaceInfo = (): void => {
     if (searchResults !== undefined) {
       const updatedAddresses = props.addresses
+      const updatedImgGpsInfos = [...props.imgGPSInfoList]
 
       updatedAddresses[props.index].address =
         searchResults[resultIndex].road_address_name
@@ -415,22 +416,20 @@ function SearchPlaceModal(props: SearchPlaceModalProps): JSX.Element {
         resultIndex
       ].place_name.replace(/\s+/g, '_')
 
-      updatedAddresses[props.index].gpsInfo = {
+      const updatedGPSInfo = {
         latitude: Number(searchResults[resultIndex].y),
         longitude: Number(searchResults[resultIndex].x),
         placeId: Number(searchResults[resultIndex].id),
       }
 
-      console.log(updatedAddresses)
+      updatedAddresses[props.index].gpsInfo = updatedGPSInfo
+      updatedImgGpsInfos[props.index] = updatedGPSInfo
 
       props.setAddresses(updatedAddresses)
+      props.setImgGPSInfoList(updatedImgGpsInfos)
       props.setModalOpen(false)
     }
   }
-
-  useEffect(() => {
-    console.log(props.addresses)
-  }, [])
 
   return (
     <SearchPlaceModalContainer ref={modalRef}>
@@ -498,7 +497,7 @@ const SearchPlaceModalContainer = styled.div`
   height: 430px;
   z-index: 999;
 
-  background-color: rgb(0, 0, 0);
+  background-color: ${theme.colors.primary100};
   border: 1px solid black;
   border-radius: 8px;
 `

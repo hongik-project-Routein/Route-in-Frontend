@@ -3,8 +3,6 @@ import styled from 'styled-components'
 import theme from '../../styles/Theme'
 import Carousel from '../../components/util/carousel'
 import { Link } from 'react-router-dom'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMinus } from '@fortawesome/free-solid-svg-icons'
 import {
   type HashtagAndText,
   type HashtagAutoAndText,
@@ -32,13 +30,6 @@ export default function WritePost(): JSX.Element {
     })
     setHashtagAutoTextList(loadHashtagAuto)
   }, [])
-
-  const deleteHashtagAutoInput = (idx: number): void => {
-    const updateList = [...hashtagAutoTextList]
-    updateList.splice(idx, 1)
-
-    setHashtagAutoTextList(updateList)
-  }
 
   // 새로 만든 해시태그를 감지해서 푸시하는 함수
   const pushHashtag = (): void => {
@@ -81,13 +72,6 @@ export default function WritePost(): JSX.Element {
           {hashtagAutoTextList.map((hashtag, idx) => (
             <HashtagAutoTextContainer key={idx}>
               <HashtagAuto>{hashtag.hashtagAuto}</HashtagAuto>
-              <DeleteBtn
-                onClick={() => {
-                  deleteHashtagAutoInput(idx)
-                }}
-              >
-                <FontAwesomeIcon icon={faMinus} />
-              </DeleteBtn>
               <HashtagAutoTextInput
                 value={hashtag.text}
                 onChange={(event) => {
@@ -177,14 +161,6 @@ const HashtagAuto = styled.div`
   color: ${theme.colors.primaryColor};
   overflow-x: hidden;
   overflow-y: hidden;
-`
-
-const DeleteBtn = styled.button`
-  position: absolute;
-  right: 10px;
-  top: 5px;
-  width: 10px;
-  height: 10px;
 `
 
 const HashtagAutoTextInput = styled.input`

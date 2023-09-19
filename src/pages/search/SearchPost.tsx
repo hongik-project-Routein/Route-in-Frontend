@@ -23,16 +23,18 @@ export default function SearchPostArticle(
   const searchParams = new URLSearchParams(window.location.search)
   const urlkeyword = searchParams.get('q')
 
-  const searchKeyword = keyword === ' ' ? urlkeyword : keyword
+  const searchKeyword = keyword === '' ? urlkeyword : keyword
 
   const { curPageItem, renderSSPagination } = useSSPagination<LoadPost>(
-    `/search/${(
-      searchKeyword as string
-    ).toLocaleLowerCase()}/${category.toLocaleLowerCase()}`,
+    `/search/${
+      searchKeyword !== null ? searchKeyword.toLocaleLowerCase() : ' '
+    }/${category.toLocaleLowerCase()}`,
     6
   )
 
   useEffect(() => {
+    console.log(curPageItem)
+
     setSearchResult(curPageItem)
   }, [curPageItem])
 
