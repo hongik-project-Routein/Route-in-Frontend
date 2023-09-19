@@ -10,6 +10,7 @@ import { type UserData } from '../../types/userType'
 import useTab from '../../recoil/hooks/useTab'
 import useUser from '../../recoil/hooks/useUser'
 import useFollow from '../../recoil/hooks/useFollow'
+import Profile from '../../components/etc/profile'
 
 export default function MyProfile(): JSX.Element {
   const { profile, changeProfileTabIndex } = useTab()
@@ -19,6 +20,7 @@ export default function MyProfile(): JSX.Element {
   const { followerList, followingList } = useFollow()
 
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(profile)
+
   const setUserProfile = useSetRecoilState(profileStore)
 
   const fetchData = async (): Promise<UserData> => {
@@ -53,12 +55,14 @@ export default function MyProfile(): JSX.Element {
     setSelectedTabIndex(index)
     changeProfileTabIndex(index)
   }
+
   useEffect(() => {
     setSelectedTabIndex(profile)
   }, [selectedTabIndex])
 
   return (
     <>
+      <Profile isMyProfile={username === loadUserInfo().uname} />
       {selectedTabIndex === 0 ? (
         <ProfileMapArticle
           handleTabfunc={handleTabClick}

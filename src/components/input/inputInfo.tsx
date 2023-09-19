@@ -14,6 +14,7 @@ interface InputInfoProps {
   labelName: string
   name: string
   specificPlaceholder: string
+  defaultValue: string | number | undefined
   checkDuplicate: boolean | (() => Promise<void>)
   checkPassword: null | (() => any)
   type: string
@@ -32,6 +33,7 @@ function InputInfo(props: InputInfoProps): JSX.Element {
         <Input
           type={props.type}
           placeholder={`${props.specificPlaceholder ?? ''}`}
+          defaultValue={props.defaultValue}
           maxLength={props.maxLength}
           {...props.register(props.name, {
             required: {

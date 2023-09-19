@@ -1,6 +1,5 @@
 import React from 'react'
 import styled from 'styled-components'
-import Profile from '../../components/etc/profile'
 import Tab from '../../components/util/tab'
 import PostSmall from '../../components/post/postSmall'
 import { type LoadPost } from '../../types/postTypes'
@@ -36,7 +35,6 @@ export default function ProfileBookmarkArticle(
 
   return (
     <>
-      <Profile />
       <Tab
         tabContent={tabContents}
         tabIndex={props.tabIndex}

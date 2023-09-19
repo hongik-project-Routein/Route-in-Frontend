@@ -88,6 +88,7 @@ export default function InitialSetting(): JSX.Element {
               labelName="계정이름"
               name="uname"
               specificPlaceholder="계정이름을 입력해주세요"
+              defaultValue={undefined}
               checkDuplicate={checkDuplicate}
               checkPassword={null}
               type="text"
@@ -102,6 +103,7 @@ export default function InitialSetting(): JSX.Element {
               labelName="이름"
               name="name"
               specificPlaceholder="이름을 입력해주세요"
+              defaultValue={undefined}
               checkDuplicate={false}
               checkPassword={null}
               type="text"
@@ -116,6 +118,7 @@ export default function InitialSetting(): JSX.Element {
               labelName="나이"
               name="age"
               specificPlaceholder="나이를 입력해주세요"
+              defaultValue={undefined}
               checkDuplicate={false}
               checkPassword={null}
               type="number"
@@ -130,6 +133,7 @@ export default function InitialSetting(): JSX.Element {
               labelName="성별"
               name="gender"
               specificPlaceholder="성별을 입력해주세요"
+              defaultValue={undefined}
               checkDuplicate={false}
               checkPassword={null}
               type="text"

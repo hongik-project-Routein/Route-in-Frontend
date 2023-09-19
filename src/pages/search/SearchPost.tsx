@@ -33,8 +33,6 @@ export default function SearchPostArticle(
   )
 
   useEffect(() => {
-    console.log(curPageItem)
-
     setSearchResult(curPageItem)
   }, [curPageItem])
 

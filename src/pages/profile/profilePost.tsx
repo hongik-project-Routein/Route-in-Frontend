@@ -1,6 +1,5 @@
 import React from 'react'
 import styled from 'styled-components'
-import Profile from '../../components/etc/profile'
 import Tab from '../../components/util/tab'
 import PostSmall from '../../components/post/postSmall'
 import { useParams } from 'react-router-dom'
@@ -31,7 +30,6 @@ export default function ProfilePostArticle(
 
   return (
     <>
-      <Profile />
       <Tab
         tabContent={tabContents}
         tabIndex={props.tabIndex}
