@@ -1,5 +1,4 @@
 import React from 'react'
-import Profile from '../../components/etc/profile'
 import Tab from '../../components/util/tab'
 import { useParams } from 'react-router-dom'
 import ProfileMapContent from '../../components/etc/profileMap'
@@ -30,7 +29,6 @@ export default function ProfileMapArticle(
 
   return (
     <>
-      <Profile />
       <Tab
         tabContent={tabContents}
         tabIndex={props.tabIndex}

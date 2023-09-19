@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, type ChangeEvent } from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
 import FollowerModal from '../popup/followerModal'
@@ -8,16 +8,22 @@ import { request } from '../../util/axios'
 import useUser from '../../recoil/hooks/useUser'
 import { useRecoilValue } from 'recoil'
 import profileStore from '../../recoil/atom/profile'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPen } from '@fortawesome/free-solid-svg-icons'
 
-export default function Profile(): JSX.Element {
+interface ProfileProps {
+  isMyProfile: boolean
+}
+
+export default function Profile(props: ProfileProps): JSX.Element {
   const [introductionText, setIntroductionText] = useState<string>('')
-  const [activeIntroductionModify, setActiveIntroductionModify] =
-    useState(false)
+  const [activeModify, setActiveModify] = useState(false)
 
   const userProfile = useRecoilValue(profileStore)
 
+  const [profileImage, setProfileImage] = useState(userProfile.image)
+
   const { loadUserInfo } = useUser()
-  const myUname = loadUserInfo().uname
 
   // 팔로워 모달
   const followerRef = useRef<HTMLDivElement>(null)
@@ -27,22 +33,17 @@ export default function Profile(): JSX.Element {
   const followModalOpen = useModal(followerRef)
   const followingModalOpen = useModal(followingRef)
 
-  const [isMyProfile, setIsMyProfile] = useState<boolean>(false)
-
   useEffect(() => {
-    if (userProfile.uname === myUname) {
-      setIsMyProfile(true)
-      setActiveIntroductionModify(true)
-    }
+    setActiveModify(props.isMyProfile)
     setIntroductionText(userProfile.introduction)
   }, [])
 
   const handleIntroduction = async (): Promise<void> => {
-    if (!activeIntroductionModify) {
+    if (!activeModify) {
       try {
         await request<string>(
           'put',
-          `/api/user/${myUname}/`,
+          `/api/user/${loadUserInfo().uname}/`,
           {
             introduction: introductionText,
           },
@@ -51,25 +52,70 @@ export default function Profile(): JSX.Element {
           }
         )
         setIntroductionText(introductionText)
-        setActiveIntroductionModify(true)
+        setActiveModify(true)
       } catch (error) {
         console.log(error)
         throw error
       }
     } else {
-      setActiveIntroductionModify(!activeIntroductionModify)
+      setActiveModify(!activeModify)
     }
+  }
+
+  const fileRef = useRef<HTMLInputElement | null>(null)
+
+  const onEditImage = (): void => {
+    if (fileRef.current !== null) {
+      fileRef.current.click()
+    }
+  }
+
+  const handleProfileImage = async (
+    event: ChangeEvent<HTMLInputElement>
+  ): Promise<void> => {
+    const files = event.target.files
+
+    if (files != null) {
+      const file = files[0]
+      const newUrl = await readUrl(file)
+      setProfileImage(newUrl)
+    }
+  }
+
+  const readUrl = async (file: File): Promise<string> => {
+    return await new Promise<string>((resolve) => {
+      const fileReader = new FileReader()
+      fileReader.onload = () => {
+        const url = fileReader.result?.toString() ?? ''
+        resolve(url)
+      }
+      fileReader.readAsDataURL(file)
+    })
   }
 
   return (
     <>
       <ProfileHeader>
-        <ProfileImage src={userProfile?.image} />
+        <ProfileImage src={profileImage}>
+          {props.isMyProfile && !activeModify ? (
+            <EditProfileBtn icon={faPen} onClick={onEditImage} />
+          ) : null}
+          <InputFile
+            id="file"
+            type="file"
+            accept=".jpg,.png,.jpeg"
+            ref={fileRef}
+            onChange={handleProfileImage}
+          />
+        </ProfileImage>
         <ProfileDesc>
           <NameAndEditBtn>
             <Nickname>{userProfile?.uname}</Nickname>
-            <EditButton isMyProfile={isMyProfile} onClick={handleIntroduction}>
-              {activeIntroductionModify ? '프로필 편집' : '저장'}
+            <EditButton
+              isMyProfile={props.isMyProfile}
+              onClick={handleIntroduction}
+            >
+              {activeModify ? '프로필 편집' : '저장'}
             </EditButton>
           </NameAndEditBtn>
           <Statistics>
@@ -90,7 +136,7 @@ export default function Profile(): JSX.Element {
           <Introduction
             value={introductionText}
             spellCheck="false"
-            readOnly={activeIntroductionModify}
+            readOnly={activeModify}
             onChange={(event) => {
               setIntroductionText(event.target.value)
             }}
@@ -108,14 +154,32 @@ const ProfileHeader = styled.header`
   margin-bottom: 30px;
 `
 
-const ProfileImage = styled.img`
+const ProfileImage = styled.div<{ src: string }>`
+  position: relative;
   width: 230px;
   height: 230px;
   margin-right: 30px;
   border-radius: 50%;
+
+  background-image: url(${(props) => props.src});
+  background-repeat: no-repeat;
+  background-size: cover;
 `
 const ProfileDesc = styled.div`
   width: 420px;
+`
+
+const EditProfileBtn = styled(FontAwesomeIcon)`
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+
+  font-size: 16px;
+  cursor: pointer;
+`
+
+const InputFile = styled.input`
+  display: none;
 `
 
 const NameAndEditBtn = styled.div`

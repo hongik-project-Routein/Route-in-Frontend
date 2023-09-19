@@ -52,6 +52,7 @@ function CommonSignup(): JSX.Element {
             labelName="이메일"
             name="email"
             specificPlaceholder="이메일을 입력해주세요"
+            defaultValue={undefined}
             checkDuplicate={false}
             checkPassword={null}
             type="text"
@@ -66,6 +67,7 @@ function CommonSignup(): JSX.Element {
             labelName="비밀번호"
             name="password"
             specificPlaceholder="비밀번호를 입력해주세요"
+            defaultValue={undefined}
             checkDuplicate={false}
             checkPassword={null}
             type="password"
@@ -80,6 +82,7 @@ function CommonSignup(): JSX.Element {
             labelName="비밀번호 확인"
             name="checkpassword"
             specificPlaceholder="비밀번호 재확인"
+            defaultValue={undefined}
             checkDuplicate={false}
             checkPassword={() => getValues('password')}
             type="password"
