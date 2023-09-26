@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import ProfileMapArticle from './profileMap'
 import ProfilePostArticle from './profilePost'
 import ProfileBookmarkArticle from './profileBookmark'
-import { useSetRecoilState } from 'recoil'
+import { useRecoilState } from 'recoil'
 import profileStore from '../../recoil/atom/profile'
 import { useParams } from 'react-router-dom'
 import { request } from '../../util/axios'
@@ -18,10 +18,9 @@ export default function MyProfile(): JSX.Element {
   const { loadUserInfo } = useUser()
 
   const { followerList, followingList } = useFollow()
-
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(profile)
 
-  const setUserProfile = useSetRecoilState(profileStore)
+  const [userProfile, setUserProfile] = useRecoilState(profileStore)
 
   const fetchData = async (): Promise<UserData> => {
     try {
@@ -43,6 +42,8 @@ export default function MyProfile(): JSX.Element {
   useEffect(() => {
     const loadUserInfo = async (): Promise<void> => {
       const result = await fetchData()
+      console.log(result)
+
       setUserProfile(result)
     }
 
@@ -62,7 +63,10 @@ export default function MyProfile(): JSX.Element {
 
   return (
     <>
-      <Profile isMyProfile={username === loadUserInfo().uname} />
+      <Profile
+        isMyProfile={username === loadUserInfo().uname}
+        userProfile={userProfile}
+      />
       {selectedTabIndex === 0 ? (
         <ProfileMapArticle
           handleTabfunc={handleTabClick}
