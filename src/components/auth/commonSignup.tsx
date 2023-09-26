@@ -8,6 +8,15 @@ import useUser from '../../recoil/hooks/useUser'
 import { useNavigate } from 'react-router-dom'
 import theme from '../../styles/Theme'
 
+interface SignupResponse {
+  access: string
+  refresh: string
+  user: {
+    email: string
+    pk: number
+  }
+}
+
 function CommonSignup(): JSX.Element {
   const {
     register,
@@ -27,18 +36,18 @@ function CommonSignup(): JSX.Element {
     }
 
     try {
-      const response = await request<string>(
+      const response = await request<SignupResponse>(
         'post',
         `/api/accounts/registration/`,
         body
       )
 
-      if (response === '회원가입 성공') {
+      if (response.user.pk !== undefined) {
         logout()
         navigate('/common-login')
       }
     } catch (error) {
-      console.log(error)
+      alert(error)
     }
   }
 

@@ -16,7 +16,7 @@ interface SearchPostArticleProps {
 export default function SearchPostArticle(
   props: SearchPostArticleProps
 ): JSX.Element {
-  const { keyword, category } = useSearch()
+  const { keyword } = useSearch()
 
   const [searchResult, setSearchResult] = useState<LoadPost[] | undefined>([])
 
@@ -26,9 +26,9 @@ export default function SearchPostArticle(
   const searchKeyword = keyword === '' ? urlkeyword : keyword
 
   const { curPageItem, renderSSPagination } = useSSPagination<LoadPost>(
-    `/search/${
+    `/post/?search=${
       searchKeyword !== null ? searchKeyword.toLocaleLowerCase() : ' '
-    }/${category.toLocaleLowerCase()}`,
+    }`,
     6
   )
 

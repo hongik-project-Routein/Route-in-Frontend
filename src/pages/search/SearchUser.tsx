@@ -16,13 +16,13 @@ interface SearchUserArticleProps {
 export default function SearchUserArticle(
   props: SearchUserArticleProps
 ): JSX.Element {
-  const { keyword, category } = useSearch()
+  const { keyword } = useSearch()
   const [searchResult, setSearchResult] = useState<
     SearchUserType[] | undefined
   >([])
 
   const { curPageItem, renderSSPagination } = useSSPagination<SearchUserType>(
-    `/search/${keyword.toLocaleLowerCase()}/${category.toLocaleLowerCase()}`,
+    `/user/?search=${keyword.toLocaleLowerCase()}`,
     6
   )
 

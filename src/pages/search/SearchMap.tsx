@@ -16,11 +16,11 @@ interface SearchMapArticleProps {
 export default function SearchMapArticle(
   props: SearchMapArticleProps
 ): JSX.Element {
-  const { keyword, category } = useSearch()
+  const { keyword } = useSearch()
   const [searchResult, setSearchResult] = useState<LoadPost[] | undefined>([])
 
   const { curPageItem, renderSSPagination } = useSSPagination<LoadPost>(
-    `/search/${keyword.toLocaleLowerCase()}/${category.toLocaleLowerCase()}`,
+    `/post/?search=${keyword.toLocaleLowerCase()}`,
     6
   )
 
