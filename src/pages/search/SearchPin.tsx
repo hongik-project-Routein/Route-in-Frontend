@@ -16,13 +16,13 @@ interface SearchPinArticleProps {
 export default function SearchPinArticle(
   props: SearchPinArticleProps
 ): JSX.Element {
-  const { keyword, category } = useSearch()
+  const { keyword } = useSearch()
   const [searchResult, setSearchResult] = useState<SearchPinType[] | undefined>(
     []
   )
 
   const { curPageItem, renderSSPagination } = useSSPagination<SearchPinType>(
-    `/search/${keyword.toLocaleLowerCase()}/${category.toLocaleLowerCase()}`,
+    `/pin/?search=${keyword.toLocaleLowerCase()}`,
     6
   )
 

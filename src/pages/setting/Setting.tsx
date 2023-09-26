@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import styled from 'styled-components'
 import Profile from '../../components/etc/profile'
 import theme from '../../styles/Theme'
@@ -6,10 +6,20 @@ import useUser from '../../recoil/hooks/useUser'
 import { request } from '../../util/axios'
 import { useNavigate } from 'react-router-dom'
 import ModifyMyInfo from './ModifyMyInfo'
+import useModal from '../../hooks/useModal'
+import HideModal from '../../components/popup/hideModal'
+import BlockModal from '../../components/popup/blockModal'
+import getUserinfo from '../../components/function/getUserinfo'
 
 function Setting(): JSX.Element {
   const { loadUserInfo, logout } = useUser()
   const navigate = useNavigate()
+
+  const hideUserRef = useRef(null)
+  const blockUserRef = useRef(null)
+
+  const hideModal = useModal(hideUserRef)
+  const blockModal = useModal(blockUserRef)
 
   const [isShowModifyUserinfo, setIsShowModifyUserinfo] =
     useState<boolean>(false)
@@ -38,7 +48,10 @@ function Setting(): JSX.Element {
 
   return (
     <>
-      <Profile isMyProfile={true} />
+      <Profile
+        isMyProfile={true}
+        userProfile={getUserinfo(loadUserInfo().uname)}
+      />
       <SettingArticle>
         <Title>회원 설정</Title>
 
@@ -56,6 +69,30 @@ function Setting(): JSX.Element {
             <Label>회원 탈퇴</Label>
             <LabelButton onClick={withdraw}>회원 탈퇴하기</LabelButton>
           </Item>
+
+          <Item>
+            <Label>숨긴 계정</Label>
+            <LabelButton as="div" ref={hideUserRef}>
+              숨긴계정 확인하기
+            </LabelButton>
+            {hideModal ? (
+              <div ref={hideUserRef}>
+                <HideModal />
+              </div>
+            ) : null}
+          </Item>
+
+          <Item>
+            <Label>차단 계정</Label>
+            <LabelButton as="div" ref={blockUserRef}>
+              차단계정 확인하기
+            </LabelButton>
+            {blockModal ? (
+              <div ref={blockUserRef}>
+                <BlockModal />
+              </div>
+            ) : null}
+          </Item>
         </Article>
       </SettingArticle>
     </>
@@ -66,7 +103,7 @@ export default Setting
 
 const SettingArticle = styled.div`
   width: 900px;
-  height: 450px;
+  min-height: 450px;
   padding: 30px 30px;
   border: 1px solid #98a2b3;
   border-radius: 8px;
@@ -87,6 +124,7 @@ const Item = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  position: relative;
 
   margin-bottom: 30px;
 `
@@ -96,9 +134,18 @@ const Label = styled.label`
 `
 
 const LabelButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   height: 30px;
   padding: 0 12px;
   background-color: ${theme.colors.primaryColor};
   color: white;
+  font-size: 14px;
   border-radius: 5px;
+
+  &:hover {
+    cursor: pointer;
+  }
 `

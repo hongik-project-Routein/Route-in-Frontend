@@ -6,22 +6,22 @@ import FollowingModal from '../popup/followingModal'
 import useModal from '../../hooks/useModal'
 import { request } from '../../util/axios'
 import useUser from '../../recoil/hooks/useUser'
-import { useRecoilValue } from 'recoil'
-import profileStore from '../../recoil/atom/profile'
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPen } from '@fortawesome/free-solid-svg-icons'
+import { type UserData } from '../../types/userType'
 
 interface ProfileProps {
   isMyProfile: boolean
+  userProfile: UserData
 }
 
 export default function Profile(props: ProfileProps): JSX.Element {
-  const [introductionText, setIntroductionText] = useState<string>('')
+  const [introductionText, setIntroductionText] = useState<string>(
+    props.userProfile.introduction
+  )
   const [activeModify, setActiveModify] = useState(false)
-
-  const userProfile = useRecoilValue(profileStore)
-
-  const [profileImage, setProfileImage] = useState(userProfile.image)
+  const [profileImage, setProfileImage] = useState(props.userProfile.image)
 
   const { loadUserInfo } = useUser()
 
@@ -35,8 +35,9 @@ export default function Profile(props: ProfileProps): JSX.Element {
 
   useEffect(() => {
     setActiveModify(props.isMyProfile)
-    setIntroductionText(userProfile.introduction)
-  }, [])
+    setIntroductionText(props.userProfile.introduction)
+    setProfileImage(props.userProfile.image)
+  }, [props.userProfile])
 
   const handleIntroduction = async (): Promise<void> => {
     if (!activeModify) {
@@ -110,7 +111,7 @@ export default function Profile(props: ProfileProps): JSX.Element {
         </ProfileImage>
         <ProfileDesc>
           <NameAndEditBtn>
-            <Nickname>{userProfile?.uname}</Nickname>
+            <Nickname>{props.userProfile?.uname}</Nickname>
             <EditButton
               isMyProfile={props.isMyProfile}
               onClick={handleIntroduction}
@@ -119,17 +120,19 @@ export default function Profile(props: ProfileProps): JSX.Element {
             </EditButton>
           </NameAndEditBtn>
           <Statistics>
-            <NumOfPosts>게시글 {userProfile?.post_set.length}</NumOfPosts>
+            <NumOfPosts>게시글 {props.userProfile?.post_set.length}</NumOfPosts>
             <FollowerContainer ref={followerRef}>
-              <Follower>팔로워 {userProfile?.follower_set.length}</Follower>
-              {followModalOpen && userProfile !== undefined ? (
-                <FollowerModal followerList={userProfile?.follower_set} />
+              <Follower>
+                팔로워 {props.userProfile?.follower_set.length}
+              </Follower>
+              {followModalOpen && props.userProfile !== undefined ? (
+                <FollowerModal followerList={props.userProfile?.follower_set} />
               ) : null}
             </FollowerContainer>
             <FollowContainer ref={followingRef}>
-              <Follow>팔로잉 {userProfile?.following_set.length}</Follow>
-              {followingModalOpen && userProfile !== undefined ? (
-                <FollowingModal followList={userProfile?.following_set} />
+              <Follow>팔로잉 {props.userProfile?.following_set.length}</Follow>
+              {followingModalOpen && props.userProfile !== undefined ? (
+                <FollowingModal followList={props.userProfile?.following_set} />
               ) : null}
             </FollowContainer>
           </Statistics>
