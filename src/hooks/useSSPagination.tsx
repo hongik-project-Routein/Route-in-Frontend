@@ -42,6 +42,8 @@ function useSSPagination<T>(
   const fetchData = async (page: number): Promise<any> => {
     setLoading(true)
     try {
+      console.log(`${uri}&page=${page}`)
+
       const response = await request<FetchResult>(
         'get',
         `${uri}?page=${page}`,
@@ -50,9 +52,13 @@ function useSSPagination<T>(
           Authorization: `Bearer ${loadUserInfo().accessToken}`,
         }
       )
+      console.log(response)
+
       setLength(response.count)
       return response.results
     } catch (error) {
+      console.log(error)
+
       setError(error)
     } finally {
       setLoading(false)
@@ -64,10 +70,11 @@ function useSSPagination<T>(
       const result = await fetchData(currentPage + 1) // 페이지 넘버는 협의 후 결정
       setCurPageItem(result)
     }
+
     loadData().catch((error) => {
       console.log(error)
     })
-  }, [currentPage])
+  }, [currentPage, uri])
 
   const onSetPage = (page: number): void => {
     setPage(page - 1)

@@ -20,7 +20,7 @@ export default function SearchMapArticle(
   const [searchResult, setSearchResult] = useState<LoadPost[] | undefined>([])
 
   const { curPageItem, renderSSPagination } = useSSPagination<LoadPost>(
-    `/post/?search=${keyword.toLocaleLowerCase()}`,
+    `/api/post/?search=${keyword.toLocaleLowerCase()}`,
     6
   )
 

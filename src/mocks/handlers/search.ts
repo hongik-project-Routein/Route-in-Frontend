@@ -5,6 +5,7 @@ import { type LoadPostPagination } from '../../types/postTypes'
 import { postDemo } from '../data/post'
 import { pinDemo } from '../data/pin'
 import { userDemo } from '../data/user'
+import { searchDemo } from '../data/search'
 
 export const searchHandler = [
   rest.get(
@@ -44,4 +45,9 @@ export const searchHandler = [
       }
     }
   ),
+
+  rest.get(`${SERVER_BASE_URL as string}/api/user/`, async (req, res, ctx) => {
+    const response = searchDemo.user
+    return await res(ctx.json(response))
+  }),
 ]

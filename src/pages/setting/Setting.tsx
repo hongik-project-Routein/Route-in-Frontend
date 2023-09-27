@@ -7,7 +7,6 @@ import { request } from '../../util/axios'
 import { useNavigate } from 'react-router-dom'
 import ModifyMyInfo from './ModifyMyInfo'
 import useModal from '../../hooks/useModal'
-import HideModal from '../../components/popup/hideModal'
 import BlockModal from '../../components/popup/blockModal'
 import getUserinfo from '../../components/function/getUserinfo'
 
@@ -15,10 +14,7 @@ function Setting(): JSX.Element {
   const { loadUserInfo, logout } = useUser()
   const navigate = useNavigate()
 
-  const hideUserRef = useRef(null)
   const blockUserRef = useRef(null)
-
-  const hideModal = useModal(hideUserRef)
   const blockModal = useModal(blockUserRef)
 
   const [isShowModifyUserinfo, setIsShowModifyUserinfo] =
@@ -68,18 +64,6 @@ function Setting(): JSX.Element {
           <Item>
             <Label>회원 탈퇴</Label>
             <LabelButton onClick={withdraw}>회원 탈퇴하기</LabelButton>
-          </Item>
-
-          <Item>
-            <Label>숨긴 계정</Label>
-            <LabelButton as="div" ref={hideUserRef}>
-              숨긴계정 확인하기
-            </LabelButton>
-            {hideModal ? (
-              <div ref={hideUserRef}>
-                <HideModal />
-              </div>
-            ) : null}
           </Item>
 
           <Item>

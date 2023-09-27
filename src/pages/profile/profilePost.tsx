@@ -25,8 +25,15 @@ export default function ProfilePostArticle(
     { tabName: '게시글', link: `/profile/${username ?? ''}/post` },
     { tabName: '북마크', link: `/profile/${username ?? ''}/bookmark` },
   ]
-  // 더미 데이터 용
+
   const myPosts = useRecoilValue(profileStore)
+
+  // 백에서 게시글 생성 시간을 보내주어야 정렬 가능
+  // const sortByCreatedAt = (a: LoadPost, b: LoadPost): number => {
+  //   if (moment(a.created_at) < moment(b.created_at)) return 1
+  //   if (moment(a.created_at) > moment(b.created_at)) return -1
+  //   return 0
+  // }
 
   return (
     <>
