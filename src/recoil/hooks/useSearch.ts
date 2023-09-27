@@ -19,9 +19,12 @@ function useSearch(): UseSearchFunction {
   const keyword = searchCondition.keyword
   const category = searchCondition.category
 
-  const changeKeyword = useCallback((keyword: string) => {
-    setSearchCondition((prev) => ({ ...prev, keyword }))
-  }, [])
+  const changeKeyword = useCallback(
+    (keyword: string) => {
+      setSearchCondition((prev) => ({ ...prev, keyword }))
+    },
+    [keyword]
+  )
 
   const changeCategory = useCallback((category: Category) => {
     setSearchCondition((prev) => ({ ...prev, category }))

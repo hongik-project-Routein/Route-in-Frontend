@@ -26,7 +26,7 @@ export default function SearchPostArticle(
   const searchKeyword = keyword === '' ? urlkeyword : keyword
 
   const { curPageItem, renderSSPagination } = useSSPagination<LoadPost>(
-    `/post/?search=${
+    `/api/post/?search=${
       searchKeyword !== null ? searchKeyword.toLocaleLowerCase() : ' '
     }`,
     6

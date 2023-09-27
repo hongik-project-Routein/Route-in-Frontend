@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart, faBookmark } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
-import Hashtag from '../util/hashtag'
 import theme from '../../styles/Theme'
 import KakaoMapPost from './KakaoMapPost'
 import { request } from '../../util/axios'
@@ -11,10 +10,10 @@ import { request } from '../../util/axios'
 import { type BookMarkType, type LoadPost } from '../../types/postTypes'
 
 import useUser from '../../recoil/hooks/useUser'
-import uuid from 'react-uuid'
 import useModal from '../../hooks/useModal'
 import LikeList from './likeList'
 import FollowButton from '../follow/followButton'
+import ShowMoreText from '../util/showMoreText'
 
 interface PostCardProps {
   loadPost: LoadPost
@@ -126,82 +125,15 @@ export default function PostCard(props: PostCardProps): JSX.Element {
           }))}
         ></KakaoMapPost>
       </PostImageContainer>
-      <PostText postText={props.loadPost.post.content} />
+      <PostTextContainer>
+        <ShowMoreText content={props.loadPost.post.content} />
+      </PostTextContainer>
       <PostComment>
         <Link
           to={`/post/${props.loadPost.post.id}`}
         >{`댓글 ${props.loadPost.post.comment_count}개 모두 보기`}</Link>
       </PostComment>
     </>
-  )
-}
-
-interface PostTextProps {
-  postText: string
-}
-
-function PostText(props: PostTextProps): JSX.Element {
-  const [limit, setLimit] = useState<number>(50)
-  const toggleEllipsis = (
-    str: JSX.Element,
-    limit: number
-  ): { string: JSX.Element; isShowMore: boolean } => {
-    const postText = str.props.postText
-    const splitText = postText.split('\n')
-    const limitedText = []
-    let lengthCount = 0
-    let isShowMore = false
-
-    for (let i = 0; i < splitText.length; i++) {
-      const line = splitText[i]
-      const words = line.split(' ')
-
-      limitedText.push(
-        <div key={`p-${uuid()}`}>
-          {words.map((word: string) => {
-            if (word.startsWith('#')) {
-              if (lengthCount + word.length + 3 > limit) {
-                isShowMore = true
-                return null
-              }
-              lengthCount += word.length + 3
-              return (
-                <a
-                  href={`/search?q=${word.substring(1)}`}
-                  key={word}
-                  style={{ color: `${theme.colors.primaryColor}` }}
-                >
-                  {word}{' '}
-                </a>
-              )
-            } else {
-              lengthCount += word.length + 1
-              return <span key={uuid()}>{word} </span>
-            }
-          })}
-        </div>
-      )
-
-      if (isShowMore) {
-        break
-      }
-    }
-    return {
-      string: <>{limitedText}</>,
-      isShowMore,
-    }
-  }
-  const onClickMore = (str: string) => (): void => {
-    setLimit(str.length)
-  }
-  return (
-    <PostTextContainer>
-      {toggleEllipsis(<Hashtag postText={props.postText} />, limit).string}
-      {toggleEllipsis(<Hashtag postText={props.postText} />, limit)
-        .isShowMore && (
-        <MoreButton onClick={onClickMore(props.postText)}>...더보기</MoreButton>
-      )}
-    </PostTextContainer>
   )
 }
 
@@ -303,8 +235,6 @@ const PostTextContainer = styled.p`
   line-height: 30px;
   white-space: pre-line;
 `
-
-const MoreButton = styled.button``
 
 const PostComment = styled.p`
   margin: 20px 0;

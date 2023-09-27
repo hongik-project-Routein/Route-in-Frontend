@@ -8,7 +8,7 @@ import useSearch from '../../recoil/hooks/useSearch'
 import useInput from '../../hooks/useInput'
 
 export default function SearchWindow(): JSX.Element {
-  const { keyword, category, changeKeyword, onSearch } = useSearch()
+  const { keyword, changeKeyword } = useSearch()
   const [inputKeyword, setInputKeyword] = useInput<string, HTMLInputElement>(
     keyword
   )
@@ -23,11 +23,6 @@ export default function SearchWindow(): JSX.Element {
     params.append('q', inputKeyword)
 
     changeKeyword(inputKeyword)
-
-    // 실제로 검색 실행
-    const response = await onSearch(inputKeyword, category)
-    console.log(response)
-
     navigate(`/search?${params.toString()}`)
   }
 

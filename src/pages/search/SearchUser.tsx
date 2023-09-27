@@ -17,18 +17,19 @@ export default function SearchUserArticle(
   props: SearchUserArticleProps
 ): JSX.Element {
   const { keyword } = useSearch()
+
   const [searchResult, setSearchResult] = useState<
     SearchUserType[] | undefined
   >([])
 
   const { curPageItem, renderSSPagination } = useSSPagination<SearchUserType>(
-    `/user/?search=${keyword.toLocaleLowerCase()}`,
+    `/api/user/?search=${keyword.toLocaleLowerCase()}`,
     6
   )
 
   useEffect(() => {
     setSearchResult(curPageItem)
-  }, [curPageItem])
+  }, [curPageItem, keyword])
 
   return (
     <>

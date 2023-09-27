@@ -78,7 +78,7 @@ export default function KakaoMapPost(props: KakaomapPostProps): JSX.Element {
                   <MapMarker
                     key={`${point.getLat()}-${point.getLng()}`}
                     position={{ lat: point.getLat(), lng: point.getLng() }}
-                    onClick={() => {
+                    onMouseOver={() => {
                       changeIndex(idx)
                     }}
                   />
