@@ -21,7 +21,7 @@ export default function CreatePostCheck(): JSX.Element {
 
   const { pins, imgUrls, hashtagAndText, savePost } = usePost()
 
-  const [carouselOpen, setCarouselOpen] = useState<boolean[]>(
+  const [, setCarouselOpen] = useState<boolean[]>(
     Array(pins.length).fill(false)
   )
 
@@ -61,7 +61,7 @@ export default function CreatePostCheck(): JSX.Element {
     const result = await savePost({ pins, content: holeText })
 
     if (result) {
-      navigate('/home')
+      navigate('/')
       window.location.reload()
     }
   }
@@ -104,11 +104,6 @@ export default function CreatePostCheck(): JSX.Element {
     if (map === undefined) return
     calculateCenter(map)
   }, [map])
-
-  useEffect(() => {
-    console.log(index)
-    console.log(carouselOpen)
-  }, [index])
 
   const mapContainerRef = useRef<HTMLDivElement>(null)
 

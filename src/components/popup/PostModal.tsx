@@ -31,16 +31,16 @@ export default function PostModal(props: PostModalProps): JSX.Element {
   })
 
   return (
-    <StoryModalContainer ref={modalRef}>
+    <Container ref={modalRef}>
       <ModalHeader>
         <CloseButton onClick={closeModal}>X</CloseButton>
       </ModalHeader>
       <PostImageContainer>{props.postImage}</PostImageContainer>
-    </StoryModalContainer>
+    </Container>
   )
 }
 
-const StoryModalContainer = styled.div`
+const Container = styled.div`
   position: fixed;
   top: 55%;
   left: 55%;
