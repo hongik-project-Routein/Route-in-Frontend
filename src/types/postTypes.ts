@@ -147,7 +147,7 @@ export interface RecommendUserType {
 // 메인 페이지 유저 추천
 // 프로필, 닉네임, 같이 아는 사람,
 export interface RecommendUserList {
-  profile: string
+  image: string
   nickname: string
   acquaintances: string[]
 }
@@ -160,20 +160,20 @@ export interface SearchPostType {
 // 핀 검색
 // 프로필, 작성자, 핀, 게시글 id, 좋아요 누른 수, 좋아요 상태, 북마크
 export interface SearchPinType {
-  profile: string
+  writer_image: string
   writer: string
-  pin: LoadPin
-  postId: number
+  image: string
+  post_id: number
   like_users: string[]
-  like_status: boolean
-  bookmark: boolean
+  is_liked: boolean
+  is_bookmarked: boolean
 }
 
 // 지도 검색
 // 게시글 id -> 클릭하면 해당 게시글로 이동위해, 프로필, 위도 경도
 export interface SearchMapType {
   postId: string
-  profile: string
+  image: string
   latLng: Array<{ lat: number; lng: number }>
 }
 

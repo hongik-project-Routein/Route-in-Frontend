@@ -16,7 +16,7 @@ export const searchHandler = [
       // const page = searchParams.get('page')
       console.log(keyword)
 
-      if (category === Category.POST || category === Category.MAP) {
+      if (category === Category.POST) {
         const response: LoadPostPagination = {
           count: postDemo.length,
           results: postDemo,

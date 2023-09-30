@@ -7,6 +7,7 @@ import SearchTab from '../../components/util/searchTab'
 import { type LoadPost } from '../../types/postTypes'
 import useSearch from './../../recoil/hooks/useSearch'
 import useSSPagination from '../../hooks/useSSPagination'
+import { useNavigate } from 'react-router-dom'
 
 interface SearchPostArticleProps {
   handleTabfunc: (index: number) => void
@@ -16,7 +17,8 @@ interface SearchPostArticleProps {
 export default function SearchPostArticle(
   props: SearchPostArticleProps
 ): JSX.Element {
-  const { keyword } = useSearch()
+  const { keyword, changeKeyword } = useSearch()
+  const navigate = useNavigate()
 
   const [searchResult, setSearchResult] = useState<LoadPost[] | undefined>([])
 
@@ -35,6 +37,11 @@ export default function SearchPostArticle(
   useEffect(() => {
     setSearchResult(curPageItem)
   }, [curPageItem])
+
+  useEffect(() => {
+    changeKeyword('')
+    navigate('/search')
+  }, [])
 
   return (
     <Container>

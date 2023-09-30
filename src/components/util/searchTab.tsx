@@ -15,7 +15,6 @@ interface TabContentProps {
 export const searchTabContents: SearchTabContents[] = [
   { tabName: '게시글', category: Category.POST },
   { tabName: '핀', category: Category.PIN },
-  { tabName: '지도', category: Category.MAP },
   { tabName: '유저', category: Category.USER },
 ]
 

@@ -1,4 +1,4 @@
-import React, { type FormEvent } from 'react'
+import React, { type FormEvent, useEffect } from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -25,6 +25,10 @@ export default function SearchWindow(): JSX.Element {
     changeKeyword(inputKeyword)
     navigate(`/search?${params.toString()}`)
   }
+
+  useEffect(() => {
+    changeKeyword('')
+  }, [window.location.href])
 
   return (
     <SearchWindowContainer onSubmit={onSubmit}>

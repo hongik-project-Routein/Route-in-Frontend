@@ -7,6 +7,7 @@ import useSearch from './../../recoil/hooks/useSearch'
 import { type SearchPinType } from '../../types/postTypes'
 import useSSPagination from '../../hooks/useSSPagination'
 import EachSearchPin from '../../components/eachItem/EachSearchPin'
+import { useNavigate } from 'react-router-dom'
 
 interface SearchPinArticleProps {
   handleTabfunc: (index: number) => void
@@ -16,7 +17,9 @@ interface SearchPinArticleProps {
 export default function SearchPinArticle(
   props: SearchPinArticleProps
 ): JSX.Element {
-  const { keyword } = useSearch()
+  const { keyword, changeKeyword } = useSearch()
+  const navigate = useNavigate()
+
   const [searchResult, setSearchResult] = useState<SearchPinType[] | undefined>(
     []
   )
@@ -29,6 +32,11 @@ export default function SearchPinArticle(
   useEffect(() => {
     setSearchResult(curPageItem)
   }, [curPageItem])
+
+  useEffect(() => {
+    changeKeyword('')
+    navigate('/search')
+  }, [])
 
   return (
     <>
