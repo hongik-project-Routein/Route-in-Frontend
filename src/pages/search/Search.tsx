@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import SearchPostArticle from './SearchPost'
 import SearchPinArticle from './SearchPin'
-import SearchMapArticle from './SearchMap'
 import SearchUserArticle from './SearchUser'
 import { searchTabContents } from '../../components/util/searchTab'
 import useSearch from './../../recoil/hooks/useSearch'
@@ -44,11 +43,6 @@ export default function Search(): JSX.Element {
           tabIndex={selectedTabIndex}
         />
       ) : selectedTabIndex === 2 ? (
-        <SearchMapArticle
-          handleTabfunc={handleTabClick}
-          tabIndex={selectedTabIndex}
-        />
-      ) : selectedTabIndex === 3 ? (
         <SearchUserArticle
           handleTabfunc={handleTabClick}
           tabIndex={selectedTabIndex}

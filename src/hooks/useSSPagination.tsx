@@ -42,11 +42,9 @@ function useSSPagination<T>(
   const fetchData = async (page: number): Promise<any> => {
     setLoading(true)
     try {
-      console.log(`${uri}&page=${page}`)
-
       const response = await request<FetchResult>(
         'get',
-        `${uri}?page=${page}`,
+        `${uri}&page=${page}`,
         null,
         {
           Authorization: `Bearer ${loadUserInfo().accessToken}`,

@@ -15,7 +15,7 @@ function EachSearchPin(props: EachSearchPinProps): JSX.Element {
     <div>
       <PersonalInfoContainer>
         <UserContent to={`/profile/${props.loadPin.writer}`}>
-          <Profile src={props.loadPin.profile} />
+          <Profile src={props.loadPin.writer_image} />
           <Nickname>{props.loadPin.writer}</Nickname>
         </UserContent>
         <RestContent>
@@ -31,9 +31,9 @@ function EachSearchPin(props: EachSearchPinProps): JSX.Element {
         </RestContent>
       </PersonalInfoContainer>
       <PostImageContainer>
-        <PinImage src={props.loadPin.pin.image} />
+        <PinImage src={props.loadPin.image} />
       </PostImageContainer>
-      <PostDetailLink to={`/post/${props.loadPin.postId}`}>
+      <PostDetailLink to={`/post/${props.loadPin.post_id}`}>
         상세 게시물로
       </PostDetailLink>
     </div>

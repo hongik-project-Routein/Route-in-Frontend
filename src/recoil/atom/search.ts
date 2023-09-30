@@ -3,7 +3,6 @@ import { atom } from 'recoil'
 export enum Category {
   POST = 'post',
   PIN = 'pin',
-  MAP = 'map',
   USER = 'user',
 }
 
