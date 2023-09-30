@@ -24,7 +24,7 @@ interface TapContent {
 const TapContents: TapContent[] = [
   { icon: faHouse, name: '홈', link: '/' },
   { icon: faMagnifyingGlass, name: '검색', link: '/search' },
-  { icon: faLocationDot, name: '탐색', link: '/explore' },
+  { icon: faLocationDot, name: '추천', link: '/explore' },
   { icon: faSquarePlus, name: '만들기', link: '/post/create' },
   { icon: faGear, name: '설정', link: '/setting' },
 ]
