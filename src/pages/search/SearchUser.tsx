@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import theme from '../../styles/Theme'
 import SearchWindow from '../../components/util/searchWindow'
 import SearchTab from '../../components/util/searchTab'
 import useSearch from './../../recoil/hooks/useSearch'
@@ -45,10 +44,7 @@ export default function SearchUserArticle(
         tabIndex={props.tabIndex}
         handleTabfunc={props.handleTabfunc}
       />
-      <SearchResultTitle>
-        <SearchResultKeyword>{keyword}</SearchResultKeyword>
-        {keyword === '' ? `검색어를 입력하세요` : `유저를 검색합니다.`}
-      </SearchResultTitle>
+
       <SearchResultGrid>
         {searchResult !== undefined
           ? searchResult.map((user, idx) => (
@@ -60,15 +56,6 @@ export default function SearchUserArticle(
     </>
   )
 }
-
-const SearchResultTitle = styled.h2`
-  margin-bottom: 50px;
-  font-size: 25px;
-`
-
-const SearchResultKeyword = styled.span`
-  color: ${theme.colors.primaryColor};
-`
 
 const SearchResultGrid = styled.div`
   display: grid;

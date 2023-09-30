@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import theme from '../../styles/Theme'
 import PostSmall from '../../components/post/postSmall'
 import SearchWindow from '../../components/util/searchWindow'
 import SearchTab from '../../components/util/searchTab'
@@ -50,12 +49,7 @@ export default function SearchPostArticle(
         tabIndex={props.tabIndex}
         handleTabfunc={props.handleTabfunc}
       />
-      <SearchResultTitle>
-        <SearchResultKeyword>{keyword}</SearchResultKeyword>
-        {keyword === ''
-          ? `검색어를 입력하세요`
-          : `와 관련된 게시글을 추천합니다.`}
-      </SearchResultTitle>
+
       <SearchResultGrid>
         {searchResult !== undefined
           ? searchResult.map((post, idx) => (
@@ -70,15 +64,6 @@ export default function SearchPostArticle(
 
 const Container = styled.div`
   width: 100%;
-`
-
-const SearchResultTitle = styled.h2`
-  margin-bottom: 30px;
-  font-size: 25px;
-`
-
-const SearchResultKeyword = styled.span`
-  color: ${theme.colors.primaryColor};
 `
 
 const SearchResultGrid = styled.div`

@@ -27,7 +27,8 @@ export default function SearchWindow(): JSX.Element {
   }
 
   useEffect(() => {
-    changeKeyword('')
+    const url = window.location.href
+    if (!url.includes('?')) changeKeyword('')
   }, [window.location.href])
 
   return (

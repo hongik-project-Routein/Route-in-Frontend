@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import theme from '../../styles/Theme'
 import SearchWindow from '../../components/util/searchWindow'
 import SearchTab from '../../components/util/searchTab'
 import useSearch from './../../recoil/hooks/useSearch'
@@ -45,10 +44,6 @@ export default function SearchPinArticle(
         tabIndex={props.tabIndex}
         handleTabfunc={props.handleTabfunc}
       />
-      <SearchResultTitle>
-        <SearchResultKeyword>{keyword}</SearchResultKeyword>
-        {keyword === '' ? `검색어를 입력하세요` : `와 관련된 핀을 추천합니다.`}
-      </SearchResultTitle>
       <SearchResultGrid>
         {searchResult !== undefined
           ? searchResult.map((pin, idx) => (
@@ -60,15 +55,6 @@ export default function SearchPinArticle(
     </>
   )
 }
-
-const SearchResultTitle = styled.h2`
-  margin-bottom: 30px;
-  font-size: 25px;
-`
-
-const SearchResultKeyword = styled.span`
-  color: ${theme.colors.primaryColor};
-`
 
 const SearchResultGrid = styled.div`
   display: grid;
