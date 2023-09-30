@@ -36,6 +36,8 @@ function CommonSignin(): JSX.Element {
         accessToken: response.access,
       }
 
+      console.log(response)
+
       login(userinfo)
 
       if (response.uname === null) {
@@ -45,6 +47,7 @@ function CommonSignin(): JSX.Element {
       }
     } catch (error) {
       console.log(error)
+      // 에러코드 받아서 400이면 로그인 불가메시지 띄우기
     }
   }
 
