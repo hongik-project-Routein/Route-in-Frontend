@@ -44,7 +44,8 @@ function Main(): JSX.Element {
         <Sidebar />
       </SidebarGrid>
       <PostGrid>
-        {posts.length > 0 &&
+        {posts !== undefined &&
+          posts.length > 0 &&
           posts.map((post, idx) => <PostCard key={idx} loadPost={post} />)}
       </PostGrid>
       <RecommendGrid>

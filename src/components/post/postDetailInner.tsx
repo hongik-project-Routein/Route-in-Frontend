@@ -219,7 +219,7 @@ const HeartAndNumber = styled.div`
 `
 const CreatedAt = styled.div`
   font-size: 12px;
-  margin-right: 10px;
+  margin: 0 10px;
 `
 
 const HeartButtonPost = styled.button<{ active: boolean }>`
