@@ -20,6 +20,7 @@ import { useNavigate } from 'react-router-dom'
 import usePostDetail from './../../recoil/hooks/usePostdetail'
 import useModal from '../../hooks/useModal'
 import LikeList from './likeList'
+import calculateDate from '../../constants/calculateDate'
 
 function PostDetailInner(): JSX.Element {
   const isSetUpdatePost = useSetRecoilState(isUpdatePost)
@@ -99,6 +100,7 @@ function PostDetailInner(): JSX.Element {
           <Profile src={postDetail.user.image} />
           <Uname>{postDetail.post.writer}</Uname>
           <DistanceFromMe>나와의 거리: {100}km</DistanceFromMe>
+          <CreatedAt>{calculateDate(postDetail.post.created_at)}</CreatedAt>
         </UserContent>
         <RestContent>
           <Icons>
@@ -213,6 +215,10 @@ const HeartAndNumber = styled.div`
   justify-content: center;
   align-items: center;
   width: 40px;
+  margin-right: 10px;
+`
+const CreatedAt = styled.div`
+  font-size: 12px;
   margin-right: 10px;
 `
 

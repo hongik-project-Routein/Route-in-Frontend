@@ -10,6 +10,7 @@ import useModal from '../../hooks/useModal'
 import LikeList from './likeList'
 import { request } from '../../util/axios'
 import theme from '../../styles/Theme'
+import calculateDate from './../../constants/calculateDate'
 
 interface PostSmallProps {
   loadPost: LoadPost // 연결 시 LoadPostMainPage로 변경
@@ -80,6 +81,7 @@ export default function PostSmall(props: PostSmallProps): JSX.Element {
           <Nickname>{props.loadPost.post.writer}</Nickname>
         </UserContent>
         <RestContent>
+          <CreatedAt>{calculateDate(props.loadPost.post.created_at)}</CreatedAt>
           <NumOfHeart ref={likePeopleRef}>
             {likeCount}
             {likePeopleOpen ? (
@@ -153,6 +155,11 @@ const RestContent = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
+`
+const CreatedAt = styled.div`
+  font-size: 9px;
+  margin-right: 10px;
+  white-space: nowrap;
 `
 
 const NumOfHeart = styled.div`

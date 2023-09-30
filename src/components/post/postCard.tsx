@@ -14,6 +14,7 @@ import useModal from '../../hooks/useModal'
 import LikeList from './likeList'
 import FollowButton from '../follow/followButton'
 import ShowMoreText from '../util/showMoreText'
+import calculateDate from './../../constants/calculateDate'
 
 interface PostCardProps {
   loadPost: LoadPost
@@ -84,6 +85,7 @@ export default function PostCard(props: PostCardProps): JSX.Element {
             {props.loadPost.post.writer}
           </Uname>
           <DistanceFromMe>나와의 거리: {100}km</DistanceFromMe>
+          <CreatedAt>{calculateDate(props.loadPost.post.created_at)}</CreatedAt>
           <FollowButton uname={props.loadPost.post.writer} />
         </UserContent>
         <RestContent>
@@ -209,6 +211,11 @@ const NumOfLike = styled.div`
   &:hover {
     cursor: pointer;
   }
+`
+
+const CreatedAt = styled.div`
+  font-size: 12px;
+  margin-right: 10px;
 `
 
 const Bookmark = styled.div<{ active: boolean }>`
