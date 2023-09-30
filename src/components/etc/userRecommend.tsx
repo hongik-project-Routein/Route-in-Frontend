@@ -9,10 +9,7 @@ export default function UserRecommend(): JSX.Element {
 
   const fetchData = async (): Promise<UserData[]> => {
     try {
-      const response = await request<UserData[]>(
-        'get',
-        `/api/user/recommend/${'jinokim98'}`
-      )
+      const response = await request<UserData[]>('get', `/api/recommend/user/`)
       return response
     } catch (error) {
       console.log(error)
