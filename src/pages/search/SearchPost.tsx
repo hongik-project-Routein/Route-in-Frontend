@@ -29,7 +29,7 @@ export default function SearchPostArticle(
   const { curPageItem, renderSSPagination } = useSSPagination<LoadPost>(
     `/api/post/?search=${
       searchKeyword !== null ? searchKeyword.toLocaleLowerCase() : ' '
-    }`,
+    }&`,
     6
   )
 

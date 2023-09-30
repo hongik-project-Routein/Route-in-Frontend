@@ -24,7 +24,7 @@ export default function SearchPinArticle(
   )
 
   const { curPageItem, renderSSPagination } = useSSPagination<SearchPinType>(
-    `/api/pin/?search=${keyword.toLocaleLowerCase()}`,
+    `/api/pin/?search=${keyword.toLocaleLowerCase()}&`,
     6
   )
 

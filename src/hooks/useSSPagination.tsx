@@ -44,7 +44,7 @@ function useSSPagination<T>(
     try {
       const response = await request<FetchResult>(
         'get',
-        `${uri}&page=${page}`,
+        `${uri}page=${page}`,
         null,
         {
           Authorization: `Bearer ${loadUserInfo().accessToken}`,

@@ -28,7 +28,7 @@ export default function ProfileBookmarkArticle(
   ]
 
   const { curPageItem, renderSSPagination } = useSSPagination<LoadPost>(
-    `/api/user/${username as string}/bookmark`,
+    `/api/user/${username as string}/bookmark/?`,
     6
   )
 
