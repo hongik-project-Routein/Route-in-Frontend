@@ -12,6 +12,7 @@ import useUser from '../../recoil/hooks/useUser'
 import usePostDetail from '../../recoil/hooks/usePostdetail'
 import LikeList from '../post/likeList'
 import calculateDate from '../../constants/calculateDate'
+import moment from 'moment'
 
 interface EachCommentProps {
   comment: LoadComment
@@ -41,7 +42,9 @@ function EachComment(props: EachCommentProps): JSX.Element {
 
   const isMyComment = props.comment.writer === loadUserInfo().uname
 
-  const isUpdated = props.comment.created_at !== props.comment.updated_at
+  const createdAt = moment(props.comment.created_at)
+  const updatedAt = moment(props.comment.updated_at)
+  const isUpdated = moment.duration(updatedAt.diff(createdAt)).asSeconds() > 1
 
   const updateCommentRef = useRef(null)
   const updateCommentOpen = useModal(updateCommentRef)
@@ -51,15 +54,9 @@ function EachComment(props: EachCommentProps): JSX.Element {
 
   const deleteCommentReq = async (id: number): Promise<void> => {
     try {
-      const response = await request<boolean>(
-        'delete',
-        `/api/comment/${id}/`,
-        undefined,
-        {
-          Authorization: `Bearer ${accessToken}`,
-        }
-      )
-      console.log(response)
+      await request<boolean>('delete', `/api/comment/${id}/`, undefined, {
+        Authorization: `Bearer ${accessToken}`,
+      })
 
       deleteComment(id)
     } catch (error) {

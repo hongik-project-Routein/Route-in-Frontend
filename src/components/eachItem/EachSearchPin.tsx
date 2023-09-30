@@ -1,10 +1,15 @@
-import React from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
 
 import { Link } from 'react-router-dom'
 import { faBookmark, faHeart } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { type SearchPinType } from '../../types/postTypes'
+import { type BookMarkType, type SearchPinType } from '../../types/postTypes'
+import useUser from '../../recoil/hooks/useUser'
+import useModal from '../../hooks/useModal'
+import { request } from '../../util/axios'
+import LikeList from '../post/likeList'
+import theme from '../../styles/Theme'
 
 interface EachSearchPinProps {
   loadPin: SearchPinType
@@ -12,6 +17,63 @@ interface EachSearchPinProps {
 
 function EachSearchPin(props: EachSearchPinProps): JSX.Element {
   const link = props.loadPin.post_id.toString()
+
+  const [likeCount, setLikeCount] = useState<number>(
+    props.loadPin.like_users.length
+  )
+  const [likeStatus, setLikeStatus] = useState(props.loadPin.is_liked)
+  const [bookmarkActive, setbookmarkActive] = useState(
+    props.loadPin.is_bookmarked
+  )
+
+  const { loadUserInfo } = useUser()
+  const accessToken = loadUserInfo().accessToken
+
+  const likePeopleRef = useRef(null)
+  const likePeopleOpen = useModal(likePeopleRef)
+
+  const likeButtonClick = async (): Promise<void> => {
+    try {
+      const response = await request<string>(
+        'post',
+        `/api/post/${props.loadPin.post_id}/like/`,
+        null,
+        {
+          Authorization: `Bearer ${accessToken}`,
+        }
+      )
+
+      setLikeCount(
+        response === '좋아요 성공' ? (prev) => prev + 1 : (prev) => prev - 1
+      )
+      setLikeStatus((prev) => !prev)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleBookmarkButton = async (): Promise<void> => {
+    try {
+      const response = await request<BookMarkType>(
+        'post',
+        `/api/post/${props.loadPin.post_id}/bookmark/`,
+        null,
+        {
+          Authorization: `Bearer ${accessToken}`,
+        }
+      )
+      console.log(response)
+
+      setbookmarkActive((prev) => !prev)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    setLikeCount(props.loadPin.like_users.length)
+  }, [])
+
   return (
     <div>
       <PersonalInfoContainer>
@@ -20,12 +82,23 @@ function EachSearchPin(props: EachSearchPinProps): JSX.Element {
           <Nickname>{props.loadPin.writer}</Nickname>
         </UserContent>
         <RestContent>
-          <NumOfHeart>{props.loadPin.like_users.length}</NumOfHeart>
+          <NumOfHeart ref={likePeopleRef}>
+            {likeCount}
+            {likePeopleOpen ? (
+              <LikeList
+                like_users={
+                  likeStatus
+                    ? [...props.loadPin.like_users, loadUserInfo().uname]
+                    : props.loadPin.like_users
+                }
+              />
+            ) : null}
+          </NumOfHeart>
           <Icons>
-            <Heart>
+            <Heart active={likeStatus} onClick={likeButtonClick}>
               <FontAwesomeIcon icon={faHeart} />
             </Heart>
-            <Bookmark>
+            <Bookmark active={bookmarkActive} onClick={handleBookmarkButton}>
               <FontAwesomeIcon icon={faBookmark} />
             </Bookmark>
           </Icons>
@@ -86,12 +159,24 @@ const Icons = styled.div`
   justify-content: flex-start;
 `
 
-const Heart = styled.div`
+const Heart = styled.div<{ active: boolean }>`
   margin-right: 10px;
+
+  color: ${(props) =>
+    props.active ? theme.colors.primaryColor : theme.colors.disable};
+  &:hover {
+    cursor: pointer;
+  }
 `
 
-const Bookmark = styled.div`
+const Bookmark = styled.div<{ active: boolean }>`
   margin-right: 10px;
+  color: ${(props) =>
+    props.active ? theme.colors.primaryColor : theme.colors.disable};
+
+  &:hover {
+    cursor: pointer;
+  }
 `
 const PostImageContainer = styled.div`
   height: 300px;

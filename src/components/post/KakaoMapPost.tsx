@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { Map, MapMarker } from 'react-kakao-maps-sdk'
+import { Map } from 'react-kakao-maps-sdk'
 import styled from 'styled-components'
-import PostModal from '../popup/PostModal'
+import EachMarker from '../eachItem/EachMarker'
 
 interface KakaomapPostProps {
   size: string
@@ -12,12 +12,9 @@ interface KakaomapPostProps {
 
 export default function KakaoMapPost(props: KakaomapPostProps): JSX.Element {
   const [map, setMap] = useState<kakao.maps.Map>()
-  const [index, setIndex] = useState<number>(-1)
   const [points, setPoints] = useState<kakao.maps.LatLng[]>([])
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [carouselOpen, setCarouselOpen] = useState<boolean[]>(
-    Array(props.pinCount).fill(false)
-  )
+
   const calculateCenter = (map: kakao.maps.Map): void => {
     if (props.pinCount > 0) {
       const bounds = new kakao.maps.LatLngBounds()
@@ -44,12 +41,6 @@ export default function KakaoMapPost(props: KakaomapPostProps): JSX.Element {
       polyline.setMap(map)
     }
   }
-  const changeIndex = (idx: number): void => {
-    setIndex(idx)
-    setCarouselOpen((prev) =>
-      prev.map((open, index) => (idx === index ? !open : open))
-    )
-  }
 
   useEffect(() => {
     if (map === undefined) return
@@ -57,66 +48,37 @@ export default function KakaoMapPost(props: KakaomapPostProps): JSX.Element {
   }, [map])
 
   return (
-    <LayerGroup size={props.size}>
-      <KakaoMapPostContainer size={props.size}>
-        {props.pinCount > 0 && (
-          <Map
-            center={{
-              lat: props.latLng[0].lat,
-              lng: props.latLng[0].lng,
-            }}
-            style={{ width: '100%', height: '100%' }}
-            onCreate={(map) => {
-              setMap(map)
-            }}
-            draggable={false}
-            zoomable={false}
-          >
-            {points.length > 0 && (
-              <>
-                {points.map((point, idx) => (
-                  <MapMarker
-                    key={`${point.getLat()}-${point.getLng()}`}
-                    position={{ lat: point.getLat(), lng: point.getLng() }}
-                    onMouseOver={() => {
-                      changeIndex(idx)
-                    }}
-                  ></MapMarker>
-                ))}
-              </>
-            )}
-          </Map>
-        )}
-      </KakaoMapPostContainer>
-      <ImageGroup active={index !== -1}>
-        {props.pinCount > 0 && index !== -1 && (
-          <PostModal
-            postImage={<img src={props.pinImages[index]} />}
-            setModalOpen={changeIndex}
-          ></PostModal>
-        )}
-      </ImageGroup>
-    </LayerGroup>
+    <KakaoMapPostContainer size={props.size}>
+      {props.pinCount > 0 && (
+        <Map
+          center={{
+            lat: props.latLng[0].lat,
+            lng: props.latLng[0].lng,
+          }}
+          style={{ width: '100%', height: '100%' }}
+          onCreate={(map) => {
+            setMap(map)
+          }}
+          draggable={true}
+          zoomable={false}
+        >
+          {points.length > 0 &&
+            points.map((point, idx) => (
+              <EachMarker
+                key={`marker-${idx}`}
+                size={props.size}
+                point={point}
+                image={props.pinImages[idx]}
+              />
+            ))}
+        </Map>
+      )}
+    </KakaoMapPostContainer>
   )
 }
-
-const LayerGroup = styled.div<{ size: string }>`
-  position: relative;
-  width: 100%;
-  height: ${(props) => `${props.size}`};
-`
 
 const KakaoMapPostContainer = styled.div<{ size: string }>`
   width: 100%;
   height: ${(props) => `${props.size}`};
   margin-top: 20px;
-`
-
-const ImageGroup = styled.div<{ active: boolean }>`
-  display: ${(props) => (props.active ? 'block' : 'none')};
-  position: absolute;
-  top: 10%;
-  left: 10%;
-  width: 80%;
-  height: 80%;
 `

@@ -9,6 +9,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import theme from '../../styles/Theme'
 import { type Auth } from './kakao'
 import { type UserState } from '../../recoil/atom/user'
+import { type AxiosError } from 'axios'
 
 function CommonSignin(): JSX.Element {
   const {
@@ -46,8 +47,12 @@ function CommonSignin(): JSX.Element {
         navigate('/')
       }
     } catch (error) {
-      console.log(error)
-      // 에러코드 받아서 400이면 로그인 불가메시지 띄우기
+      const errorResponse = (error as AxiosError).response
+      if (errorResponse !== undefined) {
+        if (errorResponse.status === 400) {
+          alert('비밀번호가 일치하지 않습니다.')
+        }
+      }
     }
   }
 

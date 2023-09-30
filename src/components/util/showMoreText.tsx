@@ -9,9 +9,6 @@ interface IShowMoreText {
 function ShowMoreText(props: IShowMoreText): JSX.Element {
   const { content } = props
 
-  const tag = <Hashtag postText={content} />
-  console.log(tag)
-
   return (
     <ReactShowMoreText
       lines={3}

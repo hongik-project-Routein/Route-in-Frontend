@@ -19,7 +19,7 @@ import user from './recoil/atom/user'
 import PrivateRoute from './privateRoute'
 
 function App(): JSX.Element {
-  const isLogin = useRecoilValue(user) !== null
+  const isLogin = useRecoilValue(user).accessToken !== ''
 
   const loginCheck = (): JSX.Element => {
     return isLogin ? (
