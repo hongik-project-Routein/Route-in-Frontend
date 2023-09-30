@@ -18,11 +18,11 @@ interface ProfileMapArticleProps {
 export default function ProfileMapArticle(
   props: ProfileMapArticleProps
 ): JSX.Element {
-  const { username } = useParams() // 실제는 db에서 username 가져올 것
+  const { uname } = useParams() // 실제는 db에서 uname 가져올 것
   const tabContents: TabContent[] = [
-    { tabName: '지도', link: `/profile/${username ?? ''}/map` },
-    { tabName: '게시글', link: `/profile/${username ?? ''}/post` },
-    { tabName: '북마크', link: `/profile/${username ?? ''}/bookmark` },
+    { tabName: '지도', link: `/profile/${uname ?? ''}/map` },
+    { tabName: '게시글', link: `/profile/${uname ?? ''}/post` },
+    { tabName: '북마크', link: `/profile/${uname ?? ''}/bookmark` },
   ]
 
   const userProfile = useRecoilValue(profileStore)

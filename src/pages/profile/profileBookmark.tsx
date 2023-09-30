@@ -20,16 +20,16 @@ interface ProfileBookmarkArticleProps {
 export default function ProfileBookmarkArticle(
   props: ProfileBookmarkArticleProps
 ): JSX.Element {
-  const { username } = useParams()
+  const { uname } = useParams()
 
   const tabContents: TabContent[] = [
-    { tabName: '지도', link: `/profile/${username ?? ''}/map` },
-    { tabName: '게시글', link: `/profile/${username ?? ''}/post` },
-    { tabName: '북마크', link: `/profile/${username ?? ''}/bookmark` },
+    { tabName: '지도', link: `/profile/${uname ?? ''}/map` },
+    { tabName: '게시글', link: `/profile/${uname ?? ''}/post` },
+    { tabName: '북마크', link: `/profile/${uname ?? ''}/bookmark` },
   ]
 
   const { curPageItem, renderSSPagination } = useSSPagination<LoadPost>(
-    `/api/user/${username as string}/bookmark/?`,
+    `/api/user/${uname as string}/bookmark/?`,
     6
   )
 

@@ -14,7 +14,7 @@ import Profile from '../../components/etc/profile'
 
 export default function MyProfile(): JSX.Element {
   const { profile, changeProfileTabIndex } = useTab()
-  const { username } = useParams()
+  const { uname } = useParams()
   const { loadUserInfo } = useUser()
 
   const { followerList, followingList } = useFollow()
@@ -26,7 +26,7 @@ export default function MyProfile(): JSX.Element {
     try {
       const response = await request<UserData>(
         'get',
-        `/api/user/${username as string}`,
+        `/api/user/${uname as string}`,
         null,
         {
           Authorization: `Bearer ${loadUserInfo().accessToken}`,
@@ -64,7 +64,7 @@ export default function MyProfile(): JSX.Element {
   return (
     <>
       <Profile
-        isMyProfile={username === loadUserInfo().uname}
+        isMyProfile={uname === loadUserInfo().uname}
         userProfile={userProfile}
       />
       {selectedTabIndex === 0 ? (

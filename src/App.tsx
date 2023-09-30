@@ -72,7 +72,7 @@ function App(): JSX.Element {
           element={<PrivateRoute isLogin={isLogin} component={<Explore />} />}
         />
         <Route
-          path="/profile/:username/*"
+          path="/profile/:uname/*"
           element={<PrivateRoute isLogin={isLogin} component={<MyProfile />} />}
         />
         <Route
