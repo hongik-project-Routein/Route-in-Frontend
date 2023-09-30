@@ -5,6 +5,7 @@ import PostSmall from '../../components/post/postSmall'
 import { type LoadPost } from '../../types/postTypes'
 import useSSPagination from '../../hooks/useSSPagination'
 import { useParams } from 'react-router-dom'
+import moment from 'moment'
 
 interface TabContent {
   tabName: string
@@ -33,11 +34,11 @@ export default function ProfileBookmarkArticle(
   )
 
   // 백에서 게시글 생성 시간을 보내주어야 정렬 가능
-  // const sortByCreatedAt = (a: LoadPost, b: LoadPost): number => {
-  //   if (moment(a.created_at) < moment(b.created_at)) return 1
-  //   if (moment(a.created_at) > moment(b.created_at)) return -1
-  //   return 0
-  // }
+  const sortByCreatedAt = (a: LoadPost, b: LoadPost): number => {
+    if (moment(a.post.created_at) < moment(b.post.created_at)) return 1
+    if (moment(a.post.created_at) > moment(b.post.created_at)) return -1
+    return 0
+  }
 
   return (
     <>
@@ -48,9 +49,9 @@ export default function ProfileBookmarkArticle(
       />
       <TabArticle>
         {curPageItem !== undefined && curPageItem.length > 0
-          ? curPageItem.map((post, idx) => (
-              <PostSmall key={idx} loadPost={post} />
-            ))
+          ? [...curPageItem]
+              .sort(sortByCreatedAt)
+              .map((post, idx) => <PostSmall key={idx} loadPost={post} />)
           : null}
       </TabArticle>
       {renderSSPagination()}

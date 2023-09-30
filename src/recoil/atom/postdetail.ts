@@ -15,6 +15,7 @@ const postdetail = atom<LoadPost>({
       like_users: [],
       bookmark_users: [],
       comment_count: 0,
+      created_at: '',
     },
     pin: [],
     user: {

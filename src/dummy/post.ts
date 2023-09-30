@@ -25,6 +25,7 @@ export const postDemo: LoadPost[] = [
       bookmark_users: [],
       is_bookmarked: false,
       comment_count: 3,
+      created_at: '',
     },
     pin: [
       {
@@ -66,6 +67,7 @@ export const postDemo: LoadPost[] = [
       is_bookmarked: false,
       bookmark_users: [],
       comment_count: 3,
+      created_at: '',
     },
     pin: [
       {
@@ -110,6 +112,7 @@ export const postDemo: LoadPost[] = [
       is_bookmarked: false,
       bookmark_users: [],
       comment_count: 3,
+      created_at: '',
     },
     pin: [
       {
@@ -156,6 +159,7 @@ export const postDemo: LoadPost[] = [
       is_bookmarked: false,
       bookmark_users: [],
       comment_count: 3,
+      created_at: '',
     },
     pin: [
       {
@@ -195,6 +199,7 @@ export const postDemo: LoadPost[] = [
       is_bookmarked: false,
       bookmark_users: [],
       comment_count: 3,
+      created_at: '',
     },
     pin: [
       {
@@ -237,6 +242,7 @@ export const postDemo: LoadPost[] = [
       is_bookmarked: false,
       bookmark_users: [],
       comment_count: 3,
+      created_at: '',
     },
     pin: [
       {

@@ -79,6 +79,7 @@ export interface LoadPost {
     is_bookmarked: boolean
     bookmark_users: string[]
     comment_count: number
+    created_at: string
   }
   pin: LoadPin[]
   user: {
