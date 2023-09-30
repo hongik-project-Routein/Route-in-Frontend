@@ -27,7 +27,7 @@ export default function UserRecommendExploreArticle(
   const [posts, setPosts] = useState<LoadPost[]>([])
 
   const { curPageItem, renderSSPagination } = useSSPagination<LoadPost>(
-    `/api/post/`,
+    `/api/post/?`,
     6
   )
 

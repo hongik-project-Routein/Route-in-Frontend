@@ -24,7 +24,7 @@ export default function SearchUserArticle(
   >([])
 
   const { curPageItem, renderSSPagination } = useSSPagination<SearchUserType>(
-    `/api/user/?search=${keyword.toLocaleLowerCase()}`,
+    `/api/user/?search=${keyword.toLocaleLowerCase()}&`,
     6
   )
 
