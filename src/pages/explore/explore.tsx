@@ -1,35 +1,59 @@
 import React, { useState, useEffect } from 'react'
-import UserRecommendExploreArticle from './userRecommendExplore'
-import LocationExploreArticle from './locationExplore'
-import useTab from '../../recoil/hooks/useTab'
+import styled from 'styled-components'
+import PostSmall from '../../components/post/postSmall'
+import { type LoadPost } from '../../types/postTypes'
+import useSSPagination from '../../hooks/useSSPagination'
+import useUser from '../../recoil/hooks/useUser'
 
 export default function Explore(): JSX.Element {
-  const { explore, changeExploreTabIndex } = useTab()
+  const [posts, setPosts] = useState<LoadPost[]>([])
+  const { loadUserInfo } = useUser()
 
-  const [selectedTabIndex, setSelectedTabIndex] = useState<number>(explore)
+  const { curPageItem, renderSSPagination } = useSSPagination<LoadPost>(
+    `/api/post/?`,
+    6
+  )
 
-  const handleTabClick = (index: number): void => {
-    setSelectedTabIndex(index)
-    changeExploreTabIndex(index)
-  }
   useEffect(() => {
-    setSelectedTabIndex(explore)
-  }, [selectedTabIndex])
+    setPosts(curPageItem)
+  }, [curPageItem])
+
   return (
-    <>
-      {selectedTabIndex === 0 ? (
-        <UserRecommendExploreArticle
-          handleTabfunc={handleTabClick}
-          tabIndex={selectedTabIndex}
-        />
-      ) : selectedTabIndex === 1 ? (
-        <LocationExploreArticle
-          handleTabfunc={handleTabClick}
-          tabIndex={selectedTabIndex}
-        />
-      ) : (
-        <div>잘못된 접근</div>
-      )}
-    </>
+    <Container>
+      <ExploreHeader>
+        <RecommandationMent>
+          {`${loadUserInfo().uname}님의 성향에 맞는 게시물을 추천합니다.`}
+        </RecommandationMent>
+      </ExploreHeader>
+
+      <RecommandationResultGrid>
+        {posts !== undefined
+          ? posts.map((post, idx) => <PostSmall key={idx} loadPost={post} />)
+          : null}
+      </RecommandationResultGrid>
+      {renderSSPagination()}
+    </Container>
   )
 }
+
+const Container = styled.div`
+  width: 100%;
+`
+
+const ExploreHeader = styled.header`
+  font-size: 20px;
+  margin-top: 78px;
+  margin-bottom: 30px;
+`
+
+const RecommandationMent = styled.div`
+  margin-bottom: 50px;
+`
+
+const RecommandationResultGrid = styled.div`
+  display: grid;
+  grid-template-rows: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 46px;
+  width: 900px;
+`
