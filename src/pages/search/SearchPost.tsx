@@ -52,9 +52,6 @@ export default function SearchPostArticle(
       />
       <SearchResultTitle>
         <SearchResultKeyword>{keyword}</SearchResultKeyword>
-        {keyword === ''
-          ? `검색어를 입력하세요`
-          : `와 관련된 게시글을 추천합니다.`}
       </SearchResultTitle>
       <SearchResultGrid>
         {searchResult !== undefined

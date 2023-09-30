@@ -47,7 +47,6 @@ export default function SearchUserArticle(
       />
       <SearchResultTitle>
         <SearchResultKeyword>{keyword}</SearchResultKeyword>
-        {keyword === '' ? `검색어를 입력하세요` : `유저를 검색합니다.`}
       </SearchResultTitle>
       <SearchResultGrid>
         {searchResult !== undefined
