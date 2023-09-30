@@ -2,18 +2,21 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { request } from '../../util/axios'
 import EachRecommendUser from '../eachItem/EachRecommendUser'
-import { type RecommendUserType } from '../../types/userType'
+import {
+  type RecommendUser,
+  type RecommendUserType,
+} from '../../types/userType'
 
 export default function UserRecommend(): JSX.Element {
   const [userRecommend, setUserRecommend] = useState<RecommendUserType[]>([])
 
   const fetchData = async (): Promise<RecommendUserType[]> => {
     try {
-      const response = await request<RecommendUserType[]>(
+      const response = await request<RecommendUser>(
         'get',
         `/api/recommend/user/`
       )
-      return response
+      return response.results
     } catch (error) {
       console.log(error)
       throw error
@@ -23,8 +26,6 @@ export default function UserRecommend(): JSX.Element {
   useEffect(() => {
     const loadUserRecommend = async (): Promise<void> => {
       const result = await fetchData()
-      console.log(result)
-
       setUserRecommend(result)
     }
     loadUserRecommend().catch((error) => {

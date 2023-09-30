@@ -14,6 +14,13 @@ export interface UserData {
   post_set: LoadPost[]
 }
 
+export interface RecommendUser {
+  count: number
+  next?: string
+  previous?: string
+  results: RecommendUserType[]
+}
+
 export interface RecommendUserType {
   uname: string
   id: number
