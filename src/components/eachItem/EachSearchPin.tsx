@@ -11,6 +11,7 @@ interface EachSearchPinProps {
 }
 
 function EachSearchPin(props: EachSearchPinProps): JSX.Element {
+  const link = props.loadPin.post_id.toString()
   return (
     <div>
       <PersonalInfoContainer>
@@ -33,9 +34,7 @@ function EachSearchPin(props: EachSearchPinProps): JSX.Element {
       <PostImageContainer>
         <PinImage src={props.loadPin.image} />
       </PostImageContainer>
-      <PostDetailLink to={`/post/${props.loadPin.post_id}`}>
-        상세 게시물로
-      </PostDetailLink>
+      <PostDetailLink to={`/post/${link}`}>상세 게시물로</PostDetailLink>
     </div>
   )
 }
