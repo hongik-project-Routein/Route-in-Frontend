@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react'
 import styled from 'styled-components'
+import theme from '../../styles/Theme'
 
 interface PostModalProps {
   postImage: JSX.Element
@@ -48,8 +49,8 @@ const StoryModalContainer = styled.div`
   height: 430px;
   z-index: 999;
 
-  background-color: rgb(0, 0, 0);
-  border: 1px solid black;
+  background-color: ${theme.colors.primary100};
+  border: none;
   border-radius: 8px;
 `
 

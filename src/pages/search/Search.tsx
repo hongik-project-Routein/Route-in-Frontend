@@ -6,6 +6,7 @@ import SearchUserArticle from './SearchUser'
 import { searchTabContents } from '../../components/util/searchTab'
 import useSearch from './../../recoil/hooks/useSearch'
 import useTab from '../../recoil/hooks/useTab'
+import styled from 'styled-components'
 
 export default function Search(): JSX.Element {
   const { search, changeSearchTabIndex } = useTab()
@@ -31,7 +32,7 @@ export default function Search(): JSX.Element {
   }, [selectedTabIndex])
 
   return (
-    <>
+    <Container>
       {selectedTabIndex === 0 ? (
         <SearchPostArticle
           handleTabfunc={handleTabClick}
@@ -55,6 +56,10 @@ export default function Search(): JSX.Element {
       ) : (
         <div>잘못된 접근</div>
       )}
-    </>
+    </Container>
   )
 }
+
+const Container = styled.div`
+  width: 100%;
+`
