@@ -13,3 +13,18 @@ export interface UserData {
   follower_set: string[]
   post_set: LoadPost[]
 }
+
+export interface RecommendUserType {
+  uname: string
+  id: number
+  last_login: string
+  email: string
+  name: string
+  introduction: string
+  age: number
+  gender: string
+  image: string
+  following_set: string[]
+  follower_set: string[]
+  sim_users: string[]
+}

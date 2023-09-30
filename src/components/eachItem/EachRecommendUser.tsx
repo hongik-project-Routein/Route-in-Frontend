@@ -1,11 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
-import { type UserData } from './../../types/userType'
+import { type RecommendUserType } from './../../types/userType'
 import FollowButton from '../follow/followButton'
 
 interface EachRecommendUserProps {
-  eachUser: UserData
+  eachUser: RecommendUserType
 }
 
 function EachRecommendUser(props: EachRecommendUserProps): JSX.Element {
@@ -18,7 +18,9 @@ function EachRecommendUser(props: EachRecommendUserProps): JSX.Element {
         <Link to={`/profile/${props.eachUser.uname}`}>
           <Nickname>{props.eachUser.uname}</Nickname>
         </Link>
-        <FollowRecommend>{`soomineom님 외 5명이 팔로우합니다.`}</FollowRecommend>
+        {props.eachUser.sim_users.length > 0 && (
+          <FollowRecommend>{`${props.eachUser.sim_users[0]}님 포함 ${props.eachUser.sim_users.length}명이 팔로우합니다.`}</FollowRecommend>
+        )}
       </TextContainer>
       <FollowButton uname={props.eachUser.uname} />
     </RecommendRow>
