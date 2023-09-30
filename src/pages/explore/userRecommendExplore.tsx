@@ -3,8 +3,8 @@ import styled from 'styled-components'
 import PostSmall from '../../components/post/postSmall'
 import Tab from '../../components/util/tab'
 import theme from '../../styles/Theme'
-import { postDemo } from '../../dummy/post'
 import { type LoadPost } from '../../types/postTypes'
+import useSSPagination from '../../hooks/useSSPagination'
 
 interface TabContent {
   tabName: string
@@ -23,18 +23,19 @@ export default function UserRecommendExploreArticle(
     { tabName: '추천', link: '/explore/recommend' },
     { tabName: '현재 위치', link: '/explore/location' },
   ]
-  // 더미 데이터 용
+
   const [posts, setPosts] = useState<LoadPost[]>([])
-  const loadPost = (): void => {
-    const post: LoadPost[] = postDemo
-    const select = post.filter((item) => item.post.id >= 4)
-    setPosts(select)
-  }
+
+  const { curPageItem, renderSSPagination } = useSSPagination<LoadPost>(
+    `/api/post/`,
+    6
+  )
+
   useEffect(() => {
-    loadPost()
-  }, [posts])
+    setPosts(curPageItem)
+  }, [curPageItem])
   return (
-    <>
+    <Container>
       <ExploreHeader>
         <Hashtags>
           <Hashtag>#야구장</Hashtag>
@@ -55,9 +56,14 @@ export default function UserRecommendExploreArticle(
           ? posts.map((post, idx) => <PostSmall key={idx} loadPost={post} />)
           : null}
       </RecommandationResultGrid>
-    </>
+      {renderSSPagination()}
+    </Container>
   )
 }
+
+const Container = styled.div`
+  width: 100%;
+`
 
 const ExploreHeader = styled.header`
   font-size: 20px;

@@ -3,8 +3,8 @@ import styled from 'styled-components'
 import Tab from '../../components/util/tab'
 import PostSmall from '../../components/post/postSmall'
 import { type LoadPost } from '../../types/postTypes'
-import useUser from '../../recoil/hooks/useUser'
 import useSSPagination from '../../hooks/useSSPagination'
+import { useParams } from 'react-router-dom'
 
 interface TabContent {
   tabName: string
@@ -19,19 +19,25 @@ interface ProfileBookmarkArticleProps {
 export default function ProfileBookmarkArticle(
   props: ProfileBookmarkArticleProps
 ): JSX.Element {
-  const { loadUserInfo } = useUser()
-  const uname = loadUserInfo().uname
+  const { username } = useParams()
 
   const tabContents: TabContent[] = [
-    { tabName: '지도', link: `/profile/${uname ?? ''}/map` },
-    { tabName: '게시글', link: `/profile/${uname ?? ''}/post` },
-    { tabName: '북마크', link: `/profile/${uname ?? ''}/bookmark` },
+    { tabName: '지도', link: `/profile/${username ?? ''}/map` },
+    { tabName: '게시글', link: `/profile/${username ?? ''}/post` },
+    { tabName: '북마크', link: `/profile/${username ?? ''}/bookmark` },
   ]
 
   const { curPageItem, renderSSPagination } = useSSPagination<LoadPost>(
-    `/api/user/${uname}/bookmark`,
+    `/api/user/${username as string}/bookmark`,
     6
   )
+
+  // 백에서 게시글 생성 시간을 보내주어야 정렬 가능
+  // const sortByCreatedAt = (a: LoadPost, b: LoadPost): number => {
+  //   if (moment(a.created_at) < moment(b.created_at)) return 1
+  //   if (moment(a.created_at) > moment(b.created_at)) return -1
+  //   return 0
+  // }
 
   return (
     <>
@@ -41,7 +47,7 @@ export default function ProfileBookmarkArticle(
         handleTabfunc={props.handleTabfunc}
       />
       <TabArticle>
-        {curPageItem.length > 0
+        {curPageItem !== undefined && curPageItem.length > 0
           ? curPageItem.map((post, idx) => (
               <PostSmall key={idx} loadPost={post} />
             ))
