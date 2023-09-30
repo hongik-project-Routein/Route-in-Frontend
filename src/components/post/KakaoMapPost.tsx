@@ -81,7 +81,7 @@ export default function KakaoMapPost(props: KakaomapPostProps): JSX.Element {
                     onMouseOver={() => {
                       changeIndex(idx)
                     }}
-                  />
+                  ></MapMarker>
                 ))}
               </>
             )}
