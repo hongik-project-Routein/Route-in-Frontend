@@ -37,7 +37,7 @@ export default function SearchPostArticle(
   }, [curPageItem])
 
   return (
-    <>
+    <Container>
       <SearchWindow />
       <SearchTab
         tabIndex={props.tabIndex}
@@ -57,9 +57,13 @@ export default function SearchPostArticle(
           : null}
       </SearchResultGrid>
       {renderSSPagination()}
-    </>
+    </Container>
   )
 }
+
+const Container = styled.div`
+  width: 100%;
+`
 
 const SearchResultTitle = styled.h2`
   margin-bottom: 30px;
