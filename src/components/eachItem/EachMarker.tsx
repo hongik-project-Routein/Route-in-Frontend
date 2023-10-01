@@ -1,16 +1,27 @@
 import React, { useState } from 'react'
 import { CustomOverlayMap, MapMarker } from 'react-kakao-maps-sdk'
+import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 interface EachMarkerProps {
   point: kakao.maps.LatLng
   image: string
   size: string
+  goToPostDetail?: string
 }
 
 function EachMarker(props: EachMarkerProps): JSX.Element {
   const { point, image, size } = props
   const [visible, setVisible] = useState<boolean>(false)
+
+  const navigate = useNavigate()
+
+  const goToDetail = (): void => {
+    if (props.goToPostDetail === undefined) return
+
+    navigate(props.goToPostDetail)
+    window.location.reload()
+  }
 
   return (
     <>
@@ -23,6 +34,7 @@ function EachMarker(props: EachMarkerProps): JSX.Element {
         onMouseOut={() => {
           setVisible(false)
         }}
+        onClick={goToDetail}
       />
       {visible && (
         <CustomOverlayMap

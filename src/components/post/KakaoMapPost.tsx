@@ -65,7 +65,7 @@ export default function KakaoMapPost(props: KakaomapPostProps): JSX.Element {
           {points.length > 0 &&
             points.map((point, idx) => (
               <EachMarker
-                key={`marker-${idx}`}
+                key={`marker-${idx}-${point.getLat()}-${point.getLng()}`}
                 size={props.size}
                 point={point}
                 image={props.pinImages[idx]}

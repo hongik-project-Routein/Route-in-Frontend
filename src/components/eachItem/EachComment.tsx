@@ -42,9 +42,6 @@ function EachComment(props: EachCommentProps): JSX.Element {
 
   const isMyComment = props.comment.writer === loadUserInfo().uname
 
-  console.log(props.comment.id, 'created_at', props.comment.created_at)
-  console.log(props.comment.id, 'updated_at', props.comment.updated_at)
-
   const createdAt = moment(props.comment.created_at)
   const updatedAt = moment(props.comment.updated_at)
   const isUpdated = moment.duration(updatedAt.diff(createdAt)).asSeconds() > 10

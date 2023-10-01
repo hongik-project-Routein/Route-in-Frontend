@@ -42,6 +42,7 @@ export default function Profile(props: ProfileProps): JSX.Element {
   const handleIntroduction = async (): Promise<void> => {
     if (!activeModify) {
       try {
+        // 소개글 변경
         await request<string>(
           'put',
           `/api/user/${loadUserInfo().uname}/`,
@@ -52,6 +53,17 @@ export default function Profile(props: ProfileProps): JSX.Element {
             Authorization: `Bearer ${loadUserInfo().accessToken}`,
           }
         )
+        // 이미지 변경 url 받아서 요청 날리면 된다.
+        // await request<string>(
+        //   'put',
+        //   `/api/user/${loadUserInfo().uname}/`,
+        //   {
+        //     image: profileImage,
+        //   },
+        //   {
+        //     Authorization: `Bearer ${loadUserInfo().accessToken}`,
+        //   }
+        // )
         setIntroductionText(introductionText)
         setActiveModify(true)
       } catch (error) {

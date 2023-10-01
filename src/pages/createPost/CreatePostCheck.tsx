@@ -285,12 +285,15 @@ const LocationGroup = styled.div`
   align-items: center;
 `
 const WriteSpace = styled.div`
-  width: 350px;
+  width: 380px;
   height: 350px;
   padding: 8px 12px;
   border: 1px solid #d9d9d9;
   border-radius: 8px;
   white-space: pre-line;
+
+  overflow-x: hidden;
+  overflow-y: scroll;
 `
 
 const ButtonContainer = styled.div`

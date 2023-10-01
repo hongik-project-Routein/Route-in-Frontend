@@ -138,10 +138,13 @@ const LocationGroup = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 350px;
+  width: 380px;
   height: 350px;
   border: 1px solid #d9d9d9;
   border-radius: 8px;
+
+  overflow-x: hidden;
+  overflow-y: scroll;
 `
 
 const HashtagAutoTextContainer = styled.div`

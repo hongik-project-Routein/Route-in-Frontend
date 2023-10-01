@@ -66,11 +66,17 @@ export default PostInput
 const TextInput = styled(MentionsInput)`
   width: 350px;
   height: 350px;
-  padding: 8px;
   resize: none;
   outline: none;
-  border: 1px solid #d9d9d9;
-  border-radius: 8px;
+
+  textarea {
+    min-height: 100px;
+    padding: 8px;
+
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    outline: none;
+  }
 `
 
 const Suggestion = styled.div<{ focused: boolean }>`

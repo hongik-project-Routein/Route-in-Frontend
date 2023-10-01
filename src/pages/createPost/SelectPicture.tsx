@@ -152,11 +152,16 @@ export default function SelectPicture(): JSX.Element {
           const callback = (result: any, status: any): void => {
             if (status === kakao.maps.services.Status.OK) {
               // 결과에서 첫 번째의 주소와 장소 이름을 얻는다. placeId는 Geocoder서비스로 얻을 수 없어서 NaN
+              const getBuildingName = (result: any): string => {
+                if (result.road_address !== null) {
+                  return result.road_address.building_name.replace(/\s+/g, '_')
+                } else {
+                  return ''
+                }
+              }
+
               const addressResult = result[0].address.address_name
-              const buildingName = result[0].road_address.building_name.replace(
-                /\s+/g,
-                '_'
-              )
+              const buildingName = getBuildingName(result[0])
               let getPlaceId = NaN
 
               if (buildingName !== '') {

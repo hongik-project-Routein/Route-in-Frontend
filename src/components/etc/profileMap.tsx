@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { Map, MapMarker } from 'react-kakao-maps-sdk'
+import { Map } from 'react-kakao-maps-sdk'
 import styled from 'styled-components'
 import { type LoadPost } from '../../types/postTypes'
 import theme from '../../styles/Theme'
+import EachMarker from '../eachItem/EachMarker'
 
 interface ProfileMapProps {
   size: string
@@ -17,21 +18,27 @@ const color: Record<number, string> = {
   4: 'red',
 }
 
+interface IPoints {
+  point: kakao.maps.LatLng
+  image: string
+  id: number
+}
+
 export default function ProfileMapContent(props: ProfileMapProps): JSX.Element {
   const [map, setMap] = useState<kakao.maps.Map>()
-  const [points, setPoints] = useState<kakao.maps.LatLng[]>([])
+  const [points, setPoints] = useState<IPoints[]>([])
 
   const calculateCenter = (map: kakao.maps.Map): void => {
     if (props.posts.length > 0) {
-      const totalPoint: kakao.maps.LatLng[] = []
+      const totalPoint: IPoints[] = []
       props.posts.forEach((post, index) => {
-        const newPoints: kakao.maps.LatLng[] = makePolyLine(post, map, index)
+        const newPoints: IPoints[] = makePolyLine(post, map, index)
         totalPoint.push(...newPoints)
       })
 
       const bounds = new kakao.maps.LatLngBounds()
       totalPoint.forEach((point) => {
-        bounds.extend(point)
+        bounds.extend(point.point)
       })
       map.setBounds(bounds)
 
@@ -43,23 +50,28 @@ export default function ProfileMapContent(props: ProfileMapProps): JSX.Element {
     post: LoadPost,
     map: kakao.maps.Map,
     index: number
-  ): kakao.maps.LatLng[] => {
+  ): IPoints[] => {
     const bounds = new kakao.maps.LatLngBounds()
-    const newPoint: kakao.maps.LatLng[] = []
+    const newPoint: IPoints[] = []
+    const id = post.post.id
 
     post.pin
-      .map((pin) => ({ lat: pin.latitude, lng: pin.longitude }))
+      .map((pin) => ({
+        lat: pin.latitude,
+        lng: pin.longitude,
+        image: pin.image,
+      }))
       .forEach((GPSInfo) => {
-        const { lat, lng } = GPSInfo
+        const { lat, lng, image } = GPSInfo
         const point = new kakao.maps.LatLng(lat, lng)
         bounds.extend(point)
-        newPoint.push(point)
+        newPoint.push({ point, image, id })
       })
 
     map.setBounds(bounds)
 
     const polyline = new kakao.maps.Polyline({
-      path: newPoint,
+      path: newPoint.map((point) => point.point),
       strokeWeight: 5, // 선의 두께 입니다
       strokeColor: color[index % 5], // 선의 색깔입니다
       strokeOpacity: 0.7, // 선의 불투명도 입니다  1에서 0 사이의 값이며 0에 가까울수록 투명합니다
@@ -76,7 +88,9 @@ export default function ProfileMapContent(props: ProfileMapProps): JSX.Element {
     calculateCenter(map)
   }, [map])
 
-  console.log(props.posts)
+  useEffect(() => {
+    console.log(points)
+  }, [points])
 
   return (
     <KakaoMapPostContainer size={props.size}>
@@ -94,9 +108,12 @@ export default function ProfileMapContent(props: ProfileMapProps): JSX.Element {
           {points.length > 0 && (
             <>
               {points.map((point, idx) => (
-                <MapMarker
-                  key={`${point.getLat()}-${point.getLng()}`}
-                  position={{ lat: point.getLat(), lng: point.getLng() }}
+                <EachMarker
+                  key={`marker-${idx}-${point.point.getLat()}-${point.point.getLng()}`}
+                  size="582px"
+                  point={point.point}
+                  image={point.image}
+                  goToPostDetail={`/post/${point.id}`}
                 />
               ))}
             </>
