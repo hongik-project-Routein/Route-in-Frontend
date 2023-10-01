@@ -10,7 +10,7 @@ export default function Explore(): JSX.Element {
   const { loadUserInfo } = useUser()
 
   const { curPageItem, renderSSPagination } = useSSPagination<LoadPost>(
-    `/api/post/?`,
+    `/api/recommend/post/?`,
     6
   )
 
