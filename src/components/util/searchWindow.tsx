@@ -6,9 +6,10 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { useNavigate } from 'react-router-dom'
 import useSearch from '../../recoil/hooks/useSearch'
 import useInput from '../../hooks/useInput'
+import { Category } from '../../recoil/atom/search'
 
 export default function SearchWindow(): JSX.Element {
-  const { keyword, changeKeyword } = useSearch()
+  const { keyword, category, changeKeyword } = useSearch()
   const [inputKeyword, setInputKeyword, directChange] = useInput<
     string,
     HTMLInputElement
@@ -48,7 +49,9 @@ export default function SearchWindow(): JSX.Element {
       <InputKeyword
         value={inputKeyword}
         onChange={setInputKeyword}
-        placeholder="해시태그로 검색"
+        placeholder={
+          category !== Category.USER ? '해시태그로 검색' : '유저이름 검색'
+        }
       />
       <SearchButton type="submit">
         <FontAwesomeIcon icon={faMagnifyingGlass} />
