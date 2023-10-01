@@ -22,7 +22,9 @@ function EachRecommendUser(props: EachRecommendUserProps): JSX.Element {
           <FollowRecommend>{`${props.eachUser.sim_users[0]}님 포함 ${props.eachUser.sim_users.length}명이 팔로우합니다.`}</FollowRecommend>
         )}
       </TextContainer>
-      <FollowButton uname={props.eachUser.uname} />
+      <FollowBtnContainer>
+        <FollowButton uname={props.eachUser.uname} />
+      </FollowBtnContainer>
     </RecommendRow>
   )
 }
@@ -65,10 +67,8 @@ const FollowRecommend = styled.span`
   font-size: 12px;
 `
 
-// const FollowButton = styled.button`
-//   position: absolute;
-//   right: 30px;
-//   bottom: 9px;
-//   color: ${theme.colors.primaryColor};
-//   font-size: 12px;
-// `
+const FollowBtnContainer = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+`

@@ -16,6 +16,7 @@ export default function UserRecommend(): JSX.Element {
         'get',
         `/api/recommend/user/`
       )
+
       return response.results
     } catch (error) {
       console.log(error)

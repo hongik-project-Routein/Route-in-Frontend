@@ -14,15 +14,9 @@ export const UserHandler = [
   ),
 
   rest.get(
-    `${SERVER_BASE_URL as string}/api/user/recommend/:uname`,
+    `${SERVER_BASE_URL as string}/api/recommend/user/`,
     async (req, res, ctx) => {
-      const { uname } = req.params
-      const wholeUser = userDemo
-
-      const response = wholeUser.filter(
-        (user) => user.uname !== uname && user.uname !== 'Isabella'
-      )
-
+      const response = { results: userDemo }
       return await res(ctx.json(response))
     }
   ),
