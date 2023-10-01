@@ -6,7 +6,6 @@ import useSearch from './../../recoil/hooks/useSearch'
 import { type SearchUserType } from '../../types/postTypes'
 import useSSPagination from '../../hooks/useSSPagination'
 import EachSearchUser from '../../components/eachItem/EachSearchUser'
-import { useNavigate } from 'react-router-dom'
 
 interface SearchUserArticleProps {
   handleTabfunc: (index: number) => void
@@ -16,8 +15,7 @@ interface SearchUserArticleProps {
 export default function SearchUserArticle(
   props: SearchUserArticleProps
 ): JSX.Element {
-  const { keyword, changeKeyword } = useSearch()
-  const navigate = useNavigate()
+  const { keyword } = useSearch()
 
   const [searchResult, setSearchResult] = useState<
     SearchUserType[] | undefined
@@ -31,11 +29,6 @@ export default function SearchUserArticle(
   useEffect(() => {
     setSearchResult(curPageItem)
   }, [curPageItem, keyword])
-
-  useEffect(() => {
-    changeKeyword('')
-    navigate('/search')
-  }, [])
 
   return (
     <>

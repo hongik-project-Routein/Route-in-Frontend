@@ -6,9 +6,11 @@ import { searchTabContents } from '../../components/util/searchTab'
 import useSearch from './../../recoil/hooks/useSearch'
 import useTab from '../../recoil/hooks/useTab'
 import styled from 'styled-components'
+import { useNavigate } from 'react-router-dom'
 
 export default function Search(): JSX.Element {
   const { search, changeSearchTabIndex } = useTab()
+  const navigate = useNavigate()
 
   const { changeKeyword, changeCategory } = useSearch()
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(search)
@@ -18,13 +20,17 @@ export default function Search(): JSX.Element {
     changeSearchTabIndex(index)
     const newCategory = searchTabContents[index].category
     changeCategory(newCategory)
+
+    changeKeyword('')
+    navigate('/search')
   }
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search)
     const keyword = searchParams.get('q')
+
     changeKeyword(keyword ?? '')
-  }, [])
+  }, [window.location.search])
 
   useEffect(() => {
     setSelectedTabIndex(search)

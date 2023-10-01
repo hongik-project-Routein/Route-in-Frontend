@@ -1,9 +1,6 @@
 import React, { type FormEvent, useState } from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFaceSmile } from '@fortawesome/free-regular-svg-icons'
-import EmojiPicker, { type EmojiClickData } from 'emoji-picker-react'
 import { type LoadComment } from '../../types/postTypes'
 import EachComment from '../eachItem/EachComment'
 import { request } from '../../util/axios'
@@ -19,19 +16,10 @@ interface CommentProps {
 
 function Comment(props: CommentProps): JSX.Element {
   const [text, setText] = useState<string>('')
-  const [emojiClick, setEmojiClick] = useState(false)
   const { loadUserInfo } = useUser()
   const accessToken = loadUserInfo().accessToken
 
   const { postComment, enrollComment } = usePostDetail()
-
-  const EmojiButtonClick = (): void => {
-    setEmojiClick((cur) => !cur)
-  }
-  const onClick = (emojiData: EmojiClickData): void => {
-    setText((cur) => cur + emojiData.emoji)
-    setEmojiClick(false)
-  }
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault()
@@ -80,19 +68,6 @@ function Comment(props: CommentProps): JSX.Element {
             ))}
       </CommentContainer>
       <WriteCommentContainer onSubmit={onSubmit}>
-        <Emoji onClick={EmojiButtonClick}>
-          <FontAwesomeIcon icon={faFaceSmile} />
-        </Emoji>
-        {emojiClick && (
-          <EmojiPickerContainer>
-            <EmojiPicker
-              height={350}
-              width="100%"
-              autoFocusSearch={false}
-              onEmojiClick={onClick}
-            />
-          </EmojiPickerContainer>
-        )}
         <CommentInput value={text} setValue={setText} />
         <EnrollComment type="submit" disabled={text === ''}>
           게시
@@ -122,19 +97,6 @@ const WriteCommentContainer = styled.form`
   margin-bottom: 30px;
   border: 1px solid #d9d9d9;
   border-radius: 8px;
-`
-
-const Emoji = styled.button`
-  width: 25px;
-  height: 25px;
-  margin: 0 10px;
-  text-align: center;
-  font-size: 25px;
-`
-
-const EmojiPickerContainer = styled.div`
-  position: absolute;
-  top: 50px;
 `
 
 const EnrollComment = styled.button<{ disabled: boolean }>`

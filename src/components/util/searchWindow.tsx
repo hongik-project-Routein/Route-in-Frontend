@@ -9,9 +9,10 @@ import useInput from '../../hooks/useInput'
 
 export default function SearchWindow(): JSX.Element {
   const { keyword, changeKeyword } = useSearch()
-  const [inputKeyword, setInputKeyword] = useInput<string, HTMLInputElement>(
-    keyword
-  )
+  const [inputKeyword, setInputKeyword, directChange] = useInput<
+    string,
+    HTMLInputElement
+  >('')
 
   const navigate = useNavigate()
 
@@ -28,8 +29,19 @@ export default function SearchWindow(): JSX.Element {
 
   useEffect(() => {
     const url = window.location.href
-    if (!url.includes('?')) changeKeyword('')
+
+    if (!url.includes('?')) {
+      changeKeyword('')
+    } else {
+      const searchParams = new URLSearchParams(window.location.search)
+      const urlkeyword = searchParams.get('q') as string
+      changeKeyword(urlkeyword)
+    }
   }, [window.location.href])
+
+  useEffect(() => {
+    directChange(keyword)
+  }, [keyword])
 
   return (
     <SearchWindowContainer onSubmit={onSubmit}>

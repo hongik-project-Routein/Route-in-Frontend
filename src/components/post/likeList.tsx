@@ -11,8 +11,6 @@ interface LikeListProps {
 }
 
 function LikeList(props: LikeListProps): JSX.Element {
-  console.log(props.like_users)
-
   const [userInfo, setUserInfo] = useState<UserData[]>([])
 
   const { loadUserInfo } = useUser()

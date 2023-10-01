@@ -42,9 +42,12 @@ function EachComment(props: EachCommentProps): JSX.Element {
 
   const isMyComment = props.comment.writer === loadUserInfo().uname
 
+  console.log(props.comment.id, 'created_at', props.comment.created_at)
+  console.log(props.comment.id, 'updated_at', props.comment.updated_at)
+
   const createdAt = moment(props.comment.created_at)
   const updatedAt = moment(props.comment.updated_at)
-  const isUpdated = moment.duration(updatedAt.diff(createdAt)).asSeconds() > 1
+  const isUpdated = moment.duration(updatedAt.diff(createdAt)).asSeconds() > 10
 
   const updateCommentRef = useRef(null)
   const updateCommentOpen = useModal(updateCommentRef)
@@ -61,6 +64,20 @@ function EachComment(props: EachCommentProps): JSX.Element {
       deleteComment(id)
     } catch (error) {
       console.log(error)
+    }
+  }
+
+  const getLikeUsers = (): string[] => {
+    if (props.comment.is_liked) {
+      return Array.from(
+        new Set([...props.comment.like_users, loadUserInfo().uname])
+      )
+    } else {
+      return [
+        ...props.comment.like_users.filter(
+          (user) => user !== loadUserInfo().uname
+        ),
+      ]
     }
   }
 
@@ -81,15 +98,7 @@ function EachComment(props: EachCommentProps): JSX.Element {
           </Time>
           <HeartCount ref={likePeopleRef}>
             {`좋아요 ${props.comment.like_count}개`}
-            {likePeopleOpen ? (
-              <LikeList
-                like_users={
-                  props.comment.is_liked
-                    ? [...props.comment.like_users, loadUserInfo().uname]
-                    : props.comment.like_users
-                }
-              />
-            ) : null}
+            {likePeopleOpen ? <LikeList like_users={getLikeUsers()} /> : null}
           </HeartCount>
         </Rest>
       </CommentMain>

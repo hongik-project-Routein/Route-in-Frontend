@@ -69,6 +69,21 @@ export default function PostSmall(props: PostSmallProps): JSX.Element {
     }
   }
 
+  // like users 제대로 보이도록 설정
+  const getLikeUsers = (): string[] => {
+    if (likeStatus) {
+      return Array.from(
+        new Set([...props.loadPost.post.like_users, loadUserInfo().uname])
+      )
+    } else {
+      return [
+        ...props.loadPost.post.like_users.filter(
+          (user) => user !== loadUserInfo().uname
+        ),
+      ]
+    }
+  }
+
   useEffect(() => {
     setLikeCount(props.loadPost.post.like_count)
   }, [])
@@ -84,15 +99,7 @@ export default function PostSmall(props: PostSmallProps): JSX.Element {
           <CreatedAt>{calculateDate(props.loadPost.post.created_at)}</CreatedAt>
           <NumOfHeart ref={likePeopleRef}>
             {likeCount}
-            {likePeopleOpen ? (
-              <LikeList
-                like_users={
-                  likeStatus
-                    ? [...props.loadPost.post.like_users, loadUserInfo().uname]
-                    : props.loadPost.post.like_users
-                }
-              />
-            ) : null}
+            {likePeopleOpen ? <LikeList like_users={getLikeUsers()} /> : null}
           </NumOfHeart>
           <Icons>
             <Heart active={likeStatus} onClick={likeButtonClick}>
@@ -147,7 +154,7 @@ const Profile = styled.img`
 `
 
 const Nickname = styled.span`
-  margin-right: 20px;
+  margin-right: 10px;
   font-size: 16px;
 `
 
@@ -164,7 +171,7 @@ const CreatedAt = styled.div`
 
 const NumOfHeart = styled.div`
   font-size: 12px;
-  margin-right: 20px;
+  margin-right: 10px;
 
   &:hover {
     cursor: pointer;

@@ -71,6 +71,20 @@ export default function PostCard(props: PostCardProps): JSX.Element {
     }
   }
 
+  const getLikeUsers = (): string[] => {
+    if (likeStatus) {
+      return Array.from(
+        new Set([...props.loadPost.post.like_users, loadUserInfo().uname])
+      )
+    } else {
+      return [
+        ...props.loadPost.post.like_users.filter(
+          (user) => user !== loadUserInfo().uname
+        ),
+      ]
+    }
+  }
+
   useEffect(() => {
     setLikeCount(props.loadPost.post.like_count)
   }, [])
@@ -97,16 +111,7 @@ export default function PostCard(props: PostCardProps): JSX.Element {
               <NumOfLike ref={likePeopleRef}>
                 {likeCount}
                 {likePeopleOpen ? (
-                  <LikeList
-                    like_users={
-                      likeStatus
-                        ? [
-                            ...props.loadPost.post.like_users,
-                            loadUserInfo().uname,
-                          ]
-                        : props.loadPost.post.like_users
-                    }
-                  />
+                  <LikeList like_users={getLikeUsers()} />
                 ) : null}
               </NumOfLike>
             </LikeAndNumber>

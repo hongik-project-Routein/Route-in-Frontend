@@ -93,6 +93,20 @@ function PostDetailInner(): JSX.Element {
     }
   }
 
+  const getLikeUsers = (): string[] => {
+    if (postDetail.post.is_liked) {
+      return Array.from(
+        new Set([...postDetail.post.like_users, loadUserInfo().uname])
+      )
+    } else {
+      return [
+        ...postDetail.post.like_users.filter(
+          (user) => user !== loadUserInfo().uname
+        ),
+      ]
+    }
+  }
+
   return (
     <>
       <PersonalInfoContainer>
@@ -114,13 +128,7 @@ function PostDetailInner(): JSX.Element {
               <NumOfHeart ref={likePeopleRef}>
                 {postDetail.post.like_count}
                 {likePeopleOpen ? (
-                  <LikeList
-                    like_users={
-                      postDetail.post.is_liked
-                        ? [...postDetail.post.like_users, loadUserInfo().uname]
-                        : postDetail.post.like_users
-                    }
-                  />
+                  <LikeList like_users={getLikeUsers()} />
                 ) : null}
               </NumOfHeart>
             </HeartAndNumber>

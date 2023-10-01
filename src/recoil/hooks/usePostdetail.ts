@@ -40,7 +40,6 @@ function usePostDetail(): usePostDetailFunction {
             is_liked: likeStatus,
           },
         }
-        console.log(newPost)
 
         setPostDetail(newPost)
       } else {

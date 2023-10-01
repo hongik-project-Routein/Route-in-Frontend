@@ -65,11 +65,15 @@ function CommentInput(props: CommentInputProps): JSX.Element {
 export default CommentInput
 
 const TextInput = styled(MentionsInput)`
-  width: 600px;
+  width: 650px;
   height: 30px;
   margin-top: 10px;
   margin-right: 40px;
   padding: 10px;
+
+  input {
+    padding: 0 20px;
+  }
 `
 
 const Suggestion = styled.div<{ focused: boolean }>`
