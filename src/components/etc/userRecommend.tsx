@@ -17,6 +17,7 @@ export default function UserRecommend(): JSX.Element {
       const response = await request<RecommendUser>(
         'get',
         `/api/recommend/user/`,
+        null,
         {
           Authorization: `Bearer ${loadUserInfo().accessToken}`,
         }
