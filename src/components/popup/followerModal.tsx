@@ -71,7 +71,7 @@ const ModalContainer = styled.div`
   position: absolute;
   top: 30px;
   left: -125px;
-  z-index: 1;
+  z-index: 3;
   width: 333px;
   height: 560px;
   background-color: ${theme.colors.white};
