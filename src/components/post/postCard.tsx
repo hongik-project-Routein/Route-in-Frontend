@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart, faBookmark } from '@fortawesome/free-solid-svg-icons'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import theme from '../../styles/Theme'
 import KakaoMapPost from './KakaoMapPost'
 import { request } from '../../util/axios'
@@ -85,6 +85,13 @@ export default function PostCard(props: PostCardProps): JSX.Element {
     }
   }
 
+  const navigate = useNavigate()
+
+  const goDetail = (link: string): void => {
+    navigate(link)
+    window.location.reload()
+  }
+
   useEffect(() => {
     setLikeCount(props.loadPost.post.like_count)
   }, [])
@@ -135,10 +142,12 @@ export default function PostCard(props: PostCardProps): JSX.Element {
       <PostTextContainer>
         <ShowMoreText content={props.loadPost.post.content} />
       </PostTextContainer>
-      <PostComment>
-        <Link
-          to={`/post/${props.loadPost.post.id}`}
-        >{`댓글 ${props.loadPost.post.comment_count}개 모두 보기`}</Link>
+      <PostComment
+        onClick={() => {
+          goDetail(`/post/${props.loadPost.post.id}`)
+        }}
+      >
+        {`댓글 ${props.loadPost.post.comment_count}개 모두 보기`}
       </PostComment>
     </>
   )
@@ -256,4 +265,8 @@ const PostComment = styled.p`
   font-size: 16px;
   line-height: 30px;
   white-space: pre-line;
+
+  &:hover {
+    cursor: pointer;
+  }
 `

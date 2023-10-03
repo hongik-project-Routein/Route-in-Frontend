@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart, faBookmark } from '@fortawesome/free-solid-svg-icons'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import KakaoMapPost from './KakaoMapPost'
 import { type BookMarkType, type LoadPost } from '../../types/postTypes'
 import useUser from '../../recoil/hooks/useUser'
@@ -30,6 +30,13 @@ export default function PostSmall(props: PostSmallProps): JSX.Element {
 
   const likePeopleRef = useRef(null)
   const likePeopleOpen = useModal(likePeopleRef)
+
+  const navigate = useNavigate()
+
+  const goDetail = (link: string): void => {
+    navigate(link)
+    window.location.reload()
+  }
 
   const likeButtonClick = async (): Promise<void> => {
     try {
@@ -122,7 +129,11 @@ export default function PostSmall(props: PostSmallProps): JSX.Element {
           }))}
         ></KakaoMapPost>
       </PostImageContainer>
-      <PostDetailLink to={`/post/${props.loadPost.post.id}`}>
+      <PostDetailLink
+        onClick={() => {
+          goDetail(`/post/${props.loadPost.post.id}`)
+        }}
+      >
         상세 게시물로
       </PostDetailLink>
     </div>
@@ -207,9 +218,13 @@ const PostImageContainer = styled.div`
   margin-top: 20px;
 `
 
-const PostDetailLink = styled(Link)`
+const PostDetailLink = styled.div`
   display: inline-block;
   width: 100%;
   height: 50px;
   margin-top: 10px;
+
+  &:hover {
+    cursor: pointer;
+  }
 `

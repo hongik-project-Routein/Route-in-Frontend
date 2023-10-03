@@ -16,7 +16,7 @@ import Comment from '../comment/Comment'
 import Hashtag from '../util/hashtag'
 import { useSetRecoilState } from 'recoil'
 import { isUpdatePost } from '../../recoil/atom/updatePost'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import usePostDetail from './../../recoil/hooks/usePostdetail'
 import useModal from '../../hooks/useModal'
 import LikeList from './likeList'
@@ -111,9 +111,11 @@ function PostDetailInner(): JSX.Element {
     <>
       <PersonalInfoContainer>
         <UserContent>
-          <Profile src={postDetail.user.image} />
-          <Uname>{postDetail.post.writer}</Uname>
-          <DistanceFromMe>나와의 거리: {100}km</DistanceFromMe>
+          <FlexLink to={`/profile/${postDetail.post.writer}`}>
+            <Profile src={postDetail.user.image} />
+            <Uname>{postDetail.post.writer}</Uname>
+            <DistanceFromMe>나와의 거리: {100}km</DistanceFromMe>
+          </FlexLink>
           <CreatedAt>{calculateDate(postDetail.post.created_at)}</CreatedAt>
         </UserContent>
         <RestContent>
@@ -195,6 +197,11 @@ const Profile = styled.img`
   &:hover {
     cursor: pointer;
   }
+`
+
+const FlexLink = styled(Link)`
+  display: flex;
+  align-items: center;
 `
 
 const Uname = styled.span`
