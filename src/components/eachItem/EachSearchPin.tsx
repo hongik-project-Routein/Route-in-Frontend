@@ -54,7 +54,7 @@ function EachSearchPin(props: EachSearchPinProps): JSX.Element {
 
   const handleBookmarkButton = async (): Promise<void> => {
     try {
-      const response = await request<BookMarkType>(
+      await request<BookMarkType>(
         'post',
         `/api/post/${props.loadPin.post_id}/bookmark/`,
         null,
@@ -62,11 +62,24 @@ function EachSearchPin(props: EachSearchPinProps): JSX.Element {
           Authorization: `Bearer ${accessToken}`,
         }
       )
-      console.log(response)
 
       setbookmarkActive((prev) => !prev)
     } catch (error) {
       console.log(error)
+    }
+  }
+
+  const getLikeUsers = (): string[] => {
+    if (likeStatus) {
+      return Array.from(
+        new Set([...props.loadPin.like_users, loadUserInfo().uname])
+      )
+    } else {
+      return [
+        ...props.loadPin.like_users.filter(
+          (user) => user !== loadUserInfo().uname
+        ),
+      ]
     }
   }
 
@@ -84,15 +97,7 @@ function EachSearchPin(props: EachSearchPinProps): JSX.Element {
         <RestContent>
           <NumOfHeart ref={likePeopleRef}>
             {likeCount}
-            {likePeopleOpen ? (
-              <LikeList
-                like_users={
-                  likeStatus
-                    ? [...props.loadPin.like_users, loadUserInfo().uname]
-                    : props.loadPin.like_users
-                }
-              />
-            ) : null}
+            {likePeopleOpen ? <LikeList like_users={getLikeUsers()} /> : null}
           </NumOfHeart>
           <Icons>
             <Heart active={likeStatus} onClick={likeButtonClick}>
