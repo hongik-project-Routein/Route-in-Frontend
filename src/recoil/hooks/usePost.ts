@@ -11,7 +11,6 @@ import { coordinatePostSendType } from '../../types/sendPost'
 import { type AxiosError } from 'axios'
 import { request } from '../../util/axios'
 import useUser from './useUser'
-import { SERVER_BASE_URL } from '../../config'
 
 interface usePostFunction {
   pins: Pin[]
@@ -63,6 +62,8 @@ function usePost(): usePostFunction {
   const savePost = useCallback(async (diff: PostSendToBackend) => {
     const accessToken = loadUserInfo().accessToken
 
+    console.log(diff)
+
     try {
       const sendData: SendPostCoordinate = coordinatePostSendType(diff)
 
@@ -79,8 +80,6 @@ function usePost(): usePostFunction {
         formData.append(`pins[${index}]mapID`, pin.mapID)
       })
 
-      console.log(`${SERVER_BASE_URL as string}/api/post/create/`)
-
       await request('post', `/api/post/create/`, formData, {
         'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${accessToken}`,
@@ -91,6 +90,7 @@ function usePost(): usePostFunction {
       const err = error as AxiosError
       if (err.response != null) {
         console.log(`status: ${err.response.status}`)
+        console.log(err.response)
       }
       return false
     }

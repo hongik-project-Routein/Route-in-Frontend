@@ -6,15 +6,20 @@ import {
   type RecommendUser,
   type RecommendUserType,
 } from '../../types/userType'
+import useUser from '../../recoil/hooks/useUser'
 
 export default function UserRecommend(): JSX.Element {
   const [userRecommend, setUserRecommend] = useState<RecommendUserType[]>([])
+  const { loadUserInfo } = useUser()
 
   const fetchData = async (): Promise<RecommendUserType[]> => {
     try {
       const response = await request<RecommendUser>(
         'get',
-        `/api/recommend/user/`
+        `/api/recommend/user/`,
+        {
+          Authorization: `Bearer ${loadUserInfo().accessToken}`,
+        }
       )
 
       return response.results
