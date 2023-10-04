@@ -11,8 +11,9 @@ interface KakaomapPostProps {
 }
 
 export default function KakaoMapPost(props: KakaomapPostProps): JSX.Element {
-  const [map, setMap] = useState<kakao.maps.Map>()
+  const [map, setMap] = useState<kakao.maps.Map | undefined>(undefined)
   const [points, setPoints] = useState<kakao.maps.LatLng[]>([])
+  const [polylines, setPolylines] = useState<kakao.maps.Polyline | null>(null)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
   const calculateCenter = (map: kakao.maps.Map): void => {
@@ -29,23 +30,38 @@ export default function KakaoMapPost(props: KakaomapPostProps): JSX.Element {
 
       setPoints(newPoint)
       map.setBounds(bounds)
-
-      const polyline = new kakao.maps.Polyline({
-        path: newPoint,
-        strokeWeight: 5, // 선의 두께 입니다
-        strokeColor: 'red', // 선의 색깔입니다
-        strokeOpacity: 0.7, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
-        strokeStyle: 'solid', // 선의 스타일입니다
-      })
-
-      polyline.setMap(map)
     }
+  }
+
+  const makePolyline = (
+    map: kakao.maps.Map,
+    point: kakao.maps.LatLng[]
+  ): void => {
+    const polyline = new kakao.maps.Polyline({
+      path: point,
+      strokeWeight: 5, // 선의 두께 입니다
+      strokeColor: 'red', // 선의 색깔입니다
+      strokeOpacity: 0.7, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+      strokeStyle: 'solid', // 선의 스타일입니다
+    })
+
+    setPolylines(polyline)
+    polyline.setMap(map)
   }
 
   useEffect(() => {
     if (map === undefined) return
     calculateCenter(map)
   }, [map, props.pinImages])
+
+  useEffect(() => {
+    if (map === undefined) return
+    makePolyline(map, points)
+
+    return () => {
+      polylines?.setMap(null)
+    }
+  }, [points])
 
   return (
     <KakaoMapPostContainer size={props.size}>

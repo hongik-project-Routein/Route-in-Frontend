@@ -16,15 +16,6 @@ interface PostSmallProps {
   loadPost: LoadPost // 연결 시 LoadPostMainPage로 변경
 }
 
-interface IMapInfo {
-  pinCount: number
-  pinImages: string[]
-  latLng: Array<{
-    lat: number
-    lng: number
-  }>
-}
-
 export default function PostSmall(props: PostSmallProps): JSX.Element {
   const [likeCount, setLikeCount] = useState<number>(
     props.loadPost.post.like_count
@@ -33,8 +24,6 @@ export default function PostSmall(props: PostSmallProps): JSX.Element {
   const [bookmarkActive, setbookmarkActive] = useState(
     props.loadPost.post.is_bookmarked
   )
-
-  const [mapInfo, setMapInfo] = useState<IMapInfo>()
 
   const { loadUserInfo } = useUser()
   const accessToken = loadUserInfo().accessToken
@@ -105,15 +94,6 @@ export default function PostSmall(props: PostSmallProps): JSX.Element {
     setLikeCount(props.loadPost.post.like_count)
     setLikeStatus(props.loadPost.post.is_liked)
     setbookmarkActive(props.loadPost.post.is_bookmarked)
-
-    setMapInfo({
-      pinCount: props.loadPost.post.pin_count,
-      pinImages: props.loadPost.pin.map((pin) => pin.image),
-      latLng: props.loadPost.pin.map((pin) => ({
-        lat: pin.latitude,
-        lng: pin.longitude,
-      })),
-    })
   }, [props.loadPost.post.id])
 
   return (
@@ -140,14 +120,15 @@ export default function PostSmall(props: PostSmallProps): JSX.Element {
         </RestContent>
       </PersonalInfoContainer>
       <PostImageContainer>
-        {mapInfo !== undefined && (
-          <KakaoMapPost
-            size="300px"
-            pinCount={mapInfo.pinCount}
-            pinImages={mapInfo.pinImages}
-            latLng={mapInfo.latLng}
-          ></KakaoMapPost>
-        )}
+        <KakaoMapPost
+          size="300px"
+          pinCount={props.loadPost.post.pin_count}
+          pinImages={props.loadPost.pin.map((pin) => pin.image)}
+          latLng={props.loadPost.pin.map((pin) => ({
+            lat: pin.latitude,
+            lng: pin.longitude,
+          }))}
+        ></KakaoMapPost>
       </PostImageContainer>
       <PostDetailLink
         onClick={() => {
