@@ -60,15 +60,9 @@ function FollowButton(props: FollowButtonProps): JSX.Element {
 
   const onFollowButton = async (): Promise<void> => {
     try {
-      const response = await request(
-        'post',
-        `/api/user/${uname}/follow/`,
-        null,
-        {
-          Authorization: `Bearer ${loadUserInfo().accessToken}`,
-        }
-      )
-      console.log(response)
+      await request('post', `/api/user/${uname}/follow/`, null, {
+        Authorization: `Bearer ${loadUserInfo().accessToken}`,
+      })
       followStateChange()
     } catch (error) {
       console.log(error)

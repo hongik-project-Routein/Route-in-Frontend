@@ -42,8 +42,6 @@ export default function MyProfile(): JSX.Element {
   useEffect(() => {
     const loadUserInfo = async (): Promise<void> => {
       const result = await fetchData()
-      console.log(result)
-
       setUserProfile(result)
     }
 

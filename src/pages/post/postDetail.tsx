@@ -58,8 +58,6 @@ function PostDetailArticle({ postid }: PostDetailArticleProps): JSX.Element {
     })
   }, [])
 
-  console.log(post)
-
   return <PostDetailInner />
 }
 

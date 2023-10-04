@@ -55,7 +55,7 @@ export default function PostCard(props: PostCardProps): JSX.Element {
 
   const handleBookmarkButton = async (): Promise<void> => {
     try {
-      const response = await request<BookMarkType>(
+      await request<BookMarkType>(
         'post',
         `/api/post/${props.loadPost.post.id}/bookmark/`,
         null,
@@ -63,7 +63,6 @@ export default function PostCard(props: PostCardProps): JSX.Element {
           Authorization: `Bearer ${accessToken}`,
         }
       )
-      console.log(response)
 
       setbookmarkActive((prev) => !prev)
     } catch (error) {

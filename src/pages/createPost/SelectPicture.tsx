@@ -241,10 +241,6 @@ export default function SelectPicture(): JSX.Element {
     changePlace(newPost, imageUrls)
   }
 
-  // test용 Effect
-  useEffect(() => {
-    console.log(pinList)
-  }, [pinList])
   return (
     <>
       <Title>사진 선택</Title>

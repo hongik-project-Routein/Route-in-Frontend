@@ -41,7 +41,7 @@ function UpdateComment(props: UpdateCommentProps): JSX.Element {
     if (text === '') return
 
     try {
-      const response = await request(
+      await request(
         'put',
         `/api/comment/${props.comment.id}/`,
         { content: text, tagged_users: [], post: props.comment.post },
@@ -49,7 +49,6 @@ function UpdateComment(props: UpdateCommentProps): JSX.Element {
           Authorization: `Bearer ${accessToken}`,
         }
       )
-      console.log(response)
       window.location.reload() // 일단은 새로고침해서 반영하기
       setText('')
     } catch (error) {

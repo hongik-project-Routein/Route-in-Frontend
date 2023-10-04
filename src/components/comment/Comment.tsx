@@ -40,8 +40,6 @@ function Comment(props: CommentProps): JSX.Element {
         }
       )
 
-      console.log(response)
-
       if (response !== undefined) {
         enrollComment(response)
       }

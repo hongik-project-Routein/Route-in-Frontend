@@ -50,7 +50,6 @@ function useSSPagination<T>(
           Authorization: `Bearer ${loadUserInfo().accessToken}`,
         }
       )
-      console.log(response)
 
       setLength(response.count)
       return response.results

@@ -46,15 +46,9 @@ function ModifyMyInfo(): JSX.Element {
     }
 
     try {
-      const response = await request<string>(
-        'post',
-        `/api/user/initial_setting/`,
-        data,
-        {
-          Authorization: `Bearer ${loadUserInfo().accessToken}`,
-        }
-      )
-      console.log(response)
+      await request<string>('post', `/api/user/initial_setting/`, data, {
+        Authorization: `Bearer ${loadUserInfo().accessToken}`,
+      })
       window.location.reload()
     } catch (error) {
       console.log(error)

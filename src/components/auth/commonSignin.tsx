@@ -37,8 +37,6 @@ function CommonSignin(): JSX.Element {
         accessToken: response.access,
       }
 
-      console.log(response)
-
       login(userinfo)
 
       if (response.uname === null) {
@@ -50,7 +48,7 @@ function CommonSignin(): JSX.Element {
       const errorResponse = (error as AxiosError).response
       if (errorResponse !== undefined) {
         if (errorResponse.status === 400) {
-          alert('비밀번호가 일치하지 않습니다.')
+          alert('회원정보가 일치하지 않습니다. 다시 확인해주세요')
         }
       }
     }

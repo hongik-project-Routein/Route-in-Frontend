@@ -26,8 +26,6 @@ function Kakao(): JSX.Element {
   const kakaoOnSuccess = async (data: any): Promise<void> => {
     const token = data.response.access_token
 
-    console.log(token)
-
     const response = await request<Auth>(
       'post',
       '/accounts/kakao/callback/',
