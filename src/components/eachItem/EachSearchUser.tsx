@@ -2,14 +2,25 @@ import React from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
 import { type SearchUserType } from '../../types/postTypes'
+import { useNavigate } from 'react-router-dom'
 
 interface EachSearchUserProps {
   loadUser: SearchUserType
 }
 
 function EachSearchUser(props: EachSearchUserProps): JSX.Element {
+  const navigate = useNavigate()
+
+  const goProfile = (link: string): void => {
+    navigate(link)
+  }
+
   return (
-    <EachSearchUserContainer>
+    <EachSearchUserContainer
+      onClick={() => {
+        goProfile(`/profile/${props.loadUser.uname}/`)
+      }}
+    >
       <Profile src={props.loadUser.image} />
       <Rest>
         <Uname>{props.loadUser.uname}</Uname>

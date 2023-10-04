@@ -18,9 +18,6 @@ function EachRecommendUser(props: EachRecommendUserProps): JSX.Element {
         <Link to={`/profile/${props.eachUser.uname}`}>
           <Nickname>{props.eachUser.uname}</Nickname>
         </Link>
-        {props.eachUser.sim_users.length > 0 && (
-          <FollowRecommend>{`${props.eachUser.sim_users[0]}님 포함 ${props.eachUser.sim_users.length}명이 팔로우합니다.`}</FollowRecommend>
-        )}
       </TextContainer>
       <FollowBtnContainer>
         <FollowButton uname={props.eachUser.uname} />
@@ -61,10 +58,6 @@ const TextContainer = styled.div`
 const Nickname = styled.div`
   font-size: 16px;
   margin-bottom: 5px;
-`
-
-const FollowRecommend = styled.span`
-  font-size: 12px;
 `
 
 const FollowBtnContainer = styled.div`
