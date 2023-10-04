@@ -10,6 +10,7 @@ import useUser from '../../recoil/hooks/useUser'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPen } from '@fortawesome/free-solid-svg-icons'
 import { type UserData } from '../../types/userType'
+import FollowButton from '../follow/followButton'
 
 interface ProfileProps {
   isMyProfile: boolean
@@ -130,6 +131,8 @@ export default function Profile(props: ProfileProps): JSX.Element {
             >
               {activeModify ? '프로필 편집' : '저장'}
             </EditButton>
+            <Blank />
+            <FollowButton uname={props.userProfile.uname} />
           </NameAndEditBtn>
           <Statistics>
             <NumOfPosts>게시글 {props.userProfile?.post_set.length}</NumOfPosts>
@@ -217,6 +220,11 @@ const EditButton = styled.button<{ isMyProfile: boolean }>`
   color: ${theme.colors.white};
   font-size: 16px;
   font-weight: 400;
+`
+
+const Blank = styled.div`
+  width: 10px;
+  height: 10px;
 `
 
 const Statistics = styled.div`
