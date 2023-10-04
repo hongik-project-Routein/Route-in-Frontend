@@ -4,15 +4,14 @@ import PostSmall from '../../components/post/postSmall'
 import { type LoadPost } from '../../types/postTypes'
 import useSSPagination from '../../hooks/useSSPagination'
 import useUser from '../../recoil/hooks/useUser'
+import Loading from '../../components/util/loading'
 
 export default function Explore(): JSX.Element {
   const [posts, setPosts] = useState<LoadPost[]>([])
   const { loadUserInfo } = useUser()
 
-  const { curPageItem, renderSSPagination } = useSSPagination<LoadPost>(
-    `/api/recommend/post/?`,
-    6
-  )
+  const { loading, curPageItem, renderSSPagination } =
+    useSSPagination<LoadPost>(`/api/recommend/post/?`, 6)
 
   useEffect(() => {
     setPosts(curPageItem)
@@ -27,9 +26,11 @@ export default function Explore(): JSX.Element {
       </ExploreHeader>
 
       <RecommandationResultGrid>
-        {posts !== undefined
-          ? posts.map((post, idx) => <PostSmall key={idx} loadPost={post} />)
-          : null}
+        {loading ? (
+          <Loading />
+        ) : posts !== undefined ? (
+          posts.map((post, idx) => <PostSmall key={idx} loadPost={post} />)
+        ) : null}
       </RecommandationResultGrid>
       {renderSSPagination()}
     </Container>

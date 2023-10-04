@@ -11,6 +11,7 @@ import LikeList from './likeList'
 import { request } from '../../util/axios'
 import theme from '../../styles/Theme'
 import calculateDate from './../../constants/calculateDate'
+import FollowButton from '../follow/followButton'
 
 interface PostSmallProps {
   loadPost: LoadPost // 연결 시 LoadPostMainPage로 변경
@@ -102,6 +103,7 @@ export default function PostSmall(props: PostSmallProps): JSX.Element {
         <UserContent to={`/profile/${props.loadPost.post.writer}`}>
           <Profile src={props.loadPost.user.image} />
           <Nickname>{props.loadPost.post.writer}</Nickname>
+          <FollowButton uname={props.loadPost.post.writer} />
         </UserContent>
         <RestContent>
           <CreatedAt>{calculateDate(props.loadPost.post.created_at)}</CreatedAt>
@@ -155,9 +157,9 @@ const UserContent = styled(Link)`
 `
 
 const Profile = styled.img`
-  width: 56px;
-  height: 56px;
-  margin-right: 20px;
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
   border-radius: 50%;
   object-fit: cover;
   &:hover {

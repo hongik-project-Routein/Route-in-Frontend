@@ -93,7 +93,10 @@ export default function PostCard(props: PostCardProps): JSX.Element {
 
   useEffect(() => {
     setLikeCount(props.loadPost.post.like_count)
-  }, [])
+    setLikeStatus(props.loadPost.post.is_liked)
+    setbookmarkActive(props.loadPost.post.is_bookmarked)
+  }, [props.loadPost.post.id])
+
   return (
     <>
       <PersonalInfoContainer>
@@ -104,7 +107,6 @@ export default function PostCard(props: PostCardProps): JSX.Element {
           <Uname to={`/profile/${props.loadPost.post.writer}`}>
             {props.loadPost.post.writer}
           </Uname>
-          <DistanceFromMe>나와의 거리: {100}km</DistanceFromMe>
           <CreatedAt>{calculateDate(props.loadPost.post.created_at)}</CreatedAt>
           <FollowButton uname={props.loadPost.post.writer} />
         </UserContent>
@@ -188,11 +190,6 @@ const RestContent = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
-`
-
-const DistanceFromMe = styled.div`
-  font-size: 16px;
-  margin-right: 20px;
 `
 
 const Icons = styled.div`

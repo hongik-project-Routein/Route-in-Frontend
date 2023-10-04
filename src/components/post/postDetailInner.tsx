@@ -21,6 +21,7 @@ import usePostDetail from './../../recoil/hooks/usePostdetail'
 import useModal from '../../hooks/useModal'
 import LikeList from './likeList'
 import calculateDate from '../../constants/calculateDate'
+import FollowButton from '../follow/followButton'
 
 function PostDetailInner(): JSX.Element {
   const isSetUpdatePost = useSetRecoilState(isUpdatePost)
@@ -114,7 +115,7 @@ function PostDetailInner(): JSX.Element {
           <FlexLink to={`/profile/${postDetail.post.writer}`}>
             <Profile src={postDetail.user.image} />
             <Uname>{postDetail.post.writer}</Uname>
-            <DistanceFromMe>나와의 거리: {100}km</DistanceFromMe>
+            <FollowButton uname={postDetail.post.writer} />
           </FlexLink>
           <CreatedAt>{calculateDate(postDetail.post.created_at)}</CreatedAt>
         </UserContent>
@@ -213,10 +214,6 @@ const RestContent = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
-`
-
-const DistanceFromMe = styled.span`
-  font-size: 16px;
 `
 
 const Icons = styled.div`

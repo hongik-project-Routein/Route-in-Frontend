@@ -85,7 +85,6 @@ export default function Sidebar(): JSX.Element {
 const SidebarContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 60px;
   width: 260px;
   height: 100%;
   background-color: ${theme.colors.white};
@@ -93,6 +92,8 @@ const SidebarContainer = styled.div`
 const UserContainer = styled(Link)<{ active: boolean }>`
   display: flex;
   justify-content: flex-start;
+  margin-top: 95px;
+
   margin-bottom: 33px;
   padding: 40px 20px;
   border: ${(props) => (props.active ? '2px' : '1px')} solid
