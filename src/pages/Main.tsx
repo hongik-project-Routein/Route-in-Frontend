@@ -89,7 +89,7 @@ function Main(): JSX.Element {
         {posts !== undefined &&
           posts.length > 0 &&
           posts.map((post, idx) => <PostCard key={idx} loadPost={post} />)}
-        <div ref={ref}></div>
+        <Next ref={ref}></Next>
       </PostGrid>
       <RecommendGrid>
         <UserRecommend />
@@ -144,6 +144,11 @@ const Footer = styled.footer`
   text-align: center;
   white-space: pre-line;
   line-height: 24px;
+`
+
+const Next = styled.div`
+  width: 10px;
+  height: 10px;
 `
 
 export default Main

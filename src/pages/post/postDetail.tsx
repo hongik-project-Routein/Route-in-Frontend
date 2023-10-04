@@ -26,7 +26,7 @@ interface PostDetailArticleProps {
 }
 
 function PostDetailArticle({ postid }: PostDetailArticleProps): JSX.Element {
-  const [post, setPost] = useState<LoadPost>()
+  const [, setPost] = useState<LoadPost>()
   const { loadUserInfo } = useUser()
   const accessToken = loadUserInfo().accessToken
 
