@@ -106,6 +106,7 @@ function Main(): JSX.Element {
 
 const Grid = styled.div`
   display: grid;
+  position: relative;
   grid-template-columns: 3fr 5fr 4fr;
   grid-column-gap: 24px;
   grid-row-gap: 33px;
@@ -124,8 +125,9 @@ const HeaderGrid = styled.div`
 `
 const SidebarGrid = styled.div`
   grid-area: sidebar;
-  position: sticky;
-  top: 0;
+  position: fixed;
+  top: 95px;
+  left: 0;
   z-index: 20;
 `
 const PostGrid = styled.div`
