@@ -126,7 +126,7 @@ const HeaderGrid = styled.div`
 const SidebarGrid = styled.div`
   grid-area: sidebar;
   position: fixed;
-  top: 95px;
+  height: 100%;
   left: 0;
   z-index: 20;
 `

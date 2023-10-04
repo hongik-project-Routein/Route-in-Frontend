@@ -85,7 +85,10 @@ export default function Sidebar(): JSX.Element {
 const SidebarContainer = styled.div`
   display: flex;
   flex-direction: column;
+  margin-top: 60px;
   width: 260px;
+  height: 100%;
+  background-color: ${theme.colors.white};
 `
 const UserContainer = styled(Link)<{ active: boolean }>`
   display: flex;
