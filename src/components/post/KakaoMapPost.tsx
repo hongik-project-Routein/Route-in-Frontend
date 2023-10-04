@@ -45,7 +45,7 @@ export default function KakaoMapPost(props: KakaomapPostProps): JSX.Element {
   useEffect(() => {
     if (map === undefined) return
     calculateCenter(map)
-  }, [map])
+  }, [map, props.pinImages])
 
   return (
     <KakaoMapPostContainer size={props.size}>
