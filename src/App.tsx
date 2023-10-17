@@ -17,6 +17,7 @@ import SelectPicture from './pages/createPost/SelectPicture'
 import { useRecoilValue } from 'recoil'
 import user from './recoil/atom/user'
 import PrivateRoute from './privateRoute'
+import DummyPost from './pages/dev/dummyPost'
 
 function App(): JSX.Element {
   const isLogin = useRecoilValue(user).accessToken !== ''
@@ -38,6 +39,11 @@ function App(): JSX.Element {
       <Route path="/initial-setting" element={<InitialSetting />} />
 
       <Route element={<Layout />}>
+        {/* 더미 데이터 생성 */}
+        <Route
+          path="/post/dummycreate"
+          element={<PrivateRoute isLogin={isLogin} component={<DummyPost />} />}
+        />
         {/* 게시글 생성 */}
         <Route
           path="/post/:postid"
