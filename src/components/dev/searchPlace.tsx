@@ -50,6 +50,10 @@ function SearchPlace({
     setValue(`pins.${order}.latitude`, searchResult[resultIndex].y)
     setValue(`pins.${order}.longitude`, searchResult[resultIndex].x)
     setValue(`pins.${order}.mapID`, searchResult[resultIndex].id)
+    setValue(
+      `pins.${order}.pin_hashtag`,
+      searchResult[resultIndex].place_name.replace(/\s+/g, '_')
+    )
     closeModal()
   }
 

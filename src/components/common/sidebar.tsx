@@ -87,6 +87,7 @@ const SidebarContainer = styled.div`
   flex-direction: column;
   width: 260px;
   height: 100%;
+
   background-color: ${theme.colors.white};
 `
 const UserContainer = styled(Link)<{ active: boolean }>`
