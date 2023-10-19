@@ -20,35 +20,38 @@ function DummyPin({ register, order, setValue }: IDummyPinProps): JSX.Element {
     <Container>
       <h2>핀 {order + 1}</h2>
       <label htmlFor="image">이미지 입력</label>
-      <input id="image" type="file" {...register(`pins.${order}.image`)} />
+      <input
+        id="image"
+        type="file"
+        {...register(`pins.${order}.image`, { required: true })}
+      />
       <SearchPlaceBtn ref={modalRef} onClick={changeModalState}>
         장소 검색
       </SearchPlaceBtn>
       <input
         type="text"
         placeholder="핀 해시태그"
-        {...register(`pins.${order}.pin_hashtag`)}
+        {...register(`pins.${order}.pin_hashtag`, { required: true })}
       />
       <input
         type="text"
         placeholder="핀 본문"
-        {...register(`pins.${order}.content`)}
+        {...register(`pins.${order}.content`, { required: true })}
       />
       <input
-        type="number"
+        type="text"
         placeholder="위도"
-        {...register(`pins.${order}.latitude`)}
+        {...register(`pins.${order}.latitude`, { required: true })}
       />
       <input
-        id="longitude"
-        type="number"
+        type="text"
         placeholder="경도"
-        {...register(`pins.${order}.longitude`)}
+        {...register(`pins.${order}.longitude`, { required: true })}
       />
       <input
         type="text"
         placeholder="mapId"
-        {...register(`pins.${order}.mapID`)}
+        {...register(`pins.${order}.mapID`, { required: true })}
       />
       <div ref={modalRef}>
         {modalOpen && (

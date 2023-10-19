@@ -15,8 +15,8 @@ export interface IPinForm {
   image: FileList
   pin_hashtag: string
   content: string
-  latitude: number
-  longitude: number
+  latitude: string
+  longitude: string
   mapID: string
 }
 
@@ -27,7 +27,7 @@ function DummyData(): JSX.Element {
 
   const { register, handleSubmit, reset, setValue } = useForm<IDataForm>()
 
-  const onSubmit = async (data: IDataForm): Promise<void> => {
+  const onValid = async (data: IDataForm): Promise<void> => {
     console.log(data)
 
     const formData = new FormData()
@@ -38,8 +38,8 @@ function DummyData(): JSX.Element {
       formData.append(`pins[${index}]image`, pin.image[0], pin.image[0].name) // File 객체를 직접 추가
       formData.append(`pins[${index}]pin_hashtag`, pin.pin_hashtag)
       formData.append(`pins[${index}]content`, pin.content)
-      formData.append(`pins[${index}]latitude`, pin.latitude.toString())
-      formData.append(`pins[${index}]longitude`, pin.longitude.toString())
+      formData.append(`pins[${index}]latitude`, pin.latitude)
+      formData.append(`pins[${index}]longitude`, pin.longitude)
       formData.append(`pins[${index}]mapID`, pin.mapID)
     })
 
@@ -56,6 +56,11 @@ function DummyData(): JSX.Element {
       setLoading(false)
     }
   }
+
+  const onInValid = (): void => {
+    alert('모든 값을 입력해주세요')
+  }
+
   const [pinCount, setPinCount] = useState<number>(1)
 
   const handlePinCount = (event: React.FormEvent<HTMLInputElement>): void => {
@@ -82,14 +87,14 @@ function DummyData(): JSX.Element {
       {loading ? (
         <Loading />
       ) : (
-        <Container onSubmit={handleSubmit(onSubmit)}>
+        <Container onSubmit={handleSubmit(onValid, onInValid)}>
           <h1>더미 데이터 생성</h1>
           <h2>게시글</h2>
           <input
             style={{ width: '500px' }}
             placeholder="본문"
             type="text"
-            {...register('content')}
+            {...register('content', { required: true })}
           />
           <input
             style={{ width: '500px' }}

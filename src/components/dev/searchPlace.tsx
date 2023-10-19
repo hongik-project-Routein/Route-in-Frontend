@@ -60,7 +60,9 @@ function SearchPlace({
   return (
     <SearchPlaceModalContainer>
       <ModalHeader>
-        <CloseButton onClick={closeModal}>X</CloseButton>
+        <CloseButton type="button" onClick={closeModal}>
+          X
+        </CloseButton>
       </ModalHeader>
       <SearchBarContainer>
         <SearchBar
@@ -69,7 +71,11 @@ function SearchPlace({
           onChange={onChange}
           onKeyPress={handleKeyPress}
         />
-        <SearchButton onClick={searchPlace} disabled={keyword === ''}>
+        <SearchButton
+          type="button"
+          onClick={searchPlace}
+          disabled={keyword === ''}
+        >
           검색
         </SearchButton>
       </SearchBarContainer>
@@ -110,6 +116,7 @@ function SearchPlace({
         </MapContainer>
       </SearchResultContainer>
       <SelectPlaceButton
+        type="button"
         onClick={setPlace}
         disabled={searchResult === undefined}
       >
