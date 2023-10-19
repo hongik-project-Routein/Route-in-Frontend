@@ -47,10 +47,10 @@ function EachComment(props: EachCommentProps): JSX.Element {
   const isUpdated = moment.duration(updatedAt.diff(createdAt)).asSeconds() > 10
 
   const updateCommentRef = useRef(null)
-  const updateCommentOpen = useModal(updateCommentRef)
+  const { modalOpen: updateCommentOpen } = useModal(updateCommentRef)
 
   const likePeopleRef = useRef(null)
-  const likePeopleOpen = useModal(likePeopleRef)
+  const { modalOpen: likePeopleOpen } = useModal(likePeopleRef)
 
   const deleteCommentReq = async (id: number): Promise<void> => {
     try {

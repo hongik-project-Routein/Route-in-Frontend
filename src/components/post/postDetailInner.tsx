@@ -38,7 +38,7 @@ function PostDetailInner(): JSX.Element {
   }
 
   const likePeopleRef = useRef(null)
-  const likePeopleOpen = useModal(likePeopleRef)
+  const { modalOpen: likePeopleOpen } = useModal(likePeopleRef)
 
   // 좋아요
   const likeButtonClick = async (): Promise<void> => {

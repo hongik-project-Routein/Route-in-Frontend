@@ -30,7 +30,7 @@ export default function PostSmall(props: PostSmallProps): JSX.Element {
   const accessToken = loadUserInfo().accessToken
 
   const likePeopleRef = useRef(null)
-  const likePeopleOpen = useModal(likePeopleRef)
+  const { modalOpen: likePeopleOpen } = useModal(likePeopleRef)
 
   const navigate = useNavigate()
 

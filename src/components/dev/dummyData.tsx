@@ -25,7 +25,7 @@ function DummyData(): JSX.Element {
   const accessToken = loadUserInfo().accessToken
   const [loading, setLoading] = useState<boolean>(false)
 
-  const { register, handleSubmit, reset } = useForm<IDataForm>()
+  const { register, handleSubmit, reset, setValue } = useForm<IDataForm>()
 
   const onSubmit = async (data: IDataForm): Promise<void> => {
     console.log(data)
@@ -65,7 +65,14 @@ function DummyData(): JSX.Element {
   const handlePinInput = (): JSX.Element[] => {
     const pin = []
     for (let i = 0; i < pinCount; i++) {
-      pin.push(<DummyPin key={`dummy-${i}`} order={i} register={register} />)
+      pin.push(
+        <DummyPin
+          key={`dummy-${i}`}
+          order={i}
+          register={register}
+          setValue={setValue}
+        />
+      )
     }
     return pin
   }

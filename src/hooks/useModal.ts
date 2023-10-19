@@ -1,6 +1,12 @@
-import { type RefObject, useEffect, useState } from 'react'
+import { type RefObject, useEffect, useState, useCallback } from 'react'
 
-function useModal(modalRef: RefObject<HTMLDivElement>): boolean {
+interface useModalReturn {
+  modalOpen: boolean
+  closeModal: () => void
+  changeModalState: () => void
+}
+
+function useModal(modalRef: RefObject<HTMLDivElement>): useModalReturn {
   const [modalOpen, setModalOpen] = useState<boolean>(false)
 
   useEffect(() => {
@@ -25,7 +31,15 @@ function useModal(modalRef: RefObject<HTMLDivElement>): boolean {
     }
   }, [modalRef])
 
-  return modalOpen
+  const closeModal = useCallback(() => {
+    setModalOpen(false)
+  }, [])
+
+  const changeModalState = useCallback(() => {
+    setModalOpen((prev) => !prev)
+  }, [])
+
+  return { modalOpen, closeModal, changeModalState }
 }
 
 export default useModal

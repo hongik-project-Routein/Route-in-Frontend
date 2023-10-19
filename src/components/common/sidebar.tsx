@@ -92,7 +92,6 @@ const SidebarContainer = styled.div`
 const UserContainer = styled(Link)<{ active: boolean }>`
   display: flex;
   justify-content: flex-start;
-  margin-top: 95px;
 
   margin-bottom: 33px;
   padding: 40px 20px;

@@ -15,7 +15,7 @@ function Setting(): JSX.Element {
   const navigate = useNavigate()
 
   const blockUserRef = useRef(null)
-  const blockModal = useModal(blockUserRef)
+  const { modalOpen: blockModal } = useModal(blockUserRef)
 
   const [isShowModifyUserinfo, setIsShowModifyUserinfo] =
     useState<boolean>(false)

@@ -10,7 +10,7 @@ import useUser from '../../recoil/hooks/useUser'
 
 export default function Header(): JSX.Element {
   const noticeRef = useRef<HTMLDivElement>(null)
-  const modalOpen = useModal(noticeRef)
+  const { modalOpen } = useModal(noticeRef)
   const { logout } = useUser()
   const navigate = useNavigate()
 

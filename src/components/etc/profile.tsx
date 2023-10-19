@@ -31,8 +31,8 @@ export default function Profile(props: ProfileProps): JSX.Element {
   const followingRef = useRef<HTMLDivElement>(null)
 
   // 팔로잉 모달
-  const followModalOpen = useModal(followerRef)
-  const followingModalOpen = useModal(followingRef)
+  const { modalOpen: followModalOpen } = useModal(followerRef)
+  const { modalOpen: followingModalOpen } = useModal(followingRef)
 
   useEffect(() => {
     setActiveModify(props.isMyProfile)

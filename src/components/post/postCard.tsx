@@ -31,7 +31,7 @@ export default function PostCard(props: PostCardProps): JSX.Element {
   const accessToken = loadUserInfo().accessToken
 
   const likePeopleRef = useRef(null)
-  const likePeopleOpen = useModal(likePeopleRef)
+  const { modalOpen: likePeopleOpen } = useModal(likePeopleRef)
 
   const likeButtonClick = async (): Promise<void> => {
     try {
