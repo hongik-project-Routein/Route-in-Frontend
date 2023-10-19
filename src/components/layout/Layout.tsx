@@ -44,6 +44,7 @@ const HeaderGrid = styled.div`
 const SidebarGrid = styled.div`
   grid-area: sidebar;
   position: fixed;
+  top: 90px;
   left: 0;
   z-index: 20;
 `

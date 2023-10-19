@@ -127,6 +127,7 @@ const SidebarGrid = styled.div`
   grid-area: sidebar;
   position: fixed;
   height: 100%;
+  top: 90px;
   left: 0;
   z-index: 20;
 `
