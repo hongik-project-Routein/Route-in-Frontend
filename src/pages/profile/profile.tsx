@@ -48,7 +48,7 @@ export default function MyProfile(): JSX.Element {
     loadUserInfo().catch((error) => {
       console.log(error)
     })
-  }, [followerList, followingList])
+  }, [followerList, followingList, uname])
 
   const handleTabClick = (index: number): void => {
     setSelectedTabIndex(index)
