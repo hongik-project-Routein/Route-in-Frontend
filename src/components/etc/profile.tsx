@@ -150,6 +150,7 @@ export default function Profile(props: ProfileProps): JSX.Element {
                 <FollowingModal followList={props.userProfile?.following_set} />
               ) : null}
             </FollowContainer>
+            <span>나와의 거리 : 100km</span>
           </Statistics>
           <Introduction
             value={introductionText}
@@ -233,6 +234,10 @@ const Statistics = styled.div`
   margin-bottom: 20px;
   & > div {
     margin-right: 30px;
+  }
+
+  span {
+    margin-left: 20px;
   }
 `
 const NumOfPosts = styled.div``
