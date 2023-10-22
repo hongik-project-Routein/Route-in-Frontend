@@ -62,13 +62,15 @@ function usePost(): usePostFunction {
   const savePost = useCallback(async (diff: PostSendToBackend) => {
     const accessToken = loadUserInfo().accessToken
 
-    console.log(diff)
-
     try {
       const sendData: SendPostCoordinate = coordinatePostSendType(diff)
 
       const formData = new FormData()
       formData.append('content', sendData.content)
+
+      diff.tagged_users?.forEach((tag, index) => {
+        formData.append(`tagged_users[${index}]`, tag) // 태그된 유저 추가
+      })
 
       // 파일을 보낼 때는 폼데이터로 보내야한다.
       sendData.pins.forEach((pin, index) => {

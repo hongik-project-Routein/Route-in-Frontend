@@ -158,7 +158,6 @@ const PersonalInfoContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 582px;
   height: 60px;
 `
 

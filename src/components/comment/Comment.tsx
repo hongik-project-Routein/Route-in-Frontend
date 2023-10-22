@@ -8,7 +8,7 @@ import useUser from '../../recoil/hooks/useUser'
 import usePostDetail from '../../recoil/hooks/usePostdetail'
 import moment from 'moment'
 import CommentInput from './CommentInput'
-import { tagProcess } from '../function/tag'
+import { getTagList, tagProcess } from '../function/tag'
 
 interface CommentProps {
   postId: number
@@ -25,13 +25,16 @@ function Comment(props: CommentProps): JSX.Element {
     event.preventDefault()
 
     if (text === '') return
+
+    const tagProcessContent = tagProcess(text)
+
     try {
       const response = await request<LoadComment>(
         'post',
         `/api/post/${props.postId}/comment/`,
         {
-          content: tagProcess(text),
-          tagged_users: [],
+          content: tagProcessContent,
+          tagged_users: getTagList(tagProcessContent),
           post: props.postId,
           like_users: [],
         },

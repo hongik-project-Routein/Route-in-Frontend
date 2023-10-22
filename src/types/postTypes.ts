@@ -24,6 +24,7 @@ export interface HashtagAutoAndText {
 export interface PostSendToBackend {
   content: string
   pins: Pin[]
+  tagged_users?: string[]
 }
 
 export interface SendPostCoordinate {
@@ -35,6 +36,7 @@ export interface SendPostCoordinate {
 export interface UpdatePost {
   content: string
   pins: UpdatePin[]
+  tagged_users?: string[]
 }
 
 // 핀 수정 시
@@ -75,6 +77,7 @@ export interface LoadPost {
     is_liked: boolean
     pin_count: number
     like_count: number
+    tagged_users?: string[] | undefined
     like_users: string[]
     is_bookmarked: boolean
     bookmark_users: string[]

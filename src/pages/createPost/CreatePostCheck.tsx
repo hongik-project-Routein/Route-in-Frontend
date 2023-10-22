@@ -7,6 +7,7 @@ import { type Pin, type HashtagAutoAndText } from '../../types/postTypes'
 import usePost from '../../recoil/hooks/usePost'
 import { useNavigate } from 'react-router-dom'
 import Loading from '../../components/util/loading'
+import { getTagList, tagProcess } from '../../components/function/tag'
 
 export default function CreatePostCheck(): JSX.Element {
   const [hashtagAutoText, setHashtagAutoText] = useState<
@@ -15,6 +16,7 @@ export default function CreatePostCheck(): JSX.Element {
   const [restHashtag, setRestHashtag] = useState<string[] | []>([])
   const [text, setText] = useState<string>('')
   const [holeText, setHoleText] = useState<string>('')
+  const [userTags, setUserTags] = useState<string[]>([])
 
   const [points, setPoints] = useState<kakao.maps.LatLng[]>([])
   const [map, setMap] = useState<kakao.maps.Map>()
@@ -60,10 +62,18 @@ export default function CreatePostCheck(): JSX.Element {
     loadText()
   }, [])
 
+  useEffect(() => {
+    setUserTags(getTagList(tagProcess(holeText)))
+  }, [holeText])
+
   const sendPost = async (): Promise<void> => {
     try {
       setLoading(true)
-      const result = await savePost({ pins, content: holeText })
+      const result = await savePost({
+        pins,
+        content: holeText,
+        tagged_users: userTags,
+      })
 
       if (result) {
         setLoading(false)

@@ -1,4 +1,4 @@
-import React, { type ChangeEvent, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
 import Carousel from '../../components/util/carousel'
@@ -13,6 +13,8 @@ import { useRecoilState, useResetRecoilState } from 'recoil'
 import updatePost, { isUpdatePost } from '../../recoil/atom/updatePost'
 import useInput from '../../hooks/useInput'
 import useUser from '../../recoil/hooks/useUser'
+import PostInput from '../../components/textarea/postInput'
+import { getTagList, tagProcess } from '../../components/function/tag'
 
 interface PostUpdateProps {
   postid: string
@@ -20,9 +22,10 @@ interface PostUpdateProps {
 
 export default function PostUpdate(props: PostUpdateProps): JSX.Element {
   const [post, setPost] = useRecoilState<UpdatePost>(updatePost)
-  const [text, setText, directChange] = useInput<string, HTMLTextAreaElement>(
-    ''
-  )
+  const [text, , directChange, setValue] = useInput<
+    string,
+    HTMLTextAreaElement
+  >('')
   const { loadUserInfo } = useUser()
 
   const resetIsUpdatePost = useResetRecoilState(isUpdatePost)
@@ -51,11 +54,6 @@ export default function PostUpdate(props: PostUpdateProps): JSX.Element {
     }
   }
 
-  const onContentChange = (event: ChangeEvent<HTMLTextAreaElement>): void => {
-    setText(event)
-    setPost({ ...post, content: event.target.value })
-  }
-
   const deleteDuplicateText = (text: string, auto: string[]): string => {
     const lines = text.split('\n')
     return lines
@@ -69,6 +67,11 @@ export default function PostUpdate(props: PostUpdateProps): JSX.Element {
       console.log(error)
     })
   }, [])
+
+  useEffect(() => {
+    const userTag = tagProcess(text)
+    setPost({ ...post, content: userTag, tagged_users: getTagList(userTag) })
+  }, [text])
 
   const concatContent = (
     content: string,
@@ -96,7 +99,11 @@ export default function PostUpdate(props: PostUpdateProps): JSX.Element {
       })
     )
 
-    const newPost = { ...post, content: newContent }
+    const newPost = {
+      ...post,
+      content: newContent,
+      tagged_users: getTagList(tagProcess(newContent)),
+    }
 
     try {
       await request('put', `/api/post/${props.postid}/update/`, newPost, {
@@ -145,7 +152,7 @@ export default function PostUpdate(props: PostUpdateProps): JSX.Element {
               ))}
           </HashtagAutoTextContainer>
           {post.pins.length > 0 && (
-            <WriteSpace value={text} onChange={onContentChange} />
+            <PostInput value={text} setValue={setValue} />
           )}
         </LocationGroup>
       </GroupContainer>
@@ -199,16 +206,6 @@ const HashtagAutoTextContainer = styled.div`
   position: relative;
   width: 350px;
   margin-bottom: 5px;
-  border: 1px solid #d9d9d9;
-  border-radius: 8px;
-`
-
-const WriteSpace = styled.textarea`
-  width: 350px;
-  height: 350px;
-  padding: 8px;
-  resize: none;
-  outline: none;
   border: 1px solid #d9d9d9;
   border-radius: 8px;
 `

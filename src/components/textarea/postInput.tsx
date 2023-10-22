@@ -2,7 +2,8 @@ import React from 'react'
 import { MentionsInput, Mention } from 'react-mentions'
 import styled from 'styled-components'
 import useUser from '../../recoil/hooks/useUser'
-import theme from '../../styles/Theme'
+import defaultStyle from '../../styles/tag/defaultStyle'
+import defaultMentionStyle from '../../styles/tag/defaultMentionStyle'
 
 interface PostInputProps {
   value: string
@@ -43,19 +44,14 @@ function PostInput(props: PostInputProps): JSX.Element {
       onChange={(event) => {
         props.setValue(event.target.value)
       }}
+      style={defaultStyle}
       a11ySuggestionsListLabel={'mention'}
     >
       <Mention
         appendSpaceOnAdd
         trigger="@"
         data={getUserData}
-        renderSuggestion={(
-          suggestion,
-          search,
-          highlightedDisplay,
-          index,
-          focused
-        ) => <Suggestion focused={focused}>{highlightedDisplay}</Suggestion>}
+        style={defaultMentionStyle}
       />
     </TextInput>
   )
@@ -77,11 +73,4 @@ const TextInput = styled(MentionsInput)`
     border-radius: 8px;
     outline: none;
   }
-`
-
-const Suggestion = styled.div<{ focused: boolean }>`
-  padding: 5px 8px;
-
-  background-color: ${(props) =>
-    props.focused ? theme.colors.primaryColor : theme.colors.white};
 `

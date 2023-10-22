@@ -17,6 +17,7 @@ export const postDemo: LoadPost[] = [
 
       #공원_피크닉
       너무 기분이 좋았다
+      @jane 나중에 같이오자.
       `,
       pin_count: 3,
       like_count: 40,
@@ -26,6 +27,7 @@ export const postDemo: LoadPost[] = [
       bookmark_users: [],
       comment_count: 2,
       created_at: '',
+      tagged_users: ['jane'],
     },
     pin: [
       {

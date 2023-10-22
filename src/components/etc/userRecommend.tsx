@@ -41,16 +41,22 @@ export default function UserRecommend(): JSX.Element {
   }, [])
 
   return (
-    <>
+    <Container>
       <RecommendTitle>회원님을 위한 추천</RecommendTitle>
       <RecommendContainer>
         {userRecommend?.map((user, idx) => (
           <EachRecommendUser key={`eachuser${idx}`} eachUser={user} />
         ))}
       </RecommendContainer>
-    </>
+    </Container>
   )
 }
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
 
 const RecommendTitle = styled.h2`
   margin-top: 10px;
