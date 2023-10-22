@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google'
 import { request } from '../../util/axios'
 import styled from 'styled-components'
@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { type Auth } from './kakao'
 import { type UserState } from '../../recoil/atom/user'
 import useUser from '../../recoil/hooks/useUser'
+import Loading from '../util/loading'
 
 function GoogleLoginProvider(): JSX.Element {
   return (
@@ -22,9 +23,11 @@ export default GoogleLoginProvider
 function GoogleLoginButton(): JSX.Element {
   const navigate = useNavigate()
   const { login } = useUser()
+  const [loading, setLoading] = useState<boolean>(false)
 
   const loginButtonClick = useGoogleLogin({
     onSuccess: async (res): Promise<void> => {
+      setLoading(true)
       const token = res.access_token
 
       const response = await request<Auth>(
@@ -50,6 +53,8 @@ function GoogleLoginButton(): JSX.Element {
 
       login(userinfo)
 
+      setLoading(false)
+
       if (response.uname === null) {
         navigate('/initial-setting')
       } else {
@@ -61,11 +66,14 @@ function GoogleLoginButton(): JSX.Element {
     },
   })
   return (
-    <LoginButton
-      onClick={() => {
-        loginButtonClick()
-      }}
-    />
+    <>
+      {loading && <Loading />}
+      <LoginButton
+        onClick={() => {
+          loginButtonClick()
+        }}
+      />
+    </>
   )
 }
 

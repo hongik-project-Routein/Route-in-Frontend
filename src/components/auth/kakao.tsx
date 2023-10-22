@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import KakaoLogin from 'react-kakao-login'
 import styled from 'styled-components'
 import { request } from '../../util/axios'
 import { useNavigate } from 'react-router-dom'
 import { type UserState } from '../../recoil/atom/user'
 import useUser from '../../recoil/hooks/useUser'
+import Loading from '../util/loading'
 
 export interface Auth {
   name: string
@@ -22,8 +23,10 @@ function Kakao(): JSX.Element {
   const kakaoClientId = process.env.REACT_APP_KAKAO_LOGIN_API_KEY as string
   const { login } = useUser()
   const navigate = useNavigate()
+  const [loading, setLoading] = useState<boolean>(false)
 
   const kakaoOnSuccess = async (data: any): Promise<void> => {
+    setLoading(true)
     const token = data.response.access_token
 
     const response = await request<Auth>(
@@ -49,17 +52,21 @@ function Kakao(): JSX.Element {
 
     login(userinfo)
 
+    setLoading(false)
+
     if (response.uname === null) {
       navigate('/initial-setting')
     } else {
       navigate('/')
     }
   }
+
   const kakaoOnFailure = (error: any): void => {
     console.log(error)
   }
   return (
     <>
+      {loading && <Loading />}
       <KakaoLogin
         token={kakaoClientId}
         // eslint-disable-next-line @typescript-eslint/no-misused-promises

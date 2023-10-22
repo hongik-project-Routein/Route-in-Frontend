@@ -6,6 +6,7 @@ import PostModal from '../../components/popup/PostModal'
 import { type Pin, type HashtagAutoAndText } from '../../types/postTypes'
 import usePost from '../../recoil/hooks/usePost'
 import { useNavigate } from 'react-router-dom'
+import Loading from '../../components/util/loading'
 
 export default function CreatePostCheck(): JSX.Element {
   const [hashtagAutoText, setHashtagAutoText] = useState<
@@ -18,6 +19,8 @@ export default function CreatePostCheck(): JSX.Element {
   const [points, setPoints] = useState<kakao.maps.LatLng[]>([])
   const [map, setMap] = useState<kakao.maps.Map>()
   const [index, setIndex] = useState<number>(-1)
+
+  const [loading, setLoading] = useState<boolean>(false)
 
   const { pins, imgUrls, hashtagAndText, savePost } = usePost()
 
@@ -58,11 +61,19 @@ export default function CreatePostCheck(): JSX.Element {
   }, [])
 
   const sendPost = async (): Promise<void> => {
-    const result = await savePost({ pins, content: holeText })
+    try {
+      setLoading(true)
+      const result = await savePost({ pins, content: holeText })
 
-    if (result) {
-      navigate('/')
-      window.location.reload()
+      if (result) {
+        setLoading(false)
+        navigate('/')
+        window.location.reload()
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -109,6 +120,7 @@ export default function CreatePostCheck(): JSX.Element {
 
   return (
     <>
+      {loading && <Loading />}
       <Title>게시글 확인</Title>
       <Paragraph>
         {`지도 위에 핀이 표시됩니다.

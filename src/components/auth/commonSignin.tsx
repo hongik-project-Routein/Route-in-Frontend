@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import InputInfo from '../input/inputInfo'
 import { Regex } from '../../constants/Regex'
@@ -10,6 +10,7 @@ import theme from '../../styles/Theme'
 import { type Auth } from './kakao'
 import { type UserState } from '../../recoil/atom/user'
 import { type AxiosError } from 'axios'
+import Loading from '../util/loading'
 
 function CommonSignin(): JSX.Element {
   const {
@@ -20,9 +21,12 @@ function CommonSignin(): JSX.Element {
 
   const navigate = useNavigate()
   const { login } = useUser()
+  const [loading, setLoading] = useState<boolean>(false)
 
   const onSubmit = async (data: FieldValues): Promise<void> => {
     try {
+      setLoading(true)
+
       const response = await request<Auth>('post', `/api/accounts/login/`, data)
 
       const userinfo: UserState = {
@@ -39,6 +43,8 @@ function CommonSignin(): JSX.Element {
 
       login(userinfo)
 
+      setLoading(false)
+
       if (response.uname === null) {
         navigate('/initial-setting')
       } else {
@@ -51,55 +57,60 @@ function CommonSignin(): JSX.Element {
           alert('회원정보가 일치하지 않습니다. 다시 확인해주세요')
         }
       }
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
-    <Container>
-      <InputContainer>
-        <Title>Route in</Title>
-        <InputForm onSubmit={handleSubmit(onSubmit)}>
-          <InputInfo
-            width={300}
-            labelName="이메일"
-            name="email"
-            specificPlaceholder="이메일을 입력해주세요"
-            defaultValue={undefined}
-            checkDuplicate={false}
-            checkPassword={null}
-            type="text"
-            register={register}
-            errors={errors.email}
-            minLength={1}
-            maxLength={20}
-            pattern={Regex.email.pattern}
-          />
-          <InputInfo
-            width={300}
-            labelName="비밀번호"
-            name="password"
-            specificPlaceholder="비밀번호를 입력해주세요"
-            defaultValue={undefined}
-            checkDuplicate={false}
-            checkPassword={null}
-            type="password"
-            register={register}
-            errors={errors.password}
-            minLength={8}
-            maxLength={20}
-            pattern={Regex.password.pattern}
-          />
+    <>
+      {loading && <Loading />}
+      <Container>
+        <InputContainer>
+          <Title>Route in</Title>
+          <InputForm onSubmit={handleSubmit(onSubmit)}>
+            <InputInfo
+              width={300}
+              labelName="이메일"
+              name="email"
+              specificPlaceholder="이메일을 입력해주세요"
+              defaultValue={undefined}
+              checkDuplicate={false}
+              checkPassword={null}
+              type="text"
+              register={register}
+              errors={errors.email}
+              minLength={1}
+              maxLength={20}
+              pattern={Regex.email.pattern}
+            />
+            <InputInfo
+              width={300}
+              labelName="비밀번호"
+              name="password"
+              specificPlaceholder="비밀번호를 입력해주세요"
+              defaultValue={undefined}
+              checkDuplicate={false}
+              checkPassword={null}
+              type="password"
+              register={register}
+              errors={errors.password}
+              minLength={8}
+              maxLength={20}
+              pattern={Regex.password.pattern}
+            />
 
-          <LoginButton>로그인</LoginButton>
-        </InputForm>
-      </InputContainer>
-      <GoSignUpContainer>
-        <GoSignUpDesc>아직 계정이 없다면</GoSignUpDesc>
-        <SignUpButton to="/common-signup">
-          <SignUpDesc>Sign Up</SignUpDesc>
-        </SignUpButton>
-      </GoSignUpContainer>
-    </Container>
+            <LoginButton>로그인</LoginButton>
+          </InputForm>
+        </InputContainer>
+        <GoSignUpContainer>
+          <GoSignUpDesc>아직 계정이 없다면</GoSignUpDesc>
+          <SignUpButton to="/common-signup">
+            <SignUpDesc>Sign Up</SignUpDesc>
+          </SignUpButton>
+        </GoSignUpContainer>
+      </Container>
+    </>
   )
 }
 
