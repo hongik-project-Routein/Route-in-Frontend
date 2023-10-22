@@ -4,7 +4,7 @@ import ProfilePostArticle from './profilePost'
 import ProfileBookmarkArticle from './profileBookmark'
 import { useRecoilState } from 'recoil'
 import profileStore from '../../recoil/atom/profile'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import { request } from '../../util/axios'
 import { type UserData } from '../../types/userType'
 import useTab from '../../recoil/hooks/useTab'
@@ -15,6 +15,7 @@ import Profile from '../../components/etc/profile'
 export default function MyProfile(): JSX.Element {
   const { profile, changeProfileTabIndex } = useTab()
   const { uname } = useParams()
+  const location = useLocation()
   const { loadUserInfo } = useUser()
 
   const { followerList, followingList } = useFollow()
@@ -56,7 +57,19 @@ export default function MyProfile(): JSX.Element {
   }
 
   useEffect(() => {
-    setSelectedTabIndex(profile)
+    const path = location.pathname.split('/')
+
+    if (path[path.length - 1] === 'map') {
+      setSelectedTabIndex(0)
+    }
+
+    if (path[path.length - 1] === 'post') {
+      setSelectedTabIndex(1)
+    }
+
+    if (path[path.length - 1] === 'bookmark') {
+      setSelectedTabIndex(2)
+    }
   }, [selectedTabIndex])
 
   return (

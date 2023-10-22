@@ -27,6 +27,7 @@ export default function ProfilePostArticle(
     { tabName: '게시글', link: `/profile/${uname ?? ''}/post` },
     { tabName: '북마크', link: `/profile/${uname ?? ''}/bookmark` },
   ]
+
   const { curPageItem, renderSSPagination } = useSSPagination<LoadPost>(
     `/api/user/${uname as string}/post/?`,
     6
