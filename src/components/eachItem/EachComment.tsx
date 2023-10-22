@@ -83,7 +83,7 @@ function EachComment(props: EachCommentProps): JSX.Element {
       <CommentProfile src={props.comment.writer_image} />
       <CommentMain>
         <Maintext>
-          <CommentNickname to={`/profile/${props.comment.writer}`}>
+          <CommentNickname to={`/profile/${props.comment.writer}/post`}>
             {props.comment.writer}
           </CommentNickname>
           <CommentDesc>{props.comment.content}</CommentDesc>

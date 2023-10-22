@@ -101,10 +101,10 @@ export default function PostCard(props: PostCardProps): JSX.Element {
     <>
       <PersonalInfoContainer>
         <UserContent>
-          <ProfileLink to={`/profile/${props.loadPost.post.writer}`}>
+          <ProfileLink to={`/profile/${props.loadPost.post.writer}/post`}>
             <Profile src={props.loadPost.user.image} />
           </ProfileLink>
-          <Uname to={`/profile/${props.loadPost.post.writer}`}>
+          <Uname to={`/profile/${props.loadPost.post.writer}/post`}>
             {props.loadPost.post.writer}
           </Uname>
           <CreatedAt>{calculateDate(props.loadPost.post.created_at)}</CreatedAt>

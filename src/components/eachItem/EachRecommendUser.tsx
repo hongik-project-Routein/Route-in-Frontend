@@ -11,11 +11,11 @@ interface EachRecommendUserProps {
 function EachRecommendUser(props: EachRecommendUserProps): JSX.Element {
   return (
     <RecommendRow>
-      <Link to={`/profile/${props.eachUser.uname}`}>
+      <Link to={`/profile/${props.eachUser.uname}/post`}>
         <Profile src={props.eachUser.image} />
       </Link>
       <TextContainer>
-        <Link to={`/profile/${props.eachUser.uname}`}>
+        <Link to={`/profile/${props.eachUser.uname}/post`}>
           <Nickname>{props.eachUser.uname}</Nickname>
         </Link>
       </TextContainer>

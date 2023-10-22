@@ -90,7 +90,7 @@ function EachSearchPin(props: EachSearchPinProps): JSX.Element {
   return (
     <div>
       <PersonalInfoContainer>
-        <UserContent to={`/profile/${props.loadPin.writer}`}>
+        <UserContent to={`/profile/${props.loadPin.writer}/post`}>
           <Profile src={props.loadPin.writer_image} />
           <Nickname>{props.loadPin.writer}</Nickname>
         </UserContent>

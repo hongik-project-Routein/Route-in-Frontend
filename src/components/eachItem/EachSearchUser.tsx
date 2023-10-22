@@ -18,7 +18,7 @@ function EachSearchUser(props: EachSearchUserProps): JSX.Element {
   return (
     <EachSearchUserContainer
       onClick={() => {
-        goProfile(`/profile/${props.loadUser.uname}/`)
+        goProfile(`/profile/${props.loadUser.uname}/post`)
       }}
     >
       <Profile src={props.loadUser.image} />

@@ -100,7 +100,7 @@ export default function PostSmall(props: PostSmallProps): JSX.Element {
   return (
     <div>
       <PersonalInfoContainer>
-        <UserContent to={`/profile/${props.loadPost.post.writer}`}>
+        <UserContent to={`/profile/${props.loadPost.post.writer}/post`}>
           <Profile src={props.loadPost.user.image} />
           <Nickname>{props.loadPost.post.writer}</Nickname>
           <FollowButton uname={props.loadPost.post.writer} />

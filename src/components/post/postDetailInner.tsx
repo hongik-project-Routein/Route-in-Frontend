@@ -112,7 +112,7 @@ function PostDetailInner(): JSX.Element {
     <>
       <PersonalInfoContainer>
         <UserContent>
-          <FlexLink to={`/profile/${postDetail.post.writer}`}>
+          <FlexLink to={`/profile/${postDetail.post.writer}/post`}>
             <Profile src={postDetail.user.image} />
             <Uname>{postDetail.post.writer}</Uname>
             <FollowButton uname={postDetail.post.writer} />
