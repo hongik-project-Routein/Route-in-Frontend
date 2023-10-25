@@ -4,7 +4,7 @@ export const postDemo: LoadPost[] = [
   {
     post: {
       id: 1,
-      writer: 'jinokim98',
+      writer: 'soomineom',
       content: `
       #집밥김치찌개
       김치찌개가 맛있는 집, 맛도 맛있고 앞에 벛꽃이 너무 예쁘게 펴서

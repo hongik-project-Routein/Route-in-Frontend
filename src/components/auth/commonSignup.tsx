@@ -7,6 +7,7 @@ import { request } from '../../util/axios'
 import useUser from '../../recoil/hooks/useUser'
 import { useNavigate } from 'react-router-dom'
 import theme from '../../styles/Theme'
+import { type AxiosError } from 'axios'
 
 function CommonSignup(): JSX.Element {
   const {
@@ -38,7 +39,10 @@ function CommonSignup(): JSX.Element {
         navigate('/common-login')
       }
     } catch (error) {
-      alert(error)
+      const errorResponse = (error as AxiosError).response
+      if (errorResponse !== undefined) {
+        console.log(errorResponse)
+      }
     }
   }
 

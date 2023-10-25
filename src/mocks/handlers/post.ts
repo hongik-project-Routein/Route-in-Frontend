@@ -20,6 +20,17 @@ export const PostHandler = [
     return await res(ctx.json(response))
   }),
 
+  rest.get(
+    `${SERVER_BASE_URL as string}/api/recommend/post`,
+    async (req, res, ctx) => {
+      const response: LoadPostPagination = {
+        count: postDemo.length,
+        results: postDemo,
+      }
+      return await res(ctx.json(response))
+    }
+  ),
+
   rest.post(
     `${SERVER_BASE_URL as string}/api/post/create/`,
     async (req, res, ctx) => {

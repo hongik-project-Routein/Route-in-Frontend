@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, type ChangeEvent } from 'react'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import CarouselSelectPicture from '../../components/util/carouselSelectPicture'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faImage } from '@fortawesome/free-solid-svg-icons'
@@ -167,16 +167,22 @@ export default function SelectPicture(): JSX.Element {
               if (buildingName !== '') {
                 const places = new kakao.maps.services.Places()
 
-                const getPlaceIdUsingAPI = new Promise<number>((resolve) => {
-                  places.keywordSearch(
-                    result[0].road_address.building_name,
-                    (result, status) => {
-                      if (status === kakao.maps.services.Status.OK) {
-                        resolve(Number(result[0].id))
+                const getPlaceIdUsingAPI = new Promise<number>(
+                  (resolve, reject) => {
+                    console.log(result[0].road_address.building_name)
+
+                    places.keywordSearch(
+                      result[0].road_address.building_name,
+                      (result, status) => {
+                        if (status === kakao.maps.services.Status.OK) {
+                          resolve(Number(result[0].id))
+                        } else {
+                          reject(new Error('검색 결과가 없습니다.'))
+                        }
                       }
-                    }
-                  )
-                })
+                    )
+                  }
+                )
 
                 Promise.all([getPlaceIdUsingAPI])
                   .then(([placeId]) => {
@@ -194,6 +200,15 @@ export default function SelectPicture(): JSX.Element {
                   })
                   .catch((err) => {
                     console.log(err)
+                    resolve({
+                      placeName: '',
+                      address: addressResult,
+                      gpsInfo: {
+                        latitude: place.latitude,
+                        longitude: place.longitude,
+                        placeId: getPlaceId,
+                      },
+                    })
                   })
               } else {
                 resolve({
@@ -224,6 +239,12 @@ export default function SelectPicture(): JSX.Element {
     }
   }
 
+  const navigate = useNavigate()
+
+  const goWritePost = (): void => {
+    navigate('/post/create/text')
+  }
+
   const enrollHashtagAuto = (): void => {
     if (imageUrls === undefined) return
     const newPost = pinList.map((post, idx) => {
@@ -239,7 +260,22 @@ export default function SelectPicture(): JSX.Element {
     })
 
     changePlace(newPost, imageUrls)
+    goWritePost()
   }
+
+  const [isAllPlaceIdFill, setIsAllPlaceIdFill] = useState<boolean>(false)
+
+  // placeId가 전부 채워져있지 않으면 다음으로 버튼 비활성화
+  useEffect(() => {
+    if (addresses.length <= 0) {
+      setIsAllPlaceIdFill(false)
+    } else {
+      setIsAllPlaceIdFill(
+        addresses.find((address) => isNaN(address.gpsInfo.placeId)) ===
+          undefined
+      )
+    }
+  }, [addresses, imgGPSInfoList])
 
   return (
     <>
@@ -307,19 +343,11 @@ export default function SelectPicture(): JSX.Element {
             ) : null}
           </CarouselContainer>
           <LocationName>
-            {addresses.length > 0 ? (
-              addresses[carouselIndex].placeName !== '' ? (
-                `#${addresses[carouselIndex].placeName}`
-              ) : (
-                <SearchPlaceButton
-                  onClick={() => {
-                    runSearchPlace()
-                  }}
-                >
-                  장소 찾기
-                </SearchPlaceButton>
-              )
-            ) : null}
+            {addresses.length > 0
+              ? addresses[carouselIndex].placeName !== ''
+                ? `#${addresses[carouselIndex].placeName}`
+                : ''
+              : null}
             {searchModalOpen && (
               <SearchPlaceModal
                 setModalOpen={setSearchModalOpen}
@@ -336,13 +364,23 @@ export default function SelectPicture(): JSX.Element {
               ? addresses[carouselIndex].address
               : '사진을 입력하세요'}
           </LocationAddress>
+          {imgGPSInfoList.length > 0 && (
+            <SearchPlaceButton
+              onClick={() => {
+                runSearchPlace()
+              }}
+            >
+              장소 찾기
+            </SearchPlaceButton>
+          )}
         </LocationGroup>
       </GroupContainer>
       <ButtonContainer>
         <Blank />
-        <NextButtonLink to="/post/create/text" active={imageUrls !== undefined}>
-          <NextButton onClick={enrollHashtagAuto}>{`다음으로`}</NextButton>
-        </NextButtonLink>
+        <NextButton
+          onClick={enrollHashtagAuto}
+          active={isAllPlaceIdFill}
+        >{`다음으로`}</NextButton>
         <Blank />
       </ButtonContainer>
     </>
@@ -408,6 +446,7 @@ function SearchPlaceModal(props: SearchPlaceModalProps): JSX.Element {
   const setPlaceInfo = (): void => {
     if (searchResults !== undefined) {
       const updatedAddresses = props.addresses
+
       const updatedImgGpsInfos = [...props.imgGPSInfoList]
 
       updatedAddresses[props.index].address =
@@ -697,13 +736,12 @@ const ButtonContainer = styled.div`
 
 const Blank = styled.div``
 
-const NextButtonLink = styled(Link)<{ active: boolean }>`
+const NextButton = styled.button<{ active: boolean }>`
   display: ${(props) => (props.active ? 'block' : 'none')};
-  margin: auto;
-`
-const NextButton = styled.button`
+
   width: 100px;
   height: 35px;
+  margin: auto;
   background-color: ${theme.colors.primaryColor};
   color: ${theme.colors.white};
   border-radius: 8px;
@@ -711,6 +749,7 @@ const NextButton = styled.button`
 `
 
 const SearchPlaceButton = styled.button`
+  margin-top: 10px;
   padding: 8px;
   background-color: ${theme.colors.primaryColor};
   color: white;
