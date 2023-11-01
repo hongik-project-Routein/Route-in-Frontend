@@ -6,16 +6,19 @@ import baseStyled, {
 
 const sizes: Record<string, number> = {
   desktop: 768,
+  mobile: 480,
 }
 
 type BackQuoteArgs = string[]
 
 interface Media {
   desktop: (...args: BackQuoteArgs) => CSSProp | undefined
+  mobile: (...args: BackQuoteArgs) => CSSProp | undefined
 }
 
 const media: Media = {
   desktop: (...args: BackQuoteArgs) => undefined,
+  mobile: (...args: BackQuoteArgs) => undefined,
 }
 
 Object.keys(sizes).reduce((acc: Media, label: string) => {
@@ -24,6 +27,14 @@ Object.keys(sizes).reduce((acc: Media, label: string) => {
       acc.desktop = (...args: BackQuoteArgs) =>
         css`
           @media only screen and (min-width: ${sizes.desktop}px) {
+            ${args}
+          }
+        `
+      break
+    case 'mobile':
+      acc.mobile = (...args: BackQuoteArgs) =>
+        css`
+          @media only screen and (max-width: ${sizes.mobile}px) {
             ${args}
           }
         `

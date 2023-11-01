@@ -1,10 +1,8 @@
 import React from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import Layout from './components/layout/Layout'
-import Login from './pages/login'
-import CommonLogin from './pages/commonLogin'
-import CommonSignupPage from './pages/commonSignup'
-import InitialSetting from './pages/InitialSetting'
+import Login from './components/auth/login'
+import InitialSetting from './components/auth/InitialSetting'
 import Main from './pages/Main'
 import PostDetail from './pages/post/postDetail'
 import WritePost from './pages/createPost/WritePost'
@@ -18,6 +16,9 @@ import { useRecoilValue } from 'recoil'
 import user from './recoil/atom/user'
 import PrivateRoute from './privateRoute'
 import DummyPost from './pages/dev/dummyPost'
+import LoginLayout from './components/layout/LoginLayout'
+import CommonSignin from './components/auth/commonSignin'
+import CommonSignup from './components/auth/commonSignup'
 
 function App(): JSX.Element {
   const isLogin = useRecoilValue(user).accessToken !== ''
@@ -33,10 +34,13 @@ function App(): JSX.Element {
   return (
     <Routes>
       <Route path="/" element={loginCheck()} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/common-login" element={<CommonLogin />} />
-      <Route path="/common-signup" element={<CommonSignupPage />} />
-      <Route path="/initial-setting" element={<InitialSetting />} />
+
+      <Route element={<LoginLayout />}>
+        <Route path="/login" element={<Login />} />
+        <Route path="/common-login" element={<CommonSignin />} />
+        <Route path="/common-signup" element={<CommonSignup />} />
+        <Route path="/initial-setting" element={<InitialSetting />} />
+      </Route>
 
       <Route element={<Layout />}>
         {/* 더미 데이터 생성 */}

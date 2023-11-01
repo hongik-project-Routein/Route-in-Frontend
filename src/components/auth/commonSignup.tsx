@@ -106,16 +106,15 @@ function CommonSignup(): JSX.Element {
 export default CommonSignup
 
 const Container = styled.article`
-  margin: 40px auto 50px 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 100%;
 `
 
-const InputContainer = styled.div`
-  width: 400px;
-  height: 500px;
-  margin-bottom: 20px;
-  border: 1px solid #d9d9d9;
-  border-radius: 5px;
-`
+const InputContainer = styled.div``
 
 const Title = styled.h1`
   margin: 80px 0 40px 0;

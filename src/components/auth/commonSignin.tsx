@@ -63,70 +63,67 @@ function CommonSignin(): JSX.Element {
   }
 
   return (
-    <>
+    <Container>
       {loading && <Loading />}
-      <Container>
-        <InputContainer>
-          <Title>Route in</Title>
-          <InputForm onSubmit={handleSubmit(onSubmit)}>
-            <InputInfo
-              width={300}
-              labelName="이메일"
-              name="email"
-              specificPlaceholder="이메일을 입력해주세요"
-              defaultValue={undefined}
-              checkDuplicate={false}
-              checkPassword={null}
-              type="text"
-              register={register}
-              errors={errors.email}
-              minLength={1}
-              maxLength={20}
-              pattern={Regex.email.pattern}
-            />
-            <InputInfo
-              width={300}
-              labelName="비밀번호"
-              name="password"
-              specificPlaceholder="비밀번호를 입력해주세요"
-              defaultValue={undefined}
-              checkDuplicate={false}
-              checkPassword={null}
-              type="password"
-              register={register}
-              errors={errors.password}
-              minLength={8}
-              maxLength={20}
-              pattern={Regex.password.pattern}
-            />
+      <InputContainer>
+        <Title>Route in</Title>
+        <InputForm onSubmit={handleSubmit(onSubmit)}>
+          <InputInfo
+            width={300}
+            labelName="이메일"
+            name="email"
+            specificPlaceholder="이메일을 입력해주세요"
+            defaultValue={undefined}
+            checkDuplicate={false}
+            checkPassword={null}
+            type="text"
+            register={register}
+            errors={errors.email}
+            minLength={1}
+            maxLength={20}
+            pattern={Regex.email.pattern}
+          />
+          <InputInfo
+            width={300}
+            labelName="비밀번호"
+            name="password"
+            specificPlaceholder="비밀번호를 입력해주세요"
+            defaultValue={undefined}
+            checkDuplicate={false}
+            checkPassword={null}
+            type="password"
+            register={register}
+            errors={errors.password}
+            minLength={8}
+            maxLength={20}
+            pattern={Regex.password.pattern}
+          />
 
-            <LoginButton>로그인</LoginButton>
-          </InputForm>
-        </InputContainer>
-        <GoSignUpContainer>
-          <GoSignUpDesc>아직 계정이 없다면</GoSignUpDesc>
-          <SignUpButton to="/common-signup">
-            <SignUpDesc>Sign Up</SignUpDesc>
-          </SignUpButton>
-        </GoSignUpContainer>
-      </Container>
-    </>
+          <LoginButton>로그인</LoginButton>
+        </InputForm>
+      </InputContainer>
+      <GoSignUpContainer>
+        <GoSignUpDesc>아직 계정이 없다면</GoSignUpDesc>
+        <SignUpButton to="/common-signup">
+          <SignUpDesc>Sign Up</SignUpDesc>
+        </SignUpButton>
+      </GoSignUpContainer>
+    </Container>
   )
 }
 
 export default CommonSignin
 
 const Container = styled.article`
-  margin: 40px auto 50px 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 100%;
 `
 
-const InputContainer = styled.div`
-  width: 400px;
-  height: 350px;
-  margin-bottom: 20px;
-  border: 1px solid #d9d9d9;
-  border-radius: 5px;
-`
+const InputContainer = styled.div``
 
 const Title = styled.h1`
   margin: 80px 0 60px 0;
@@ -157,7 +154,7 @@ const LoginButton = styled.button`
 `
 
 const GoSignUpContainer = styled.div`
-  width: 400px;
+  width: 100%;
   height: 130px;
   border: 1px solid #d9d9d9;
   border-radius: 5px;

@@ -85,6 +85,7 @@ export default function WritePost(): JSX.Element {
                   })
                 }}
                 type="text"
+                spellCheck={false}
               />
             </HashtagAutoTextContainer>
           ))}

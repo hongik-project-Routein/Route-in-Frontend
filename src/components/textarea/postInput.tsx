@@ -46,6 +46,7 @@ function PostInput(props: PostInputProps): JSX.Element {
       }}
       style={defaultStyle}
       a11ySuggestionsListLabel={'mention'}
+      spellCheck={false}
     >
       <Mention
         appendSpaceOnAdd
@@ -66,6 +67,7 @@ const TextInput = styled(MentionsInput)`
   outline: none;
 
   textarea {
+    font-size: 15px;
     min-height: 100px;
     padding: 8px;
 

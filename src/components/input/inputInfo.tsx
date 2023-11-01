@@ -92,6 +92,10 @@ const Label = styled.label`
   font-style: normal;
   font-weight: 600;
   line-height: 150%;
+
+  @media screen and (max-width: 480px) {
+    width: 70px;
+  }
 `
 
 const InputRowContent = styled.div`
@@ -113,6 +117,10 @@ const Input = styled.input`
   font-weight: 600;
   &:focus {
     outline: none;
+  }
+
+  @media screen and (max-width: 480px) {
+    width: 150px;
   }
 `
 
