@@ -184,6 +184,11 @@ const GroupContainer = styled.div`
   display: flex;
   justify-content: space-evenly;
   margin-top: 30px;
+
+  @media screen and (max-width: 480px) {
+    flex-direction: column;
+    align-items: center;
+  }
 `
 
 const PictureGroup = styled.div`
@@ -227,6 +232,9 @@ const Blank = styled.div``
 const UpdateButton = styled.button`
   width: 100px;
   height: 35px;
+
+  margin: 0 auto;
+
   background-color: ${theme.colors.primaryColor};
   color: ${theme.colors.white};
   border-radius: 8px;

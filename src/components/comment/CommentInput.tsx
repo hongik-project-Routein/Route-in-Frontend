@@ -71,4 +71,8 @@ const TextInput = styled(MentionsInput)`
   input {
     padding: 0 20px;
   }
+
+  @media screen and (max-width: 480px) {
+    width: 300px;
+  }
 `

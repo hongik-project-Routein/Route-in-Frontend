@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPen } from '@fortawesome/free-solid-svg-icons'
 import { type UserData } from '../../types/userType'
 import FollowButton from '../follow/followButton'
+import Mobile from '../layout/Mobile'
 
 interface ProfileProps {
   isMyProfile: boolean
@@ -124,6 +125,9 @@ export default function Profile(props: ProfileProps): JSX.Element {
         </ProfileImage>
         <ProfileDesc>
           <NameAndEditBtn>
+            <Mobile>
+              <ProfileImageMobile src={profileImage} />
+            </Mobile>
             <Nickname>{props.userProfile?.uname}</Nickname>
             <EditButton
               isMyProfile={props.isMyProfile}
@@ -183,11 +187,31 @@ const ProfileImage = styled.div<{ src: string }>`
   background-image: url(${(props) => props.src});
   background-repeat: no-repeat;
   background-size: cover;
+
+  @media screen and (max-width: 480px) {
+    display: none;
+  }
+`
+
+const ProfileImageMobile = styled.div<{ src: string }>`
+  position: relative;
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+  border-radius: 50%;
+
+  background-image: url(${(props) => props.src});
+  background-repeat: no-repeat;
+  background-size: cover;
 `
 const ProfileDesc = styled.div`
   width: 420px;
-`
 
+  @media screen and (max-width: 480px) {
+    width: 100%;
+    font-size: 12px;
+  }
+`
 const EditProfileBtn = styled(FontAwesomeIcon)`
   position: absolute;
   bottom: 10px;
@@ -265,4 +289,8 @@ const Introduction = styled.textarea`
   resize: none;
   outline: none;
   border: 1px solid #d9d9d9;
+
+  @media screen and (max-width: 480px) {
+    width: 100%;
+  }
 `

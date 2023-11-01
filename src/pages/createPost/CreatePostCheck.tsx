@@ -192,10 +192,6 @@ export default function CreatePostCheck(): JSX.Element {
   )
 }
 
-// const HiddenFormTag = styled.form`
-//   display: none;
-// `
-
 interface ProcessHashtagBlueProps {
   hashtagAutoText: HashtagAutoAndText[] | []
   restHashtag: string[] | []
@@ -271,6 +267,11 @@ const GroupContainer = styled.div`
   display: flex;
   justify-content: space-around;
   margin-top: 30px;
+
+  @media screen and (max-width: 480px) {
+    flex-direction: column;
+    align-items: center;
+  }
 `
 
 const LayerGroup = styled.div`
@@ -280,6 +281,11 @@ const LayerGroup = styled.div`
   align-items: center;
   width: 350px;
   height: 350px;
+
+  @media screen and (max-width: 480px) {
+    width: 100%;
+    margin-bottom: 20px;
+  }
 `
 
 const KakaoMapContainer = styled.div`
@@ -316,6 +322,10 @@ const WriteSpace = styled.div`
 
   overflow-x: hidden;
   overflow-y: scroll;
+
+  @media screen and (max-width: 480px) {
+    width: 100vw;
+  }
 `
 
 const ButtonContainer = styled.div`

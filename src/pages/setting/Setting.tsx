@@ -91,6 +91,10 @@ const SettingArticle = styled.div`
   padding: 30px 30px;
   border: 1px solid #98a2b3;
   border-radius: 8px;
+
+  @media screen and (max-width: 480px) {
+    width: 100%;
+  }
 `
 
 const Title = styled.h2`

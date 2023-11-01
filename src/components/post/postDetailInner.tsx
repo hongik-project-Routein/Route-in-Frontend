@@ -178,15 +178,23 @@ export default PostDetailInner
 
 const PersonalInfoContainer = styled.div`
   display: flex;
-  display: flex;
   justify-content: flex-start;
   align-items: center;
+
+  @media screen and (max-width: 480px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `
 
 const UserContent = styled.div`
   display: flex;
   align-items: center;
   margin-right: 12%;
+
+  @media screen and (max-width: 480px) {
+    margin: 20px 0;
+  }
 `
 
 const Profile = styled.img`
@@ -198,6 +206,12 @@ const Profile = styled.img`
   &:hover {
     cursor: pointer;
   }
+
+  @media screen and (max-width: 480px) {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+  }
 `
 
 const FlexLink = styled(Link)`
@@ -208,6 +222,11 @@ const FlexLink = styled(Link)`
 const Uname = styled.span`
   margin-right: 20px;
   font-size: 20px;
+
+  @media screen and (max-width: 480px) {
+    font-size: 16px;
+    margin-right: 10px;
+  }
 `
 
 const RestContent = styled.div`
@@ -303,70 +322,14 @@ const DeleteButton = styled.div<{ active: boolean }>`
   }
 `
 
-// const DotsContainer = styled.div`
-//   position: relative;
-// `
-
-// const Dots = styled(FontAwesomeIcon)`
-//   margin-left: 10px;
-//   margin-bottom: 25px;
-//   color: ${theme.colors.disable};
-//   font-size: 20px;
-
-//   &:hover {
-//     cursor: pointer;
-//   }
-// `
-
-// const UDLayerPopup = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: center;
-//   align-items: center;
-//   position: absolute;
-//   top: 20px;
-//   left: -15px;
-//   width: 70px;
-//   height: 80px;
-//   border: 1px solid ${theme.colors.black};
-//   border-radius: 10px;
-//   background-color: ${theme.colors.white};
-// `
-
-// const DeleteButton = styled.button`
-//   width: 100%;
-//   height: 30px;
-
-//   background-color: transparent;
-//   border: none;
-//   font-size: 15px;
-
-//   &:hover {
-//     cursor: pointer;
-//     background-color: rgba(0, 0, 0, 0.1);
-//     border-radius: 10px;
-//   }
-// `
-
-// const UpdateButton = styled.div`
-//   width: 100%;
-//   height: 30px;
-
-//   background-color: transparent;
-//   border: none;
-//   font-size: 15px;
-
-//   &:hover {
-//     cursor: pointer;
-//     background-color: rgba(0, 0, 0, 0.1);
-//     border-radius: 10px;
-//   }
-// `
-
 const PostContainer = styled.div`
   display: flex;
   justify-content: flex-start;
   margin-bottom: 30px;
+
+  @media screen and (max-width: 480px) {
+    flex-direction: column;
+  }
 `
 
 const PostImageContainer = styled.div`
@@ -374,6 +337,10 @@ const PostImageContainer = styled.div`
   height: 400px;
   margin-top: 20px;
   margin-right: 50px;
+
+  @media screen and (max-width: 480px) {
+    width: 100%;
+  }
 `
 
 const PostText = styled.p`
@@ -386,4 +353,10 @@ const PostText = styled.p`
   font-size: 16px;
   line-height: 30px;
   white-space: pre-line;
+
+  @media screen and (max-width: 480px) {
+    width: 100%;
+    font-size: 12px;
+    height: auto;
+  }
 `

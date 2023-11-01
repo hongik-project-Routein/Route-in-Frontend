@@ -6,8 +6,6 @@ function Mobile({ children }: { children: JSX.Element }): JSX.Element | null {
 
   useEffect(() => {
     const handleResize = (): void => {
-      console.log(window.innerWidth)
-
       setWidth(window.innerWidth)
     }
     window.addEventListener(`resize`, handleResize)

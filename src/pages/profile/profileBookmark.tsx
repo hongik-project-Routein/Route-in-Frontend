@@ -66,4 +66,9 @@ const TabArticle = styled.div`
   grid-gap: 20px;
   width: 9fr;
   margin-right: 20px;
+
+  @media screen and (max-width: 480px) {
+    display: flex;
+    flex-direction: column;
+  }
 `

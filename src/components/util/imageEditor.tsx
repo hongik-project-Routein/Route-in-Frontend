@@ -1,34 +1,18 @@
-import React, { useEffect, useRef } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 
 interface ImageEditorProps {
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+  modalRef: any
+  onClose: () => void
 }
 
-export default function ImageEditor(props: ImageEditorProps): JSX.Element {
+function ImageEditor(props: ImageEditorProps): JSX.Element {
   const closeModal = (): void => {
-    props.setModalOpen(false)
+    props.onClose()
   }
 
-  const modalRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const handler = (event: MouseEvent): void => {
-      if (
-        modalRef.current == null ||
-        !modalRef.current.contains(event.target as HTMLElement)
-      ) {
-        props.setModalOpen(false)
-      }
-    }
-
-    document.addEventListener('mousedown', handler)
-    return () => {
-      document.removeEventListener('mousedown', handler)
-    }
-  })
   return (
-    <ImageEditorContainer ref={modalRef}>
+    <ImageEditorContainer ref={props.modalRef}>
       <CloseButton onClick={closeModal}>X</CloseButton>
       <ImageEditorBody>
         <CardBody>
@@ -56,6 +40,8 @@ export default function ImageEditor(props: ImageEditorProps): JSX.Element {
     </ImageEditorContainer>
   )
 }
+
+export default ImageEditor
 
 const ImageEditorContainer = styled.div`
   position: absolute;

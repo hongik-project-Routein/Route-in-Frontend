@@ -56,4 +56,10 @@ const SearchResultGrid = styled.div`
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 46px;
   width: 900px;
+
+  @media screen and (max-width: 480px) {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
 `

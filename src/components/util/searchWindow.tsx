@@ -66,6 +66,10 @@ const SearchWindowContainer = styled.form`
   height: 60px;
   margin-top: 77px;
   margin-bottom: 30px;
+
+  @media screen and (max-width: 480px) {
+    width: 100%;
+  }
 `
 
 const InputKeyword = styled.input`

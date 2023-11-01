@@ -49,6 +49,10 @@ const ExploreHeader = styled.header`
 
 const RecommandationMent = styled.div`
   margin-bottom: 50px;
+
+  @media screen and (max-width: 480px) {
+    font-size: 14px;
+  }
 `
 
 const RecommandationResultGrid = styled.div`
@@ -57,4 +61,10 @@ const RecommandationResultGrid = styled.div`
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 46px;
   width: 900px;
+
+  @media screen and (max-width: 480px) {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
 `

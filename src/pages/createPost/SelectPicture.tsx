@@ -10,6 +10,8 @@ import { type Pin } from '../../types/postTypes'
 import ImageEditor from '../../components/util/imageEditor'
 import { Map, MapMarker } from 'react-kakao-maps-sdk'
 import usePost from '../../recoil/hooks/usePost'
+import useModal from '../../hooks/useModal'
+import SearchPlaceModal from '../../components/popup/searchPlaceModal'
 
 export interface GPSInfo {
   latitude: number
@@ -34,9 +36,18 @@ export default function SelectPicture(): JSX.Element {
   const [imgGPSInfoList, setImgGPSInfoList] = useState<GPSInfo[] | []>([])
   const [addresses, setAddresses] = useState<PlaceInfo[] | []>([])
   const [carouselIndex, setCarouselIndex] = useState<number>(0)
-  const [modalOpen, setModalOpen] = useState<boolean>(false)
-  const [searchModalOpen, setSearchModalOpen] = useState<boolean>(false)
+
   const mapRef = useRef(null)
+  const imageEditRef = useRef(null)
+  const searchModalRef = useRef(null)
+
+  const {
+    modalOpen: searchModalOpen,
+    closeModal: searchModalClose,
+    changeModalState: onSearchModal,
+  } = useModal(searchModalRef)
+  const { modalOpen: imageEditOpen, closeModal: imageEditModalClose } =
+    useModal(imageEditRef)
 
   const { enrollImages, changePlace } = usePost()
 
@@ -95,14 +106,6 @@ export default function SelectPicture(): JSX.Element {
       console.error('no gps info', error)
     }
     return undefined
-  }
-
-  const runImageEditor = (): void => {
-    setModalOpen(true)
-  }
-
-  const runSearchPlace = (): void => {
-    setSearchModalOpen(true)
   }
 
   // url이 변경됐을 때만 실행 => 사진을 넣을 때만 실행되길 원함
@@ -315,12 +318,17 @@ export default function SelectPicture(): JSX.Element {
             )}
           </InputImageContainer>
           <EditPictureButton
+            ref={imageEditRef}
             active={imageUrls !== undefined}
-            onClick={runImageEditor}
           >
             사진편집
           </EditPictureButton>
-          {modalOpen && <ImageEditor setModalOpen={setModalOpen} />}
+          {imageEditOpen && (
+            <ImageEditor
+              onClose={imageEditModalClose}
+              modalRef={imageEditRef}
+            />
+          )}
         </PictureGroup>
         <LocationGroup>
           <CarouselContainer>
@@ -348,16 +356,6 @@ export default function SelectPicture(): JSX.Element {
                 ? `#${addresses[carouselIndex].placeName}`
                 : ''
               : null}
-            {searchModalOpen && (
-              <SearchPlaceModal
-                setModalOpen={setSearchModalOpen}
-                index={carouselIndex}
-                addresses={addresses}
-                setAddresses={setAddresses}
-                imgGPSInfoList={imgGPSInfoList}
-                setImgGPSInfoList={setImgGPSInfoList}
-              />
-            )}
           </LocationName>
           <LocationAddress>
             {addresses.length > 0
@@ -365,13 +363,20 @@ export default function SelectPicture(): JSX.Element {
               : '사진을 입력하세요'}
           </LocationAddress>
           {imgGPSInfoList.length > 0 && (
-            <SearchPlaceButton
-              onClick={() => {
-                runSearchPlace()
-              }}
-            >
+            <SearchPlaceButton ref={searchModalRef} onClick={onSearchModal}>
               장소 찾기
             </SearchPlaceButton>
+          )}
+          {searchModalOpen && (
+            <SearchPlaceModal
+              modalRef={searchModalRef}
+              onClose={searchModalClose}
+              index={carouselIndex}
+              addresses={addresses}
+              setAddresses={setAddresses}
+              imgGPSInfoList={imgGPSInfoList}
+              setImgGPSInfoList={setImgGPSInfoList}
+            />
           )}
         </LocationGroup>
       </GroupContainer>
@@ -386,258 +391,6 @@ export default function SelectPicture(): JSX.Element {
     </>
   )
 }
-
-interface SearchPlaceModalProps {
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
-  index: number
-  addresses: [] | PlaceInfo[]
-  setAddresses: React.Dispatch<React.SetStateAction<[] | PlaceInfo[]>>
-  imgGPSInfoList: GPSInfo[]
-  setImgGPSInfoList: React.Dispatch<React.SetStateAction<[] | GPSInfo[]>>
-}
-
-function SearchPlaceModal(props: SearchPlaceModalProps): JSX.Element {
-  const [keyword, setKeyword] = useState<string>('')
-  const [searchResults, setSearchResults] = useState<undefined | any[]>(
-    undefined
-  )
-  const [resultIndex, setResultIndex] = useState<number>(0)
-
-  const onChange = (event: ChangeEvent<HTMLInputElement>): void => {
-    setKeyword(event.target.value)
-  }
-
-  const closeModal = (): void => {
-    props.setModalOpen(false)
-  }
-
-  const modalRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const handler = (event: MouseEvent): void => {
-      if (
-        modalRef.current == null ||
-        !modalRef.current.contains(event.target as HTMLElement)
-      ) {
-        props.setModalOpen(false)
-      }
-    }
-
-    document.addEventListener('mousedown', handler)
-    return () => {
-      document.removeEventListener('mousedown', handler)
-    }
-  })
-
-  const searchPlace = (): void => {
-    const places = new kakao.maps.services.Places()
-
-    places.keywordSearch(keyword, (result, status) => {
-      if (status === kakao.maps.services.Status.OK) {
-        setSearchResults(result)
-      }
-    })
-  }
-
-  const clickPlace = (index: number): void => {
-    setResultIndex(index)
-  }
-
-  const setPlaceInfo = (): void => {
-    if (searchResults !== undefined) {
-      const updatedAddresses = props.addresses
-
-      const updatedImgGpsInfos = [...props.imgGPSInfoList]
-
-      updatedAddresses[props.index].address =
-        searchResults[resultIndex].road_address_name
-
-      updatedAddresses[props.index].placeName = searchResults[
-        resultIndex
-      ].place_name.replace(/\s+/g, '_')
-
-      const updatedGPSInfo = {
-        latitude: Number(searchResults[resultIndex].y),
-        longitude: Number(searchResults[resultIndex].x),
-        placeId: Number(searchResults[resultIndex].id),
-      }
-
-      updatedAddresses[props.index].gpsInfo = updatedGPSInfo
-      updatedImgGpsInfos[props.index] = updatedGPSInfo
-
-      props.setAddresses(updatedAddresses)
-      props.setImgGPSInfoList(updatedImgGpsInfos)
-      props.setModalOpen(false)
-    }
-  }
-
-  return (
-    <SearchPlaceModalContainer ref={modalRef}>
-      <ModalHeader>
-        <CloseButton onClick={closeModal}>X</CloseButton>
-      </ModalHeader>
-      <SearchBarContainer>
-        <SearchBar type="text" value={keyword} onChange={onChange}></SearchBar>
-        <SearchButton onClick={searchPlace} disabled={keyword === ''}>
-          검색
-        </SearchButton>
-      </SearchBarContainer>
-      <SearchResultContainer>
-        <PlaceList>
-          {searchResults?.map((result, idx) => (
-            <SearchResultRow
-              key={idx}
-              onClick={() => {
-                clickPlace(idx)
-              }}
-              current={resultIndex === idx}
-            >
-              <PlaceName>{result.place_name}</PlaceName>
-              <Address>{result.road_address_name}</Address>
-            </SearchResultRow>
-          ))}
-        </PlaceList>
-        <MapContainer>
-          {searchResults !== undefined ? (
-            <Map
-              center={{
-                lat: Number(searchResults[resultIndex].y),
-                lng: Number(searchResults[resultIndex].x),
-              }}
-              style={{ width: '100%', height: '100%' }}
-              draggable={false}
-              zoomable={false}
-            >
-              <MapMarker
-                position={{
-                  lat: Number(searchResults[resultIndex].y),
-                  lng: Number(searchResults[resultIndex].x),
-                }}
-              ></MapMarker>
-            </Map>
-          ) : null}
-        </MapContainer>
-      </SearchResultContainer>
-      <SelectPlaceButton
-        onClick={setPlaceInfo}
-        disabled={searchResults === undefined}
-      >
-        선택
-      </SelectPlaceButton>
-    </SearchPlaceModalContainer>
-  )
-}
-
-const SearchPlaceModalContainer = styled.div`
-  position: fixed;
-  top: 55%;
-  left: 55%;
-  transform: translate(-50%, -50%);
-
-  height: 430px;
-  z-index: 999;
-
-  background-color: ${theme.colors.primary100};
-  border: 1px solid black;
-  border-radius: 8px;
-`
-
-const ModalHeader = styled.header`
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  width: 100%;
-  height: 30px;
-  padding-top: 5px;
-`
-
-const SearchBarContainer = styled.div`
-  display: flex;
-  width: 600px;
-  height: 50px;
-  margin-left: 12px;
-`
-
-const SearchBar = styled.input`
-  width: 300px;
-  height: 30px;
-  margin-right: 30px;
-  padding: 0 5px;
-  background-color: white;
-`
-
-const SearchButton = styled.button<{ disabled: boolean }>`
-  width: 50px;
-  height: 30px;
-  background-color: ${(props) =>
-    props.disabled ? '#d9d9d9' : theme.colors.primaryColor};
-  color: white;
-  &:hover {
-    cursor: ${(props) => (props.disabled ? 'default' : 'pointer')};
-  }
-`
-
-const SearchResultContainer = styled.div`
-  display: flex;
-  width: 600px;
-  height: 300px;
-  padding: 8px 12px;
-`
-
-const PlaceList = styled.div`
-  width: 200px;
-  height: 100%;
-  margin-right: 30px;
-  padding: 8px 12px;
-  background-color: white;
-  overflow-y: scroll;
-`
-
-const SearchResultRow = styled.div<{ current: boolean }>`
-  margin-bottom: 10px;
-  padding: 3px;
-  background-color: ${(props) => (props.current ? '#d9d9d9' : 'white')};
-  border-bottom: 1px solid black;
-  &:hover {
-    cursor: pointer;
-    background-color: #d9d9d9;
-  }
-`
-
-const PlaceName = styled.p`
-  font-size: 14px;
-  margin-bottom: 2px;
-`
-
-const Address = styled.p`
-  font-size: 10px;
-`
-
-const MapContainer = styled.div`
-  width: 350px;
-  height: 100%;
-  background-color: white;
-`
-
-const CloseButton = styled.button`
-  margin-right: 20px;
-  color: white;
-  &:hover {
-    cursor: pointer;
-  }
-`
-
-const SelectPlaceButton = styled.button<{ disabled: boolean }>`
-  width: 50px;
-  height: 30px;
-  margin-left: 12px;
-  background-color: ${(props) =>
-    props.disabled ? '#d9d9d9' : theme.colors.primaryColor};
-  color: white;
-  &:hover {
-    cursor: ${(props) => (props.disabled ? 'default' : 'pointer')};
-  }
-`
 
 const Title = styled.h1`
   color: ${theme.colors.primaryColor};
@@ -698,6 +451,10 @@ const GroupContainer = styled.div`
   display: flex;
   justify-content: space-around;
   margin-top: 30px;
+
+  @media screen and (max-width: 480px) {
+    flex-direction: column;
+  }
 `
 
 const PictureGroup = styled.div`
@@ -705,14 +462,25 @@ const PictureGroup = styled.div`
   flex-direction: column;
   align-items: center;
 `
-const EditPictureButton = styled.button<{ active: boolean }>`
-  display: ${(props) => (props.active ? 'block' : 'none')};
+const EditPictureButton = styled.div<{ active: boolean }>`
+  display: ${(props) => (props.active ? 'flex' : 'none')};
+  justify-content: center;
+  align-items: center;
+
   width: 100px;
   height: 35px;
   background-color: ${theme.secondaryColors.secondary};
   color: ${theme.colors.white};
   border-radius: 8px;
   font-size: 16px;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  @media screen and (max-width: 480px) {
+    margin-bottom: 20px;
+  }
 `
 
 const LocationGroup = styled.div`
@@ -748,10 +516,20 @@ const NextButton = styled.button<{ active: boolean }>`
   font-size: 16px;
 `
 
-const SearchPlaceButton = styled.button`
+const SearchPlaceButton = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 100px;
+  height: 35px;
   margin-top: 10px;
   padding: 8px;
   background-color: ${theme.colors.primaryColor};
   color: white;
   border-radius: 5px;
+
+  &:hover {
+    cursor: pointer;
+  }
 `

@@ -98,7 +98,7 @@ export default function PostSmall(props: PostSmallProps): JSX.Element {
   }, [props.loadPost.post.id])
 
   return (
-    <div>
+    <Container>
       <PersonalInfoContainer>
         <UserContent to={`/profile/${props.loadPost.post.writer}/post`}>
           <Profile src={props.loadPost.user.image} />
@@ -139,15 +139,21 @@ export default function PostSmall(props: PostSmallProps): JSX.Element {
       >
         상세 게시물로
       </PostDetailLink>
-    </div>
+    </Container>
   )
 }
+
+const Container = styled.div``
 
 const PersonalInfoContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   height: 60px;
+
+  @media screen and (max-width: 360px) {
+    flex-direction: column;
+  }
 `
 
 const UserContent = styled(Link)`

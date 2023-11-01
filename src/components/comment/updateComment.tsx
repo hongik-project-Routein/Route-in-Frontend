@@ -2,9 +2,7 @@ import React, { useState, type FormEvent } from 'react'
 import { type LoadComment } from '../../types/postTypes'
 import styled from 'styled-components'
 import theme from '../../styles/Theme'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFaceSmile } from '@fortawesome/free-regular-svg-icons'
-import EmojiPicker, { type EmojiClickData } from 'emoji-picker-react'
+
 import { request } from '../../util/axios'
 import useUser from '../../recoil/hooks/useUser'
 import CommentInput from './CommentInput'
@@ -16,19 +14,9 @@ interface UpdateCommentProps {
 
 function UpdateComment(props: UpdateCommentProps): JSX.Element {
   const [text, setText] = useState<string>(props.comment.content)
-  const [emojiClick, setEmojiClick] = useState(false)
 
   const { loadUserInfo } = useUser()
   const accessToken = loadUserInfo().accessToken
-
-  const EmojiButtonClick = (): void => {
-    setEmojiClick((cur) => !cur)
-  }
-
-  const onClick = (emojiData: EmojiClickData): void => {
-    setText((cur) => cur + emojiData.emoji)
-    setEmojiClick(false)
-  }
 
   // 수정을 저장하는 함수
   const onSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
@@ -59,19 +47,6 @@ function UpdateComment(props: UpdateCommentProps): JSX.Element {
 
   return (
     <WriteCommentContainer onSubmit={onSubmit}>
-      <Emoji onClick={EmojiButtonClick}>
-        <FontAwesomeIcon icon={faFaceSmile} />
-      </Emoji>
-      {emojiClick && (
-        <EmojiPickerContainer>
-          <EmojiPicker
-            height={350}
-            width="100%"
-            autoFocusSearch={false}
-            onEmojiClick={onClick}
-          />
-        </EmojiPickerContainer>
-      )}
       <CommentInput value={text} setValue={setText} />
       <EnrollComment type="submit" disabled={text === ''}>
         게시
@@ -97,22 +72,19 @@ const WriteCommentContainer = styled.form`
   background-color: ${theme.colors.white};
   border: 1px solid #d9d9d9;
   border-radius: 8px;
-`
 
-const Emoji = styled.button`
-  width: 25px;
-  height: 25px;
-  margin: 0 10px;
-  text-align: center;
-  font-size: 25px;
-`
-
-const EmojiPickerContainer = styled.div`
-  position: absolute;
-  top: 50px;
+  @media screen and (max-width: 480px) {
+    width: 80%;
+    left: 50%;
+  }
 `
 
 const EnrollComment = styled.button<{ disabled: boolean }>`
   color: ${(props) => (props.disabled ? '#b1e2f1' : theme.colors.primaryColor)};
   font-weight: 700;
+  white-space: nowrap;
+
+  @media screen and (max-width: 480px) {
+    margin-right: 20px;
+  }
 `

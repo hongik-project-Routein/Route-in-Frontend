@@ -133,6 +133,7 @@ const CommentProfile = styled.img`
 `
 
 const CommentMain = styled.div``
+
 const Maintext = styled.p`
   display: flex;
   align-items: center;
@@ -140,24 +141,34 @@ const Maintext = styled.p`
 const CommentNickname = styled(Link)`
   margin-right: 10px;
   font-weight: 700;
+
+  @media screen and (max-width: 480px) {
+    font-size: 12px;
+  }
 `
-const CommentDesc = styled.span``
+const CommentDesc = styled.span`
+  @media screen and (max-width: 480px) {
+    font-size: 10px;
+  }
+`
 
 const Rest = styled.div`
   display: flex;
   align-items: center;
   margin-top: 10px;
   font-size: 12px;
+
+  @media screen and (max-width: 480px) {
+    font-size: 10px;
+  }
 `
 const Time = styled.div`
   padding-top: 3px;
   margin-right: 10px;
-  font-size: 12px;
 `
 const HeartCount = styled.div`
   padding-top: 3px;
   margin-right: 10px;
-  font-size: 12px;
 
   &:hover {
     cursor: pointer;

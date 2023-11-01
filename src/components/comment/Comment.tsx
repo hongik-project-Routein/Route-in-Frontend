@@ -81,7 +81,7 @@ function Comment(props: CommentProps): JSX.Element {
 export default Comment
 
 const CommentContainer = styled.div`
-  width: 750px;
+  width: 100%;
   height: 250px;
   margin-bottom: 10px;
   border: 1px solid #d9d9d9;
@@ -98,9 +98,15 @@ const WriteCommentContainer = styled.form`
   margin-bottom: 30px;
   border: 1px solid #d9d9d9;
   border-radius: 8px;
+
+  @media screen and (max-width: 480px) {
+    width: 100%;
+  }
 `
 
 const EnrollComment = styled.button<{ disabled: boolean }>`
+  margin-right: 20px;
   color: ${(props) => (props.disabled ? '#b1e2f1' : theme.colors.primaryColor)};
   font-weight: 700;
+  white-space: nowrap;
 `

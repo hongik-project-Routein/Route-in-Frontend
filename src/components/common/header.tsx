@@ -112,6 +112,7 @@ const LogoutButton = styled.button`
 `
 
 const MobileHamburger = styled(FontAwesomeIcon)`
+  margin-right: 20px;
   font-size: 25px;
   color: ${theme.colors.disable};
 

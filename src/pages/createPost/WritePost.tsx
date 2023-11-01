@@ -127,6 +127,11 @@ const GroupContainer = styled.div`
   display: flex;
   justify-content: space-evenly;
   margin-top: 30px;
+
+  @media screen and (max-width: 480px) {
+    flex-direction: column;
+    align-items: center;
+  }
 `
 
 const PictureGroup = styled.div`
@@ -141,7 +146,6 @@ const LocationGroup = styled.div`
   align-items: center;
   width: 380px;
   height: 350px;
-  border: 1px solid #d9d9d9;
   border-radius: 8px;
 
   overflow-x: hidden;
