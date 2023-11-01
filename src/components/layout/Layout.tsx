@@ -31,6 +31,12 @@ const Container = styled.div`
   grid-template-areas:
     'header header header'
     'sidebar article article ';
+
+  @media screen and (max-width: 480px) {
+    display: flex;
+    flex-direction: column;
+    margin: 0 10px;
+  }
 `
 
 const HeaderGrid = styled.div`
@@ -40,6 +46,9 @@ const HeaderGrid = styled.div`
   left: 0;
   right: 0;
   z-index: 1000;
+
+  width: 100%;
+  height: 80px;
 `
 const SidebarGrid = styled.div`
   grid-area: sidebar;
@@ -47,6 +56,13 @@ const SidebarGrid = styled.div`
   top: 90px;
   left: 0;
   z-index: 20;
+
+  width: 260px;
+  height: 100%;
+
+  @media screen and (max-width: 480px) {
+    display: none;
+  }
 `
 const ArticleGrid = styled.div`
   grid-area: article;

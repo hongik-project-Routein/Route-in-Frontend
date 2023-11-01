@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -9,6 +9,7 @@ import {
   faSquarePlus,
   faGear,
   type IconDefinition,
+  faArrowRightFromBracket,
 } from '@fortawesome/free-solid-svg-icons'
 
 import theme from '../../styles/Theme'
@@ -29,12 +30,12 @@ const TapContents: TapContent[] = [
   { icon: faGear, name: '설정', link: '/setting' },
 ]
 
-export default function Sidebar(): JSX.Element {
+function SidebarMobile(): JSX.Element {
   const { navbar, changeNavbarIndex } = useTab()
 
   const [selectedTabIndex, setselectedTabIndex] = useState<number>(navbar)
 
-  const { loadUserInfo } = useUser()
+  const { loadUserInfo, logout } = useUser()
 
   const userinfo = loadUserInfo()
 
@@ -42,6 +43,14 @@ export default function Sidebar(): JSX.Element {
     setselectedTabIndex(index)
     changeNavbarIndex(index)
   }
+
+  const navigate = useNavigate()
+
+  const userLogout = (): void => {
+    logout()
+    navigate('/')
+  }
+
   useEffect(() => {
     setselectedTabIndex(navbar)
   }, [selectedTabIndex])
@@ -78,11 +87,28 @@ export default function Sidebar(): JSX.Element {
           </TabContentContainer>
         ))}
       </Tab>
+      <LogoutTab onClick={userLogout}>
+        <LogoutIcon icon={faArrowRightFromBracket} />
+        <TabName>로그아웃</TabName>
+      </LogoutTab>
     </SidebarContainer>
   )
 }
 
+export default SidebarMobile
+
 const SidebarContainer = styled.div`
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 20px;
+  background-color: ${theme.colors.white};
+  border: 1px solid #98a2b3;
+  border-radius: 12px;
+
+  height: 100%;
+
   display: flex;
   flex-direction: column;
   background-color: ${theme.colors.white};
@@ -91,8 +117,8 @@ const UserContainer = styled(Link)<{ active: boolean }>`
   display: flex;
   justify-content: flex-start;
 
-  margin-bottom: 33px;
-  padding: 40px 20px;
+  margin-bottom: 20px;
+  padding: 20px;
   border: ${(props) => (props.active ? '2px' : '1px')} solid
     ${theme.colors.primaryColor};
   border-radius: 15px;
@@ -155,4 +181,16 @@ const TabIcon = styled.div`
 const TabName = styled.div`
   color: #707070;
   font-size: 16px;
+`
+
+const LogoutTab = styled.div`
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #d9d9d9;
+`
+
+const LogoutIcon = styled(FontAwesomeIcon)`
+  width: 24px;
+  font-size: 16px;
+  margin: 12px 15px;
 `

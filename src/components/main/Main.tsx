@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import Header from '../components/common/header'
-import Sidebar from '../components/common/sidebar'
-import PostCard from '../components/post/postCard'
+import PostCard from '../post/postCard'
 import styled from 'styled-components'
-import UserRecommend from '../components/etc/userRecommend'
-import theme from '../styles/Theme'
-import { type LoadPostPagination, type LoadPost } from '../types/postTypes'
-import { request } from '../util/axios'
-import useUser from '../recoil/hooks/useUser'
+import UserRecommend from '../etc/userRecommend'
+import { type LoadPostPagination, type LoadPost } from '../../types/postTypes'
+import { request } from '../../util/axios'
+import useUser from '../../recoil/hooks/useUser'
 import { useInView } from 'react-intersection-observer'
 
 function Main(): JSX.Element {
@@ -79,12 +76,6 @@ function Main(): JSX.Element {
 
   return (
     <Grid>
-      <HeaderGrid>
-        <Header />
-      </HeaderGrid>
-      <SidebarGrid>
-        <Sidebar />
-      </SidebarGrid>
       <PostGrid>
         {posts !== undefined &&
           posts.length > 0 &&
@@ -94,59 +85,26 @@ function Main(): JSX.Element {
       <RecommendGrid>
         <UserRecommend />
       </RecommendGrid>
-      <FooterGrid>
-        <Footer>
-          {`@ 2023 Route in
-          From Hongik Univ. Project 1 Group6`}
-        </Footer>
-      </FooterGrid>
     </Grid>
   )
 }
 
 const Grid = styled.div`
-  display: grid;
-  position: relative;
-  grid-template-columns: 3fr 5fr 4fr;
-  grid-column-gap: 24px;
-  grid-row-gap: 33px;
-  grid-template-areas:
-    'header header header'
-    'sidebar post recommend'
-    'sidebar post footer';
+  display: flex;
+  column-gap: 20px;
 `
 
-const HeaderGrid = styled.div`
-  grid-area: header;
-  position: sticky;
-  top: 0;
-  z-index: 30;
-  background-color: ${theme.colors.white};
-`
-const SidebarGrid = styled.div`
-  grid-area: sidebar;
-  position: fixed;
-  height: 100%;
-  top: 90px;
-  left: 0;
-  z-index: 20;
-`
 const PostGrid = styled.div`
-  grid-area: post;
+  flex: 5;
 `
+
 const RecommendGrid = styled.div`
-  grid-area: recommend;
-`
+  flex: 3;
+  margin-right: 10px;
 
-const FooterGrid = styled.div`
-  grid-area: footer;
-`
-
-const Footer = styled.footer`
-  color: #475467;
-  text-align: center;
-  white-space: pre-line;
-  line-height: 24px;
+  @media screen and (max-width: 480px) {
+    display: none;
+  }
 `
 
 const Next = styled.div`

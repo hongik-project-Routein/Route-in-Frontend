@@ -3,7 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import Layout from './components/layout/Layout'
 import Login from './components/auth/login'
 import InitialSetting from './components/auth/InitialSetting'
-import Main from './pages/Main'
+import Main from './components/main/Main'
 import PostDetail from './pages/post/postDetail'
 import WritePost from './pages/createPost/WritePost'
 import CreatePostCheck from './pages/createPost/CreatePostCheck'
@@ -33,8 +33,6 @@ function App(): JSX.Element {
 
   return (
     <Routes>
-      <Route path="/" element={loginCheck()} />
-
       <Route element={<LoginLayout />}>
         <Route path="/login" element={<Login />} />
         <Route path="/common-login" element={<CommonSignin />} />
@@ -43,6 +41,8 @@ function App(): JSX.Element {
       </Route>
 
       <Route element={<Layout />}>
+        <Route path="/" element={loginCheck()} />
+
         {/* 더미 데이터 생성 */}
         <Route
           path="/post/dummycreate"

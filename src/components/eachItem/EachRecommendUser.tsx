@@ -33,7 +33,6 @@ const RecommendRow = styled.div`
   display: flex;
   position: relative;
   align-items: center;
-  width: 340px;
   height: 50px;
   margin-bottom: 20px;
 `
@@ -66,7 +65,5 @@ const Nickname = styled.div`
 `
 
 const FollowBtnContainer = styled.div`
-  position: absolute;
-  top: 0;
-  right: 0;
+  margin-left: 20px;
 `

@@ -34,7 +34,7 @@ const ModalContainer = styled.div`
   right: 5px;
   z-index: 3;
   width: 333px;
-  padding: 30px;
+  padding: 20px;
   background-color: ${theme.colors.white};
   border: 1px solid #98a2b3;
   border-radius: 12px;
