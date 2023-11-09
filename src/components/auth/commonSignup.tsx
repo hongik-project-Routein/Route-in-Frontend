@@ -46,6 +46,10 @@ function CommonSignup(): JSX.Element {
     }
   }
 
+  const goPrivacy = (): void => {
+    navigate('/privacy')
+  }
+
   return (
     <Container>
       <InputContainer>
@@ -99,6 +103,7 @@ function CommonSignup(): JSX.Element {
           <SaveButton>회원가입</SaveButton>
         </InputForm>
       </InputContainer>
+      <PrivacyBtn onClick={goPrivacy}>개인정보 처리방침</PrivacyBtn>
     </Container>
   )
 }
@@ -141,5 +146,23 @@ const SaveButton = styled.button`
 
   &:hover {
     cursor: pointer;
+  }
+`
+
+const PrivacyBtn = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 70px;
+  padding: 8px 12px;
+
+  font-size: 14px;
+
+  border: 1px solid ${theme.colors.disable};
+  border-radius: 5px;
+
+  &:hover {
+    cursor: pointer;
+    background-color: ${theme.colors.disable};
   }
 `
