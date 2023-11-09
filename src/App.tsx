@@ -20,6 +20,7 @@ import LoginLayout from './components/layout/LoginLayout'
 import CommonSignin from './components/auth/commonSignin'
 import CommonSignup from './components/auth/commonSignup'
 import Privacy from './pages/privacy'
+import SettingPrivacy from './pages/setting/settingPrivacy'
 
 function App(): JSX.Element {
   const isLogin = useRecoilValue(user).accessToken !== ''
@@ -39,12 +40,17 @@ function App(): JSX.Element {
         <Route path="/common-login" element={<CommonSignin />} />
         <Route path="/common-signup" element={<CommonSignup />} />
         <Route path="/initial-setting" element={<InitialSetting />} />
+        <Route path="/privacy" element={<Privacy />} />
       </Route>
 
       <Route element={<Layout />}>
         <Route path="/" element={loginCheck()} />
-        <Route path="/privacy" element={<Privacy />} />
-
+        <Route
+          path="/setting/privacy"
+          element={
+            <PrivateRoute isLogin={isLogin} component={<SettingPrivacy />} />
+          }
+        />
         {/* 더미 데이터 생성 */}
         <Route
           path="/post/dummycreate"

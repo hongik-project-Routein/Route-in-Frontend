@@ -43,7 +43,7 @@ function Setting(): JSX.Element {
   }
 
   const goPrivacy = (): void => {
-    navigate('/privacy')
+    navigate('/setting/privacy')
   }
 
   return (
