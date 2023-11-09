@@ -87,7 +87,7 @@ function PostDetailInner(): JSX.Element {
           }
         )
         alert(`삭제되었습니다.${response}`)
-        navigate('/home')
+        navigate('/')
       } catch (error) {
         console.log(error)
       }
