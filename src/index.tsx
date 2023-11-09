@@ -6,6 +6,7 @@ import GlobalStyle from './styles/GlobalStyle'
 import { RecoilRoot } from 'recoil'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App'
+import ScrollToTop from './util/scrollToTop'
 
 // import { worker } from './mocks/browser'
 
@@ -19,6 +20,7 @@ root.render(
   <ThemeProvider theme={theme}>
     <GlobalStyle />
     <BrowserRouter>
+      <ScrollToTop />
       <RecoilRoot>
         <App />
       </RecoilRoot>

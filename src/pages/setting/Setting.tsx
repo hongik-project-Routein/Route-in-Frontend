@@ -42,6 +42,10 @@ function Setting(): JSX.Element {
     setIsShowModifyUserinfo((prev) => !prev)
   }
 
+  const goPrivacy = (): void => {
+    navigate('/privacy')
+  }
+
   return (
     <>
       <Profile
@@ -76,6 +80,11 @@ function Setting(): JSX.Element {
                 <BlockModal />
               </div>
             ) : null}
+          </Item>
+
+          <Item>
+            <Label>개인정보 처리방침</Label>
+            <LabelButton onClick={goPrivacy}>확인하기</LabelButton>
           </Item>
         </Article>
       </SettingArticle>

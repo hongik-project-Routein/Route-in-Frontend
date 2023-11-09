@@ -19,6 +19,7 @@ import DummyPost from './pages/dev/dummyPost'
 import LoginLayout from './components/layout/LoginLayout'
 import CommonSignin from './components/auth/commonSignin'
 import CommonSignup from './components/auth/commonSignup'
+import Privacy from './pages/privacy'
 
 function App(): JSX.Element {
   const isLogin = useRecoilValue(user).accessToken !== ''
@@ -42,6 +43,7 @@ function App(): JSX.Element {
 
       <Route element={<Layout />}>
         <Route path="/" element={loginCheck()} />
+        <Route path="/privacy" element={<Privacy />} />
 
         {/* 더미 데이터 생성 */}
         <Route

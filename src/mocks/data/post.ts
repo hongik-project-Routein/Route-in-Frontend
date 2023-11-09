@@ -4,7 +4,7 @@ export const postDemo: LoadPost[] = [
   {
     post: {
       id: 1,
-      writer: 'jinokim98',
+      writer: 'soomineom',
       content: `
       #집밥김치찌개
       김치찌개가 맛있는 집, 맛도 맛있고 앞에 벛꽃이 너무 예쁘게 펴서
@@ -26,7 +26,7 @@ export const postDemo: LoadPost[] = [
       is_bookmarked: false,
       bookmark_users: [],
       comment_count: 2,
-      created_at: '',
+      created_at: '2023-11-06',
       tagged_users: ['jane'],
     },
     pin: [
@@ -96,7 +96,7 @@ export const postDemo: LoadPost[] = [
       is_bookmarked: false,
       bookmark_users: [],
       comment_count: 3,
-      created_at: '',
+      created_at: '2023-11-01',
     },
     pin: [
       {
@@ -141,7 +141,7 @@ export const postDemo: LoadPost[] = [
       is_bookmarked: false,
       bookmark_users: [],
       comment_count: 3,
-      created_at: '',
+      created_at: '2023-11-02',
     },
     pin: [
       {
