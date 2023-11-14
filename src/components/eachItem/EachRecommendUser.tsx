@@ -17,7 +17,6 @@ function EachRecommendUser(props: EachRecommendUserProps): JSX.Element {
       <TextContainer>
         <Link to={`/profile/${props.eachUser.uname}/post`}>
           <Nickname>{props.eachUser.uname}</Nickname>
-          <span>나와의 거리: 100km</span>
         </Link>
       </TextContainer>
       <FollowBtnContainer>

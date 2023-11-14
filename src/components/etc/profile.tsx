@@ -118,7 +118,7 @@ export default function Profile(props: ProfileProps): JSX.Element {
           <InputFile
             id="file"
             type="file"
-            accept=".jpg,.png,.jpeg"
+            accept=".jpg,.png,.jpeg,.heic"
             ref={fileRef}
             onChange={handleProfileImage}
           />
@@ -154,7 +154,6 @@ export default function Profile(props: ProfileProps): JSX.Element {
                 <FollowingModal followList={props.userProfile?.following_set} />
               ) : null}
             </FollowContainer>
-            <span>나와의 거리 : 100km</span>
           </Statistics>
           <Introduction
             value={introductionText}
