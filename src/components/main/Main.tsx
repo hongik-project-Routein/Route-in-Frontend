@@ -85,20 +85,23 @@ function Main(): JSX.Element {
   }, [inView])
 
   return (
-    <>
-      {loading && <Loading />}
-      <Grid>
-        <PostGrid>
-          {posts !== undefined &&
-            posts.length > 0 &&
-            posts.map((post, idx) => <PostCard key={idx} loadPost={post} />)}
-          <Next ref={ref}></Next>
-        </PostGrid>
-        <RecommendGrid>
-          <UserRecommend />
-        </RecommendGrid>
-      </Grid>
-    </>
+    <Grid>
+      {loading ? (
+        <Loading />
+      ) : (
+        <>
+          <PostGrid>
+            {posts !== undefined &&
+              posts.length > 0 &&
+              posts.map((post, idx) => <PostCard key={idx} loadPost={post} />)}
+            <Next ref={ref}></Next>
+          </PostGrid>
+          <RecommendGrid>
+            <UserRecommend />
+          </RecommendGrid>
+        </>
+      )}
+    </Grid>
   )
 }
 
