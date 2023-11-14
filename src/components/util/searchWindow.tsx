@@ -25,7 +25,7 @@ export default function SearchWindow(): JSX.Element {
     params.append('q', inputKeyword)
 
     changeKeyword(inputKeyword)
-    navigate(`/search?${params.toString()}`)
+    navigate(`/search?${params.toString()}`, { state: 'search' })
   }
 
   useEffect(() => {

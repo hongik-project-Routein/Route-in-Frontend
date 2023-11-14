@@ -15,7 +15,7 @@ const search = atom<SearchState>({
   key: 'search',
   default: {
     keyword: '',
-    category: Category.POST,
+    category: Category.PIN,
   },
 })
 

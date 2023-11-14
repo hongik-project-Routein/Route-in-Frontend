@@ -21,8 +21,15 @@ export default function SearchPinArticle(
     []
   )
 
+  const searchParams = new URLSearchParams(window.location.search)
+  const urlkeyword = searchParams.get('q')
+
+  const searchKeyword = keyword === '' ? urlkeyword : keyword
+
   const { curPageItem, renderSSPagination } = useSSPagination<SearchPinType>(
-    `/api/pin/?search=${keyword.toLocaleLowerCase()}&`,
+    `/api/pin/?search=${
+      searchKeyword !== null ? searchKeyword.toLocaleLowerCase() : ' '
+    }&`,
     6
   )
 
@@ -37,14 +44,18 @@ export default function SearchPinArticle(
         tabIndex={props.tabIndex}
         handleTabfunc={props.handleTabfunc}
       />
-      <SearchResultGrid>
-        {searchResult !== undefined
-          ? searchResult.map((pin, idx) => (
-              <EachSearchPin key={idx} loadPin={pin} />
-            ))
-          : null}
-      </SearchResultGrid>
-      {renderSSPagination()}
+      {searchKeyword !== null && (
+        <>
+          <SearchResultGrid>
+            {searchResult !== undefined
+              ? searchResult.map((pin, idx) => (
+                  <EachSearchPin key={idx} loadPin={pin} />
+                ))
+              : null}
+          </SearchResultGrid>
+          {renderSSPagination()}
+        </>
+      )}
     </>
   )
 }

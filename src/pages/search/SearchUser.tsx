@@ -38,14 +38,18 @@ export default function SearchUserArticle(
         handleTabfunc={props.handleTabfunc}
       />
 
-      <SearchResultGrid>
-        {searchResult !== undefined
-          ? searchResult.map((user, idx) => (
-              <EachSearchUser key={idx} loadUser={user} />
-            ))
-          : null}
-      </SearchResultGrid>
-      {renderSSPagination()}
+      {keyword !== '' && (
+        <>
+          <SearchResultGrid>
+            {searchResult !== undefined
+              ? searchResult.map((user, idx) => (
+                  <EachSearchUser key={idx} loadUser={user} />
+                ))
+              : null}
+          </SearchResultGrid>
+          {renderSSPagination()}
+        </>
+      )}
     </>
   )
 }

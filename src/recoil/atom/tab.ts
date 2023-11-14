@@ -9,7 +9,7 @@ interface TabState {
 
 const initialState: TabState = {
   navbar: 0,
-  search: 0,
+  search: 1,
   profile: 0,
   explore: 0,
 }

@@ -18,15 +18,8 @@ export default function SearchPostArticle(
   const { keyword } = useSearch()
   const [searchResult, setSearchResult] = useState<LoadPost[] | undefined>([])
 
-  const searchParams = new URLSearchParams(window.location.search)
-  const urlkeyword = searchParams.get('q')
-
-  const searchKeyword = keyword === '' ? urlkeyword : keyword
-
   const { curPageItem, renderSSPagination } = useSSPagination<LoadPost>(
-    `/api/post/?search=${
-      searchKeyword !== null ? searchKeyword.toLocaleLowerCase() : ' '
-    }&`,
+    `/api/post/?search=${keyword.toLocaleLowerCase()}&`,
     6
   )
 
@@ -42,14 +35,18 @@ export default function SearchPostArticle(
         handleTabfunc={props.handleTabfunc}
       />
 
-      <SearchResultGrid>
-        {searchResult !== undefined
-          ? searchResult.map((post, idx) => (
-              <PostSmall key={idx} loadPost={post} />
-            ))
-          : null}
-      </SearchResultGrid>
-      {renderSSPagination()}
+      {keyword !== '' && (
+        <>
+          <SearchResultGrid>
+            {searchResult !== undefined
+              ? searchResult.map((post, idx) => (
+                  <PostSmall key={idx} loadPost={post} />
+                ))
+              : null}
+          </SearchResultGrid>
+          {renderSSPagination()}
+        </>
+      )}
     </Container>
   )
 }
