@@ -306,7 +306,7 @@ export default function SelectPicture(): JSX.Element {
                 <InputPicture
                   id="file"
                   type="file"
-                  accept=".jpg,.png,.jpeg"
+                  accept=".jpg,.png,.jpeg,.heic"
                   onChange={(event) => {
                     fileSelectedHandler(event).catch((error) => {
                       console.log(error)
