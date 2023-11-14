@@ -6,16 +6,20 @@ import { type LoadPostPagination, type LoadPost } from '../../types/postTypes'
 import { request } from '../../util/axios'
 import useUser from '../../recoil/hooks/useUser'
 import { useInView } from 'react-intersection-observer'
+import Loading from '../util/loading'
 
 function Main(): JSX.Element {
   const [ref, inView] = useInView()
 
+  const [loading, setLoading] = useState(false)
   const [posts, setPosts] = useState<LoadPost[]>([])
   const [next, setNext] = useState('')
   const { loadUserInfo } = useUser()
   const accessToken = loadUserInfo().accessToken
 
   const loadPost = async (): Promise<void> => {
+    setLoading(true)
+
     try {
       const loadPost = await request<LoadPostPagination>(
         'get',
@@ -35,6 +39,8 @@ function Main(): JSX.Element {
       }
     } catch (err) {
       console.log(err)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -45,6 +51,8 @@ function Main(): JSX.Element {
   }, [])
 
   const loadNext = async (): Promise<void> => {
+    setLoading(true)
+
     try {
       if (next === '') return
       const nextContent = await request<LoadPostPagination>('get', next, null, {
@@ -63,6 +71,8 @@ function Main(): JSX.Element {
       }
     } catch (err) {
       console.log(err)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -75,17 +85,20 @@ function Main(): JSX.Element {
   }, [inView])
 
   return (
-    <Grid>
-      <PostGrid>
-        {posts !== undefined &&
-          posts.length > 0 &&
-          posts.map((post, idx) => <PostCard key={idx} loadPost={post} />)}
-        <Next ref={ref}></Next>
-      </PostGrid>
-      <RecommendGrid>
-        <UserRecommend />
-      </RecommendGrid>
-    </Grid>
+    <>
+      {loading && <Loading />}
+      <Grid>
+        <PostGrid>
+          {posts !== undefined &&
+            posts.length > 0 &&
+            posts.map((post, idx) => <PostCard key={idx} loadPost={post} />)}
+          <Next ref={ref}></Next>
+        </PostGrid>
+        <RecommendGrid>
+          <UserRecommend />
+        </RecommendGrid>
+      </Grid>
+    </>
   )
 }
 
