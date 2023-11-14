@@ -51,8 +51,6 @@ function Main(): JSX.Element {
   }, [])
 
   const loadNext = async (): Promise<void> => {
-    setLoading(true)
-
     try {
       if (next === '') return
       const nextContent = await request<LoadPostPagination>('get', next, null, {
@@ -71,8 +69,6 @@ function Main(): JSX.Element {
       }
     } catch (err) {
       console.log(err)
-    } finally {
-      setLoading(false)
     }
   }
 
