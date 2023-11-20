@@ -31,6 +31,8 @@ function SearchPlace({
 
     places.keywordSearch(keyword, (result, status) => {
       if (status === kakao.maps.services.Status.OK) {
+        console.log(result[0].id)
+
         setSearchResult(result)
       }
     })
