@@ -103,9 +103,9 @@ export default function PostSmall(props: PostSmallProps): JSX.Element {
         <UserContent to={`/profile/${props.loadPost.post.writer}/post`}>
           <Profile src={props.loadPost.user.image} />
           <Nickname>{props.loadPost.post.writer}</Nickname>
-          <FollowButton uname={props.loadPost.post.writer} />
         </UserContent>
         <RestContent>
+          <FollowButton uname={props.loadPost.post.writer} />
           <CreatedAt>{calculateDate(props.loadPost.post.created_at)}</CreatedAt>
           <NumOfHeart ref={likePeopleRef}>
             {likeCount}
