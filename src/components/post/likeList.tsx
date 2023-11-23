@@ -70,6 +70,8 @@ const Container = styled.div`
   background-color: ${theme.colors.white};
   border: 1px solid #d9d9d9;
   border-radius: 12px;
+
+  overflow-y: scroll;
 `
 
 const Title = styled.div`

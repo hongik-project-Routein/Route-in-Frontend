@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { type UserData } from './../../types/userType'
 import FollowButton from '../follow/followButton'
+import { useNavigate } from 'react-router-dom'
 
 interface EachLikeUsersProps {
   eachUser: UserData
@@ -10,10 +11,25 @@ interface EachLikeUsersProps {
 function EachLikeUsers(props: EachLikeUsersProps): JSX.Element {
   const { eachUser } = props
 
+  const navigate = useNavigate()
+
+  const goProfile = (link: string): void => {
+    navigate(link)
+  }
+
   return (
     <Row>
-      <ProfileImage src={eachUser.image} />
-      <NicknameAndName>
+      <ProfileImage
+        src={eachUser.image}
+        onClick={() => {
+          goProfile(`/profile/${eachUser.uname}/post`)
+        }}
+      />
+      <NicknameAndName
+        onClick={() => {
+          goProfile(`/profile/${eachUser.uname}/post`)
+        }}
+      >
         <Nickname>{eachUser.uname}</Nickname>
         <Name>{eachUser.name}</Name>
       </NicknameAndName>
