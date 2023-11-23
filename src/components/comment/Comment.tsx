@@ -88,7 +88,7 @@ const CommentContainer = styled.div`
   border-radius: 8px;
   overflow-y: scroll;
 
-  @media screen and (max-width: 360px) {
+  @media screen and (max-width: 450px) {
     width: 100%;
   }
 `
