@@ -11,14 +11,16 @@ interface EachRecommendUserProps {
 function EachRecommendUser(props: EachRecommendUserProps): JSX.Element {
   return (
     <RecommendRow>
-      <Link to={`/profile/${props.eachUser.uname}/post`}>
-        <Profile src={props.eachUser.image} />
-      </Link>
-      <TextContainer>
+      <LeftContainer>
         <Link to={`/profile/${props.eachUser.uname}/post`}>
-          <Nickname>{props.eachUser.uname}</Nickname>
+          <Profile src={props.eachUser.image} />
         </Link>
-      </TextContainer>
+        <TextContainer>
+          <Link to={`/profile/${props.eachUser.uname}/post`}>
+            <Nickname>{props.eachUser.uname}</Nickname>
+          </Link>
+        </TextContainer>
+      </LeftContainer>
       <FollowBtnContainer>
         <FollowButton uname={props.eachUser.uname} />
       </FollowBtnContainer>
@@ -30,6 +32,7 @@ export default EachRecommendUser
 
 const RecommendRow = styled.div`
   display: flex;
+  justify-content: space-between;
   position: relative;
   align-items: center;
   height: 50px;
@@ -45,6 +48,11 @@ const Profile = styled.img`
   &:hover {
     cursor: pointer;
   }
+`
+
+const LeftContainer = styled.div`
+  display: flex;
+  align-items: center;
 `
 
 const TextContainer = styled.div`
