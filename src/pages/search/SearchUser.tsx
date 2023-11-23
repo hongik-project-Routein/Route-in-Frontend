@@ -6,6 +6,7 @@ import useSearch from './../../recoil/hooks/useSearch'
 import { type SearchUserType } from '../../types/postTypes'
 import useSSPagination from '../../hooks/useSSPagination'
 import EachSearchUser from '../../components/eachItem/EachSearchUser'
+import Loading from '../../components/util/loading'
 
 interface SearchUserArticleProps {
   handleTabfunc: (index: number) => void
@@ -21,10 +22,11 @@ export default function SearchUserArticle(
     SearchUserType[] | undefined
   >([])
 
-  const { curPageItem, renderSSPagination } = useSSPagination<SearchUserType>(
-    `/api/user/?search=${keyword.toLocaleLowerCase()}&`,
-    6
-  )
+  const { loading, curPageItem, renderSSPagination } =
+    useSSPagination<SearchUserType>(
+      `/api/user/?search=${keyword.toLocaleLowerCase()}&`,
+      6
+    )
 
   useEffect(() => {
     setSearchResult(curPageItem)
@@ -38,17 +40,21 @@ export default function SearchUserArticle(
         handleTabfunc={props.handleTabfunc}
       />
 
-      {keyword !== '' && (
-        <>
-          <SearchResultGrid>
-            {searchResult !== undefined
-              ? searchResult.map((user, idx) => (
-                  <EachSearchUser key={idx} loadUser={user} />
-                ))
-              : null}
-          </SearchResultGrid>
-          {renderSSPagination()}
-        </>
+      {loading ? (
+        <Loading />
+      ) : (
+        keyword !== '' && (
+          <>
+            <SearchResultGrid>
+              {searchResult !== undefined
+                ? searchResult.map((user, idx) => (
+                    <EachSearchUser key={idx} loadUser={user} />
+                  ))
+                : null}
+            </SearchResultGrid>
+            {renderSSPagination()}
+          </>
+        )
       )}
     </>
   )

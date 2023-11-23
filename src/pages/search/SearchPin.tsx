@@ -6,6 +6,7 @@ import useSearch from './../../recoil/hooks/useSearch'
 import { type SearchPinType } from '../../types/postTypes'
 import useSSPagination from '../../hooks/useSSPagination'
 import EachSearchPin from '../../components/eachItem/EachSearchPin'
+import Loading from '../../components/util/loading'
 
 interface SearchPinArticleProps {
   handleTabfunc: (index: number) => void
@@ -26,12 +27,13 @@ export default function SearchPinArticle(
 
   const searchKeyword = keyword === '' ? urlkeyword : keyword
 
-  const { curPageItem, renderSSPagination } = useSSPagination<SearchPinType>(
-    `/api/pin/?search=${
-      searchKeyword !== null ? searchKeyword.toLocaleLowerCase() : ' '
-    }&`,
-    6
-  )
+  const { loading, curPageItem, renderSSPagination } =
+    useSSPagination<SearchPinType>(
+      `/api/pin/?search=${
+        searchKeyword !== null ? searchKeyword.toLocaleLowerCase() : ' '
+      }&`,
+      6
+    )
 
   useEffect(() => {
     setSearchResult(curPageItem)
@@ -44,17 +46,21 @@ export default function SearchPinArticle(
         tabIndex={props.tabIndex}
         handleTabfunc={props.handleTabfunc}
       />
-      {searchKeyword !== null && (
-        <>
-          <SearchResultGrid>
-            {searchResult !== undefined
-              ? searchResult.map((pin, idx) => (
-                  <EachSearchPin key={idx} loadPin={pin} />
-                ))
-              : null}
-          </SearchResultGrid>
-          {renderSSPagination()}
-        </>
+      {loading ? (
+        <Loading />
+      ) : (
+        searchKeyword !== null && (
+          <>
+            <SearchResultGrid>
+              {searchResult !== undefined
+                ? searchResult.map((pin, idx) => (
+                    <EachSearchPin key={idx} loadPin={pin} />
+                  ))
+                : null}
+            </SearchResultGrid>
+            {renderSSPagination()}
+          </>
+        )
       )}
     </>
   )

@@ -6,6 +6,7 @@ import SearchTab from '../../components/util/searchTab'
 import { type LoadPost } from '../../types/postTypes'
 import useSearch from './../../recoil/hooks/useSearch'
 import useSSPagination from '../../hooks/useSSPagination'
+import Loading from '../../components/util/loading'
 
 interface SearchPostArticleProps {
   handleTabfunc: (index: number) => void
@@ -18,10 +19,11 @@ export default function SearchPostArticle(
   const { keyword } = useSearch()
   const [searchResult, setSearchResult] = useState<LoadPost[] | undefined>([])
 
-  const { curPageItem, renderSSPagination } = useSSPagination<LoadPost>(
-    `/api/post/?search=${keyword.toLocaleLowerCase()}&`,
-    6
-  )
+  const { loading, curPageItem, renderSSPagination } =
+    useSSPagination<LoadPost>(
+      `/api/post/?search=${keyword.toLocaleLowerCase()}&`,
+      6
+    )
 
   useEffect(() => {
     setSearchResult(curPageItem)
@@ -35,17 +37,21 @@ export default function SearchPostArticle(
         handleTabfunc={props.handleTabfunc}
       />
 
-      {keyword !== '' && (
-        <>
-          <SearchResultGrid>
-            {searchResult !== undefined
-              ? searchResult.map((post, idx) => (
-                  <PostSmall key={idx} loadPost={post} />
-                ))
-              : null}
-          </SearchResultGrid>
-          {renderSSPagination()}
-        </>
+      {loading ? (
+        <Loading />
+      ) : (
+        keyword !== '' && (
+          <>
+            <SearchResultGrid>
+              {searchResult !== undefined
+                ? searchResult.map((post, idx) => (
+                    <PostSmall key={idx} loadPost={post} />
+                  ))
+                : null}
+            </SearchResultGrid>
+            {renderSSPagination()}
+          </>
+        )
       )}
     </Container>
   )
