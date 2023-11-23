@@ -81,7 +81,7 @@ function Comment(props: CommentProps): JSX.Element {
 export default Comment
 
 const CommentContainer = styled.div`
-  width: 100%;
+  width: 750px;
   height: 250px;
   margin-bottom: 10px;
   border: 1px solid #d9d9d9;
