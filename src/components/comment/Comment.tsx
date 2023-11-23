@@ -87,6 +87,10 @@ const CommentContainer = styled.div`
   border: 1px solid #d9d9d9;
   border-radius: 8px;
   overflow-y: scroll;
+
+  @media screen and (max-width: 360px) {
+    width: 100%;
+  }
 `
 
 const WriteCommentContainer = styled.form`
